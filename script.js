@@ -5,24 +5,36 @@
 
 
 /* =========================================
-   BANCO DE DADOS TEMPORÁRIO
-   Por enquanto usamos o navegador.
-   Depois vamos trocar pelo banco online.
+   BANCO TEMPORÁRIO
 ========================================= */
 
 let apolices = JSON.parse(
     localStorage.getItem("savaApolices")
 ) || [];
 
+let apoliceAtualId = null;
+
+let temporizadorNotificacao = null;
+
 
 /* =========================================
-   ELEMENTOS DA PÁGINA
+   ELEMENTOS
 ========================================= */
 
-const modal = document.getElementById("modalCadastro");
-const formulario = document.getElementById("formApolice");
-const listaApolices = document.getElementById("listaApolices");
-const campoBusca = document.getElementById("campoBusca");
+const modalCadastro =
+    document.getElementById("modalCadastro");
+
+const modalDetalhes =
+    document.getElementById("modalDetalhes");
+
+const formulario =
+    document.getElementById("formApolice");
+
+const listaApolices =
+    document.getElementById("listaApolices");
+
+const campoBusca =
+    document.getElementById("campoBusca");
 
 
 /* =========================================
@@ -31,9 +43,25 @@ const campoBusca = document.getElementById("campoBusca");
 
 function abrirCadastro() {
 
-    modal.classList.add("ativo");
+    formulario.reset();
 
-    document.getElementById("cliente").focus();
+    document.getElementById("idEdicao").value = "";
+
+    document.getElementById("tituloModal").textContent =
+        "Nova Apólice";
+
+    document.getElementById("alerta30").checked = true;
+    document.getElementById("alerta15").checked = true;
+    document.getElementById("alerta7").checked = true;
+
+    modalCadastro.classList.add("ativo");
+
+    setTimeout(function() {
+
+        document.getElementById("cliente").focus();
+
+    }, 100);
+
 }
 
 
@@ -43,185 +71,322 @@ function abrirCadastro() {
 
 function fecharCadastro() {
 
-    modal.classList.remove("ativo");
+    modalCadastro.classList.remove("ativo");
 
-    formulario.reset();
 }
 
 
 /* =========================================
-   FECHAR AO CLICAR FORA DO MODAL
+   FECHAR DETALHES
 ========================================= */
 
-modal.addEventListener("click", function(event) {
+function fecharDetalhes() {
 
-    if (event.target === modal) {
-        fecharCadastro();
-    }
+    modalDetalhes.classList.remove("ativo");
 
-});
+    apoliceAtualId = null;
+
+}
 
 
 /* =========================================
-   FORMATAÇÃO DO TELEFONE
+   CLICAR FORA DO MODAL
 ========================================= */
 
-document.getElementById("telefone").addEventListener("input", function(event) {
+modalCadastro.addEventListener(
+    "click",
+    function(event) {
 
-    let telefone = event.target.value.replace(/\D/g, "");
+        if (event.target === modalCadastro) {
 
-    if (telefone.length > 11) {
-        telefone = telefone.substring(0, 11);
-    }
+            fecharCadastro();
 
-    if (telefone.length <= 10) {
-
-        telefone = telefone.replace(
-            /^(\d{2})(\d)/,
-            "($1) $2"
-        );
-
-        telefone = telefone.replace(
-            /(\d{4})(\d)/,
-            "$1-$2"
-        );
-
-    } else {
-
-        telefone = telefone.replace(
-            /^(\d{2})(\d)/,
-            "($1) $2"
-        );
-
-        telefone = telefone.replace(
-            /(\d{5})(\d)/,
-            "$1-$2"
-        );
+        }
 
     }
+);
 
-    event.target.value = telefone;
 
-});
+modalDetalhes.addEventListener(
+    "click",
+    function(event) {
+
+        if (event.target === modalDetalhes) {
+
+            fecharDetalhes();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   TELEFONE
+========================================= */
+
+document
+    .getElementById("telefone")
+    .addEventListener(
+        "input",
+        function(event) {
+
+            let telefone =
+                event.target.value.replace(/\D/g, "");
+
+            if (telefone.length > 11) {
+
+                telefone =
+                    telefone.substring(0, 11);
+
+            }
+
+            if (telefone.length <= 10) {
+
+                telefone =
+                    telefone.replace(
+                        /^(\d{2})(\d)/,
+                        "($1) $2"
+                    );
+
+                telefone =
+                    telefone.replace(
+                        /(\d{4})(\d)/,
+                        "$1-$2"
+                    );
+
+            } else {
+
+                telefone =
+                    telefone.replace(
+                        /^(\d{2})(\d)/,
+                        "($1) $2"
+                    );
+
+                telefone =
+                    telefone.replace(
+                        /(\d{5})(\d)/,
+                        "$1-$2"
+                    );
+
+            }
+
+            event.target.value =
+                telefone;
+
+        }
+    );
 
 
 /* =========================================
    SALVAR APÓLICE
 ========================================= */
 
-formulario.addEventListener("submit", function(event) {
+formulario.addEventListener(
+    "submit",
+    function(event) {
 
-    event.preventDefault();
-
-
-    const cliente =
-        document.getElementById("cliente").value.trim();
-
-    const telefone =
-        document.getElementById("telefone").value.trim();
-
-    const numeroApolice =
-        document.getElementById("numeroApolice").value.trim();
-
-    const seguradora =
-        document.getElementById("seguradora").value;
-
-    const tipoSeguro =
-        document.getElementById("tipoSeguro").value;
-
-    const dataVencimento =
-        document.getElementById("dataVencimento").value;
-
-    const observacoes =
-        document.getElementById("observacoes").value.trim();
+        event.preventDefault();
 
 
-    const alerta30 =
-        document.getElementById("alerta30").checked;
-
-    const alerta15 =
-        document.getElementById("alerta15").checked;
-
-    const alerta7 =
-        document.getElementById("alerta7").checked;
+        const cliente =
+            document
+                .getElementById("cliente")
+                .value
+                .trim();
 
 
-    /* =========================================
-       CRIAR OBJETO DA APÓLICE
-    ========================================= */
-
-    const novaApolice = {
-
-        id: Date.now(),
-
-        cliente: cliente,
-
-        telefone: telefone,
-
-        numeroApolice: numeroApolice,
-
-        seguradora: seguradora,
-
-        tipoSeguro: tipoSeguro,
-
-        dataVencimento: dataVencimento,
-
-        observacoes: observacoes,
-
-        alertas: {
-
-            dias30: alerta30,
-
-            dias15: alerta15,
-
-            dias7: alerta7
-
-        },
-
-        status: "Pendente",
-
-        criadaEm: new Date().toISOString()
-
-    };
+        const telefone =
+            document
+                .getElementById("telefone")
+                .value
+                .trim();
 
 
-    /* =========================================
-       ADICIONAR AO BANCO
-    ========================================= */
-
-    apolices.push(novaApolice);
-
-
-    salvarDados();
+        const numeroApolice =
+            document
+                .getElementById("numeroApolice")
+                .value
+                .trim();
 
 
-    /* =========================================
-       ATUALIZAR SISTEMA
-    ========================================= */
-
-    atualizarSistema();
-
-
-    /* =========================================
-       FECHAR MODAL
-    ========================================= */
-
-    fecharCadastro();
+        const seguradora =
+            document
+                .getElementById("seguradora")
+                .value;
 
 
-    /* =========================================
-       MENSAGEM
-    ========================================= */
+        const tipoSeguro =
+            document
+                .getElementById("tipoSeguro")
+                .value;
 
-    alert(
-        "✅ Apólice cadastrada com sucesso!"
-    );
 
-});
+        const dataVencimento =
+            document
+                .getElementById("dataVencimento")
+                .value;
+
+
+        const observacoes =
+            document
+                .getElementById("observacoes")
+                .value
+                .trim();
+
+
+        const alertas = {
+
+            dias30:
+                document
+                    .getElementById("alerta30")
+                    .checked,
+
+            dias15:
+                document
+                    .getElementById("alerta15")
+                    .checked,
+
+            dias7:
+                document
+                    .getElementById("alerta7")
+                    .checked
+
+        };
+
+
+        const idEdicao =
+            document
+                .getElementById("idEdicao")
+                .value;
+
+
+        /* =========================================
+           EDIÇÃO
+        ========================================== */
+
+        if (idEdicao) {
+
+            const indice =
+                apolices.findIndex(
+                    function(apolice) {
+
+                        return String(apolice.id) ===
+                            String(idEdicao);
+
+                    }
+                );
+
+
+            if (indice !== -1) {
+
+                apolices[indice].cliente =
+                    cliente;
+
+                apolices[indice].telefone =
+                    telefone;
+
+                apolices[indice].numeroApolice =
+                    numeroApolice;
+
+                apolices[indice].seguradora =
+                    seguradora;
+
+                apolices[indice].tipoSeguro =
+                    tipoSeguro;
+
+                apolices[indice].dataVencimento =
+                    dataVencimento;
+
+                apolices[indice].observacoes =
+                    observacoes;
+
+                apolices[indice].alertas =
+                    alertas;
+
+                salvarDados();
+
+                atualizarSistema();
+
+                fecharCadastro();
+
+                mostrarNotificacao(
+                    "Apólice atualizada!",
+                    `Os dados de ${cliente} foram atualizados com sucesso.`
+                );
+
+                return;
+
+            }
+
+        }
+
+
+        /* =========================================
+           NOVA APÓLICE
+        ========================================== */
+
+        const novaApolice = {
+
+            id:
+                Date.now(),
+
+            cliente:
+                cliente,
+
+            telefone:
+                telefone,
+
+            numeroApolice:
+                numeroApolice,
+
+            seguradora:
+                seguradora,
+
+            tipoSeguro:
+                tipoSeguro,
+
+            dataVencimento:
+                dataVencimento,
+
+            observacoes:
+                observacoes,
+
+            alertas:
+                alertas,
+
+            status:
+                "Pendente",
+
+            criadaEm:
+                new Date().toISOString()
+
+        };
+
+
+        apolices.push(
+            novaApolice
+        );
+
+
+        salvarDados();
+
+        atualizarSistema();
+
+        fecharCadastro();
+
+
+        mostrarNotificacao(
+            "Apólice cadastrada com sucesso!",
+            `${cliente} foi adicionado à Central de Renovações.`
+        );
+
+    }
+);
 
 
 /* =========================================
-   SALVAR NO LOCALSTORAGE
+   SALVAR DADOS
 ========================================= */
 
 function salvarDados() {
@@ -235,21 +400,33 @@ function salvarDados() {
 
 
 /* =========================================
-   CALCULAR DIAS ATÉ O VENCIMENTO
+   CALCULAR DIAS
 ========================================= */
 
 function calcularDias(data) {
 
-    const hoje = new Date();
+    const hoje =
+        new Date();
 
-    hoje.setHours(0, 0, 0, 0);
-
-
-    const vencimento = new Date(
-        data + "T00:00:00"
+    hoje.setHours(
+        0,
+        0,
+        0,
+        0
     );
 
-    vencimento.setHours(0, 0, 0, 0);
+
+    const vencimento =
+        new Date(
+            data + "T00:00:00"
+        );
+
+    vencimento.setHours(
+        0,
+        0,
+        0,
+        0
+    );
 
 
     const diferenca =
@@ -272,10 +449,14 @@ function calcularDias(data) {
 function formatarData(data) {
 
     if (!data) {
+
         return "-";
+
     }
 
-    const partes = data.split("-");
+    const partes =
+        data.split("-");
+
 
     return (
         partes[2] +
@@ -289,21 +470,27 @@ function formatarData(data) {
 
 
 /* =========================================
-   DESCOBRIR STATUS
+   STATUS
 ========================================= */
 
 function descobrirStatus(apolice) {
 
-    const dias = calcularDias(
-        apolice.dataVencimento
-    );
+    const dias =
+        calcularDias(
+            apolice.dataVencimento
+        );
 
 
     if (dias < 0) {
 
         return {
-            texto: "Vencida",
-            classe: "status-vencida"
+
+            texto:
+                "Vencida",
+
+            classe:
+                "status-vencida"
+
         };
 
     }
@@ -312,8 +499,13 @@ function descobrirStatus(apolice) {
     if (dias === 0) {
 
         return {
-            texto: "Vence hoje",
-            classe: "status-hoje"
+
+            texto:
+                "Vence hoje",
+
+            classe:
+                "status-hoje"
+
         };
 
     }
@@ -322,8 +514,13 @@ function descobrirStatus(apolice) {
     if (dias <= 7) {
 
         return {
-            texto: `Vence em ${dias} dia${dias === 1 ? "" : "s"}`,
-            classe: "status-urgente"
+
+            texto:
+                `Vence em ${dias} dia${dias === 1 ? "" : "s"}`,
+
+            classe:
+                "status-urgente"
+
         };
 
     }
@@ -332,30 +529,27 @@ function descobrirStatus(apolice) {
     if (dias <= 30) {
 
         return {
-            texto: `Vence em ${dias} dias`,
-            classe: "status-atencao"
+
+            texto:
+                `Vence em ${dias} dias`,
+
+            classe:
+                "status-atencao"
+
         };
 
     }
 
 
     return {
-        texto: "Vigente",
-        classe: "status-normal"
+
+        texto:
+            "Vigente",
+
+        classe:
+            "status-normal"
+
     };
-
-}
-
-
-/* =========================================
-   ATUALIZAR TODA A INTERFACE
-========================================= */
-
-function atualizarSistema() {
-
-    atualizarContadores();
-
-    renderizarApolices();
 
 }
 
@@ -372,64 +566,94 @@ function atualizarContadores() {
 
     let proximos30 = 0;
 
-
-    apolices.forEach(function(apolice) {
-
-        const dias = calcularDias(
-            apolice.dataVencimento
-        );
+    let vencidas = 0;
 
 
-        if (dias === 0) {
+    apolices.forEach(
+        function(apolice) {
 
-            vencemHoje++;
+            const dias =
+                calcularDias(
+                    apolice.dataVencimento
+                );
+
+
+            if (dias === 0) {
+
+                vencemHoje++;
+
+            }
+
+
+            if (
+                dias >= 1 &&
+                dias <= 7
+            ) {
+
+                proximos7++;
+
+            }
+
+
+            if (
+                dias >= 1 &&
+                dias <= 30
+            ) {
+
+                proximos30++;
+
+            }
+
+
+            if (dias < 0) {
+
+                vencidas++;
+
+            }
 
         }
-
-
-        if (dias >= 1 && dias <= 7) {
-
-            proximos7++;
-
-        }
-
-
-        if (dias >= 1 && dias <= 30) {
-
-            proximos30++;
-
-        }
-
-    });
+    );
 
 
     document.getElementById(
         "totalApolices"
-    ).textContent = apolices.length;
+    ).textContent =
+        apolices.length;
 
 
     document.getElementById(
         "vencemHoje"
-    ).textContent = vencemHoje;
+    ).textContent =
+        vencemHoje;
 
 
     document.getElementById(
         "proximos7"
-    ).textContent = proximos7;
+    ).textContent =
+        proximos7;
 
 
     document.getElementById(
         "proximos30"
-    ).textContent = proximos30;
+    ).textContent =
+        proximos30;
+
+
+    document.getElementById(
+        "vencidas"
+    ).textContent =
+        vencidas;
 
 }
 
 
 /* =========================================
-   RENDERIZAR APÓLICES
+   RENDERIZAR
 ========================================= */
 
-function renderizarApolices(lista = apolices) {
+function renderizarApolices(
+    lista = apolices
+) {
 
     listaApolices.innerHTML = "";
 
@@ -440,20 +664,28 @@ function renderizarApolices(lista = apolices) {
 
             <tr>
 
-                <td colspan="6">
+                <td colspan="7">
 
                     <div class="estado-vazio">
 
-                        <div>📄</div>
+                        <div class="icone-vazio">
+                            📄
+                        </div>
 
                         <h3>
-                            Nenhuma apólice cadastrada
+                            Nenhuma apólice encontrada
                         </h3>
 
                         <p>
-                            Clique em "Nova Apólice"
-                            para cadastrar a primeira.
+                            Cadastre uma apólice ou altere sua busca.
                         </p>
+
+                        <button
+                            class="btn-vazio"
+                            onclick="abrirCadastro()"
+                        >
+                            + Nova Apólice
+                        </button>
 
                     </div>
 
@@ -468,88 +700,151 @@ function renderizarApolices(lista = apolices) {
     }
 
 
-    /* =========================================
-       ORDENAR POR DATA
-    ========================================= */
+    const listaOrdenada =
+        [...lista].sort(
+            function(a, b) {
 
-    const listaOrdenada = [...lista].sort(
-        function(a, b) {
+                return new Date(
+                    a.dataVencimento
+                ) -
+                new Date(
+                    b.dataVencimento
+                );
 
-            return new Date(
-                a.dataVencimento
-            ) -
-            new Date(
-                b.dataVencimento
+            }
+        );
+
+
+    listaOrdenada.forEach(
+        function(apolice) {
+
+            const status =
+                descobrirStatus(
+                    apolice
+                );
+
+
+            const linha =
+                document.createElement("tr");
+
+
+            linha.innerHTML = `
+
+                <td>
+
+                    <strong>
+                        ${escaparHTML(
+                            apolice.cliente
+                        )}
+                    </strong>
+
+                </td>
+
+
+                <td>
+
+                    ${escaparHTML(
+                        apolice.tipoSeguro
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${escaparHTML(
+                        apolice.seguradora
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${escaparHTML(
+                        apolice.numeroApolice
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${formatarData(
+                        apolice.dataVencimento
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    <span
+                        class="status ${status.classe}"
+                    >
+                        ${status.texto}
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <div class="acoes-tabela">
+
+                        <button
+                            class="btn-acao"
+                            title="Ver detalhes"
+                            onclick="abrirDetalhes(${apolice.id})"
+                        >
+                            👁️
+                        </button>
+
+
+                        <button
+                            class="btn-acao"
+                            title="Editar"
+                            onclick="editarApolice(${apolice.id})"
+                        >
+                            ✏️
+                        </button>
+
+
+                        <button
+                            class="btn-acao"
+                            title="Excluir"
+                            onclick="excluirApolice(${apolice.id})"
+                        >
+                            🗑️
+                        </button>
+
+                    </div>
+
+                </td>
+
+            `;
+
+
+            listaApolices.appendChild(
+                linha
             );
 
         }
     );
 
-
-    listaOrdenada.forEach(function(apolice) {
-
-        const status =
-            descobrirStatus(apolice);
-
-
-        const linha =
-            document.createElement("tr");
-
-
-        linha.innerHTML = `
-
-            <td>
-                <strong>
-                    ${escaparHTML(apolice.cliente)}
-                </strong>
-            </td>
-
-            <td>
-                ${escaparHTML(apolice.tipoSeguro)}
-            </td>
-
-            <td>
-                ${escaparHTML(apolice.seguradora)}
-            </td>
-
-            <td>
-                ${escaparHTML(apolice.numeroApolice)}
-            </td>
-
-            <td>
-                ${formatarData(
-                    apolice.dataVencimento
-                )}
-            </td>
-
-            <td>
-
-                <span class="status ${status.classe}">
-                    ${status.texto}
-                </span>
-
-            </td>
-
-        `;
-
-
-        listaApolices.appendChild(linha);
-
-    });
-
 }
 
 
 /* =========================================
-   BUSCAR CLIENTE
+   BUSCA
 ========================================= */
 
 function buscarApolice() {
 
     const termo =
         campoBusca.value
-        .toLowerCase()
-        .trim();
+            .toLowerCase()
+            .trim();
 
 
     if (!termo) {
@@ -562,54 +857,662 @@ function buscarApolice() {
 
 
     const resultado =
-        apolices.filter(function(apolice) {
+        apolices.filter(
+            function(apolice) {
 
-            return (
+                return (
 
-                apolice.cliente
-                    .toLowerCase()
-                    .includes(termo)
+                    apolice.cliente
+                        .toLowerCase()
+                        .includes(termo)
 
-                ||
+                    ||
 
-                apolice.numeroApolice
-                    .toLowerCase()
-                    .includes(termo)
+                    apolice.numeroApolice
+                        .toLowerCase()
+                        .includes(termo)
 
-                ||
+                    ||
 
-                apolice.telefone
-                    .toLowerCase()
-                    .includes(termo)
+                    apolice.telefone
+                        .toLowerCase()
+                        .includes(termo)
 
-                ||
+                    ||
 
-                apolice.seguradora
-                    .toLowerCase()
-                    .includes(termo)
+                    apolice.seguradora
+                        .toLowerCase()
+                        .includes(termo)
 
-            );
+                    ||
 
-        });
+                    apolice.tipoSeguro
+                        .toLowerCase()
+                        .includes(termo)
+
+                );
+
+            }
+        );
 
 
-    renderizarApolices(resultado);
+    renderizarApolices(
+        resultado
+    );
 
 }
 
 
 /* =========================================
-   SEGURANÇA CONTRA HTML INDESEJADO
+   ABRIR DETALHES
+========================================= */
+
+function abrirDetalhes(id) {
+
+    const apolice =
+        apolices.find(
+            function(item) {
+
+                return item.id === id;
+
+            }
+        );
+
+
+    if (!apolice) {
+
+        return;
+
+    }
+
+
+    apoliceAtualId =
+        id;
+
+
+    const dias =
+        calcularDias(
+            apolice.dataVencimento
+        );
+
+
+    const status =
+        descobrirStatus(
+            apolice
+        );
+
+
+    document.getElementById(
+        "detalhesCliente"
+    ).textContent =
+        apolice.cliente;
+
+
+    document.getElementById(
+        "detalhesStatus"
+    ).innerHTML = `
+
+        <span class="status ${status.classe}">
+            ${status.texto}
+        </span>
+
+    `;
+
+
+    document.getElementById(
+        "detalhesTelefone"
+    ).textContent =
+        apolice.telefone;
+
+
+    document.getElementById(
+        "detalhesApolice"
+    ).textContent =
+        apolice.numeroApolice;
+
+
+    document.getElementById(
+        "detalhesSeguradora"
+    ).textContent =
+        apolice.seguradora;
+
+
+    document.getElementById(
+        "detalhesSeguro"
+    ).textContent =
+        apolice.tipoSeguro;
+
+
+    document.getElementById(
+        "detalhesVencimento"
+    ).textContent =
+        formatarData(
+            apolice.dataVencimento
+        );
+
+
+    if (dias < 0) {
+
+        document.getElementById(
+            "detalhesDias"
+        ).textContent =
+            `${Math.abs(dias)} dias atrasada`;
+
+    } else if (dias === 0) {
+
+        document.getElementById(
+            "detalhesDias"
+        ).textContent =
+            "Vence hoje";
+
+    } else {
+
+        document.getElementById(
+            "detalhesDias"
+        ).textContent =
+            `${dias} dias`;
+
+    }
+
+
+    document.getElementById(
+        "detalhesObservacoes"
+    ).textContent =
+        apolice.observacoes ||
+        "Nenhuma observação cadastrada.";
+
+
+    mostrarAlertasDetalhes(
+        apolice
+    );
+
+
+    modalDetalhes.classList.add(
+        "ativo"
+    );
+
+}
+
+
+/* =========================================
+   ALERTAS DOS DETALHES
+========================================= */
+
+function mostrarAlertasDetalhes(apolice) {
+
+    const container =
+        document.getElementById(
+            "detalhesAlertas"
+        );
+
+
+    container.innerHTML = "";
+
+
+    const alertas = [
+
+        {
+            nome: "30 dias antes",
+            ativo: apolice.alertas.dias30
+        },
+
+        {
+            nome: "15 dias antes",
+            ativo: apolice.alertas.dias15
+        },
+
+        {
+            nome: "7 dias antes",
+            ativo: apolice.alertas.dias7
+        }
+
+    ];
+
+
+    alertas.forEach(
+        function(alerta) {
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "alerta-item";
+
+
+            div.innerHTML = `
+
+                <span>
+                    ${alerta.nome}
+                </span>
+
+                <strong class="${
+                    alerta.ativo
+                        ? "alerta-ativo"
+                        : "alerta-inativo"
+                }">
+
+                    ${
+                        alerta.ativo
+                            ? "✓ Ativo"
+                            : "Desativado"
+                    }
+
+                </strong>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   EDITAR
+========================================= */
+
+function editarApolice(id) {
+
+    const apolice =
+        apolices.find(
+            function(item) {
+
+                return item.id === id;
+
+            }
+        );
+
+
+    if (!apolice) {
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "idEdicao"
+    ).value =
+        apolice.id;
+
+
+    document.getElementById(
+        "cliente"
+    ).value =
+        apolice.cliente;
+
+
+    document.getElementById(
+        "telefone"
+    ).value =
+        apolice.telefone;
+
+
+    document.getElementById(
+        "numeroApolice"
+    ).value =
+        apolice.numeroApolice;
+
+
+    document.getElementById(
+        "seguradora"
+    ).value =
+        apolice.seguradora;
+
+
+    document.getElementById(
+        "tipoSeguro"
+    ).value =
+        apolice.tipoSeguro;
+
+
+    document.getElementById(
+        "dataVencimento"
+    ).value =
+        apolice.dataVencimento;
+
+
+    document.getElementById(
+        "observacoes"
+    ).value =
+        apolice.observacoes || "";
+
+
+    document.getElementById(
+        "alerta30"
+    ).checked =
+        apolice.alertas.dias30;
+
+
+    document.getElementById(
+        "alerta15"
+    ).checked =
+        apolice.alertas.dias15;
+
+
+    document.getElementById(
+        "alerta7"
+    ).checked =
+        apolice.alertas.dias7;
+
+
+    document.getElementById(
+        "tituloModal"
+    ).textContent =
+        "Editar Apólice";
+
+
+    modalDetalhes.classList.remove(
+        "ativo"
+    );
+
+
+    modalCadastro.classList.add(
+        "ativo"
+    );
+
+}
+
+
+/* =========================================
+   EDITAR PELOS DETALHES
+========================================= */
+
+function editarApoliceAtual() {
+
+    if (apoliceAtualId) {
+
+        editarApolice(
+            apoliceAtualId
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   EXCLUIR
+========================================= */
+
+function excluirApolice(id) {
+
+    const apolice =
+        apolices.find(
+            function(item) {
+
+                return item.id === id;
+
+            }
+        );
+
+
+    if (!apolice) {
+
+        return;
+
+    }
+
+
+    const confirmar =
+        confirm(
+            `Tem certeza que deseja excluir a apólice de ${apolice.cliente}?\n\nEssa ação não poderá ser desfeita.`
+        );
+
+
+    if (!confirmar) {
+
+        return;
+
+    }
+
+
+    apolices =
+        apolices.filter(
+            function(item) {
+
+                return item.id !== id;
+
+            }
+        );
+
+
+    salvarDados();
+
+    atualizarSistema();
+
+
+    mostrarNotificacao(
+        "Apólice removida",
+        `O cadastro de ${apolice.cliente} foi removido da central.`
+    );
+
+}
+
+
+/* =========================================
+   EXCLUIR PELOS DETALHES
+========================================= */
+
+function excluirApoliceAtual() {
+
+    if (apoliceAtualId) {
+
+        const id =
+            apoliceAtualId;
+
+        fecharDetalhes();
+
+        excluirApolice(
+            id
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   WHATSAPP
+========================================= */
+
+function abrirWhatsAppAtual() {
+
+    const apolice =
+        apolices.find(
+            function(item) {
+
+                return item.id === apoliceAtualId;
+
+            }
+        );
+
+
+    if (!apolice) {
+
+        return;
+
+    }
+
+
+    let telefone =
+        apolice.telefone
+            .replace(/\D/g, "");
+
+
+    if (
+        telefone.length === 10 ||
+        telefone.length === 11
+    ) {
+
+        telefone =
+            "55" +
+            telefone;
+
+    }
+
+
+    const dias =
+        calcularDias(
+            apolice.dataVencimento
+        );
+
+
+    const mensagem =
+
+`Olá! 👋
+
+Aqui é da SAVA Seguros.
+
+Gostaríamos de entrar em contato sobre a apólice do cliente ${apolice.cliente}.
+
+📄 Apólice: ${apolice.numeroApolice}
+🏢 Seguradora: ${apolice.seguradora}
+🛡️ Seguro: ${apolice.tipoSeguro}
+📅 Vencimento: ${formatarData(apolice.dataVencimento)}
+
+⏳ Prazo: ${
+    dias === 0
+        ? "vence hoje"
+        : dias > 0
+            ? `faltam ${dias} dias`
+            : "apólice vencida"
+}
+
+Podemos conversar sobre a renovação?
+
+SAVA Seguros`;
+
+
+    const url =
+        `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+
+
+    window.open(
+        url,
+        "_blank"
+    );
+
+}
+
+
+/* =========================================
+   NOTIFICAÇÃO
+========================================= */
+
+function mostrarNotificacao(
+    titulo,
+    mensagem
+) {
+
+    const notificacao =
+        document.getElementById(
+            "notificacao"
+        );
+
+
+    document.getElementById(
+        "notificacaoTitulo"
+    ).textContent =
+        titulo;
+
+
+    document.getElementById(
+        "notificacaoMensagem"
+    ).textContent =
+        mensagem;
+
+
+    notificacao.classList.add(
+        "ativo"
+    );
+
+
+    clearTimeout(
+        temporizadorNotificacao
+    );
+
+
+    temporizadorNotificacao =
+        setTimeout(
+            function() {
+
+                fecharNotificacao();
+
+            },
+            4500
+        );
+
+}
+
+
+/* =========================================
+   FECHAR NOTIFICAÇÃO
+========================================= */
+
+function fecharNotificacao() {
+
+    document
+        .getElementById(
+            "notificacao"
+        )
+        .classList.remove(
+            "ativo"
+        );
+
+}
+
+
+/* =========================================
+   SEGURANÇA HTML
 ========================================= */
 
 function escaparHTML(texto) {
 
     return String(texto)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================
+   ATUALIZAR SISTEMA
+========================================= */
+
+function atualizarSistema() {
+
+    atualizarContadores();
+
+    renderizarApolices();
 
 }
 

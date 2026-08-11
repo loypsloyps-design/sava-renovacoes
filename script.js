@@ -62,11 +62,13 @@ function abrirCadastro() {
 
     modalCadastro.classList.add("ativo");
 
+    document.body.style.overflow = "hidden";
+
     setTimeout(function () {
 
         document.getElementById("cliente").focus();
 
-    }, 100);
+    }, 180);
 }
 
 
@@ -77,6 +79,13 @@ function abrirCadastro() {
 function fecharCadastro() {
 
     modalCadastro.classList.remove("ativo");
+
+    if (
+        !modalDetalhes.classList.contains("ativo") &&
+        !modalExcluir.classList.contains("ativo")
+    ) {
+        document.body.style.overflow = "";
+    }
 }
 
 
@@ -89,11 +98,49 @@ function fecharDetalhes() {
     modalDetalhes.classList.remove("ativo");
 
     apoliceAtualId = null;
+
+    if (!modalCadastro.classList.contains("ativo")) {
+        document.body.style.overflow = "";
+    }
 }
 
 
 /* =========================================
-   FECHAR MODAL EXCLUSÃO
+   MODAL DE EXCLUSÃO
+========================================= */
+
+function abrirModalExcluir(id) {
+
+    const apolice =
+        apolices.find(function (item) {
+
+            return String(item.id) === String(id);
+
+        });
+
+
+    if (!apolice) {
+        return;
+    }
+
+
+    apoliceExclusaoId = id;
+
+
+    document.getElementById(
+        "clienteExclusao"
+    ).textContent =
+        apolice.cliente;
+
+
+    modalExcluir.classList.add("ativo");
+
+    document.body.style.overflow = "hidden";
+}
+
+
+/* =========================================
+   FECHAR MODAL DE EXCLUSÃO
 ========================================= */
 
 function fecharModalExcluir() {
@@ -101,6 +148,71 @@ function fecharModalExcluir() {
     modalExcluir.classList.remove("ativo");
 
     apoliceExclusaoId = null;
+
+
+    if (
+        !modalCadastro.classList.contains("ativo") &&
+        !modalDetalhes.classList.contains("ativo")
+    ) {
+        document.body.style.overflow = "";
+    }
+}
+
+
+/* =========================================
+   CONFIRMAR EXCLUSÃO
+========================================= */
+
+function confirmarExclusao() {
+
+    if (!apoliceExclusaoId) {
+        return;
+    }
+
+
+    const apolice =
+        apolices.find(function (item) {
+
+            return String(item.id) ===
+                String(apoliceExclusaoId);
+
+        });
+
+
+    if (!apolice) {
+
+        fecharModalExcluir();
+
+        return;
+    }
+
+
+    const cliente =
+        apolice.cliente;
+
+
+    apolices =
+        apolices.filter(function (item) {
+
+            return String(item.id) !==
+                String(apoliceExclusaoId);
+
+        });
+
+
+    salvarDados();
+
+    atualizarSistema();
+
+    fecharModalExcluir();
+
+    fecharDetalhes();
+
+
+    mostrarNotificacao(
+        "Apólice removida",
+        `O cadastro de ${cliente} foi removido da central.`
+    );
 }
 
 
@@ -151,7 +263,7 @@ modalExcluir.addEventListener(
 
 
 /* =========================================
-   ESC FECHA MODAIS
+   TECLA ESC
 ========================================= */
 
 document.addEventListener(
@@ -162,11 +274,28 @@ document.addEventListener(
             return;
         }
 
-        fecharCadastro();
 
-        fecharDetalhes();
+        if (modalExcluir.classList.contains("ativo")) {
 
-        fecharModalExcluir();
+            fecharModalExcluir();
+
+            return;
+        }
+
+
+        if (modalDetalhes.classList.contains("ativo")) {
+
+            fecharDetalhes();
+
+            return;
+        }
+
+
+        if (modalCadastro.classList.contains("ativo")) {
+
+            fecharCadastro();
+
+        }
 
     }
 );
@@ -185,12 +314,14 @@ document
             let telefone =
                 event.target.value.replace(/\D/g, "");
 
+
             if (telefone.length > 11) {
 
                 telefone =
                     telefone.substring(0, 11);
 
             }
+
 
             if (telefone.length <= 10) {
 
@@ -221,6 +352,7 @@ document
                     );
 
             }
+
 
             event.target.value =
                 telefone;
@@ -368,10 +500,9 @@ formulario.addEventListener(
                     `Os dados de ${cliente} foram atualizados com sucesso.`
                 );
 
+
                 return;
-
             }
-
         }
 
 
@@ -458,11 +589,13 @@ function salvarDados() {
 function calcularDias(data) {
 
     if (!data) {
-        return 99999;
+        return 0;
     }
+
 
     const hoje =
         new Date();
+
 
     hoje.setHours(
         0,
@@ -476,6 +609,7 @@ function calcularDias(data) {
         new Date(
             data + "T00:00:00"
         );
+
 
     vencimento.setHours(
         0,
@@ -504,10 +638,9 @@ function calcularDias(data) {
 function formatarData(data) {
 
     if (!data) {
-
         return "-";
-
     }
+
 
     const partes =
         data.split("-");
@@ -546,7 +679,6 @@ function descobrirStatus(apolice) {
                 "status-vencida"
 
         };
-
     }
 
 
@@ -561,7 +693,6 @@ function descobrirStatus(apolice) {
                 "status-hoje"
 
         };
-
     }
 
 
@@ -576,7 +707,6 @@ function descobrirStatus(apolice) {
                 "status-urgente"
 
         };
-
     }
 
 
@@ -591,7 +721,6 @@ function descobrirStatus(apolice) {
                 "status-atencao"
 
         };
-
     }
 
 
@@ -632,9 +761,7 @@ function atualizarContadores() {
 
 
             if (dias === 0) {
-
                 vencemHoje++;
-
             }
 
 
@@ -642,9 +769,7 @@ function atualizarContadores() {
                 dias >= 1 &&
                 dias <= 7
             ) {
-
                 proximos7++;
-
             }
 
 
@@ -652,16 +777,12 @@ function atualizarContadores() {
                 dias >= 1 &&
                 dias <= 30
             ) {
-
                 proximos30++;
-
             }
 
 
             if (dias < 0) {
-
                 vencidas++;
-
             }
 
         }
@@ -748,7 +869,6 @@ function renderizarApolices(
         `;
 
         return;
-
     }
 
 
@@ -794,30 +914,38 @@ function renderizarApolices(
 
 
                 <td>
+
                     ${escaparHTML(
                         apolice.tipoSeguro
                     )}
+
                 </td>
 
 
                 <td>
+
                     ${escaparHTML(
                         apolice.seguradora
                     )}
+
                 </td>
 
 
                 <td>
+
                     ${escaparHTML(
                         apolice.numeroApolice
                     )}
+
                 </td>
 
 
                 <td>
+
                     ${formatarData(
                         apolice.dataVencimento
                     )}
+
                 </td>
 
 
@@ -857,7 +985,7 @@ function renderizarApolices(
                         <button
                             class="btn-acao"
                             title="Excluir"
-                            onclick="excluirApolice(${apolice.id})"
+                            onclick="abrirModalExcluir(${apolice.id})"
                         >
                             🗑️
                         </button>
@@ -895,7 +1023,6 @@ function buscarApolice() {
         renderizarApolices();
 
         return;
-
     }
 
 
@@ -905,31 +1032,31 @@ function buscarApolice() {
 
                 return (
 
-                    String(apolice.cliente || "")
+                    apolice.cliente
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    String(apolice.numeroApolice || "")
+                    apolice.numeroApolice
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    String(apolice.telefone || "")
+                    apolice.telefone
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    String(apolice.seguradora || "")
+                    apolice.seguradora
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    String(apolice.tipoSeguro || "")
+                    apolice.tipoSeguro
                         .toLowerCase()
                         .includes(termo)
 
@@ -955,16 +1082,15 @@ function abrirDetalhes(id) {
         apolices.find(
             function (item) {
 
-                return item.id === id;
+                return String(item.id) ===
+                    String(id);
 
             }
         );
 
 
     if (!apolice) {
-
         return;
-
     }
 
 
@@ -1072,6 +1198,8 @@ function abrirDetalhes(id) {
     modalDetalhes.classList.add(
         "ativo"
     );
+
+    document.body.style.overflow = "hidden";
 }
 
 
@@ -1090,31 +1218,31 @@ function mostrarAlertasDetalhes(apolice) {
     container.innerHTML = "";
 
 
-    const alertasSalvos =
-        apolice.alertas || {};
+    const configuracao =
+        apolice.alertas || {
+
+            dias30: true,
+            dias15: true,
+            dias7: true
+
+        };
 
 
     const alertas = [
 
         {
             nome: "30 dias antes",
-            ativo: Boolean(
-                alertasSalvos.dias30
-            )
+            ativo: configuracao.dias30
         },
 
         {
             nome: "15 dias antes",
-            ativo: Boolean(
-                alertasSalvos.dias15
-            )
+            ativo: configuracao.dias15
         },
 
         {
             nome: "7 dias antes",
-            ativo: Boolean(
-                alertasSalvos.dias7
-            )
+            ativo: configuracao.dias7
         }
 
     ];
@@ -1125,6 +1253,7 @@ function mostrarAlertasDetalhes(apolice) {
 
             const div =
                 document.createElement("div");
+
 
             div.className =
                 "alerta-item";
@@ -1172,21 +1301,16 @@ function editarApolice(id) {
         apolices.find(
             function (item) {
 
-                return item.id === id;
+                return String(item.id) ===
+                    String(id);
 
             }
         );
 
 
     if (!apolice) {
-
         return;
-
     }
-
-
-    const alertas =
-        apolice.alertas || {};
 
 
     document.getElementById(
@@ -1237,22 +1361,32 @@ function editarApolice(id) {
         apolice.observacoes || "";
 
 
+    const alertas =
+        apolice.alertas || {
+
+            dias30: true,
+            dias15: true,
+            dias7: true
+
+        };
+
+
     document.getElementById(
         "alerta30"
     ).checked =
-        Boolean(alertas.dias30);
+        alertas.dias30;
 
 
     document.getElementById(
         "alerta15"
     ).checked =
-        Boolean(alertas.dias15);
+        alertas.dias15;
 
 
     document.getElementById(
         "alerta7"
     ).checked =
-        Boolean(alertas.dias7);
+        alertas.dias7;
 
 
     document.getElementById(
@@ -1269,6 +1403,18 @@ function editarApolice(id) {
     modalCadastro.classList.add(
         "ativo"
     );
+
+
+    document.body.style.overflow = "hidden";
+
+
+    setTimeout(function () {
+
+        document.getElementById(
+            "cliente"
+        ).focus();
+
+    }, 150);
 }
 
 
@@ -1289,41 +1435,12 @@ function editarApoliceAtual() {
 
 
 /* =========================================
-   ABRIR MODAL DE EXCLUSÃO
+   EXCLUIR PELA TABELA
 ========================================= */
 
 function excluirApolice(id) {
 
-    const apolice =
-        apolices.find(
-            function (item) {
-
-                return item.id === id;
-
-            }
-        );
-
-
-    if (!apolice) {
-
-        return;
-
-    }
-
-
-    apoliceExclusaoId =
-        id;
-
-
-    document.getElementById(
-        "clienteExclusao"
-    ).textContent =
-        apolice.cliente;
-
-
-    modalExcluir.classList.add(
-        "ativo"
-    );
+    abrirModalExcluir(id);
 }
 
 
@@ -1334,92 +1451,12 @@ function excluirApolice(id) {
 function excluirApoliceAtual() {
 
     if (!apoliceAtualId) {
-
         return;
-
     }
 
 
-    excluirApolice(
+    abrirModalExcluir(
         apoliceAtualId
-    );
-}
-
-
-/* =========================================
-   CONFIRMAR EXCLUSÃO
-========================================= */
-
-function confirmarExclusao() {
-
-    if (!apoliceExclusaoId) {
-
-        return;
-
-    }
-
-
-    const apolice =
-        apolices.find(
-            function (item) {
-
-                return item.id ===
-                    apoliceExclusaoId;
-
-            }
-        );
-
-
-    if (!apolice) {
-
-        fecharModalExcluir();
-
-        return;
-
-    }
-
-
-    const nomeCliente =
-        apolice.cliente;
-
-
-    apolices =
-        apolices.filter(
-            function (item) {
-
-                return item.id !==
-                    apoliceExclusaoId;
-
-            }
-        );
-
-
-    salvarDados();
-
-    atualizarSistema();
-
-
-    const eraDetalhes =
-        apoliceAtualId ===
-        apoliceExclusaoId;
-
-
-    fecharModalExcluir();
-
-
-    if (eraDetalhes) {
-
-        fecharDetalhes();
-
-    }
-
-
-    apoliceAtualId = null;
-
-
-    mostrarNotificacao(
-        "Apólice removida",
-        `O cadastro de ${nomeCliente} foi removido da central.`
     );
 }
 
@@ -1434,17 +1471,15 @@ function abrirWhatsAppAtual() {
         apolices.find(
             function (item) {
 
-                return item.id ===
-                    apoliceAtualId;
+                return String(item.id) ===
+                    String(apoliceAtualId);
 
             }
         );
 
 
     if (!apolice) {
-
         return;
-
     }
 
 
@@ -1471,7 +1506,8 @@ function abrirWhatsAppAtual() {
         );
 
 
-    const mensagem = `Olá! 👋
+    const mensagem =
+`Olá! 👋
 
 Aqui é da SAVA Seguros.
 
@@ -1577,7 +1613,7 @@ function fecharNotificacao() {
 
 function escaparHTML(texto) {
 
-    return String(texto || "")
+    return String(texto)
 
         .replace(
             /&/g,

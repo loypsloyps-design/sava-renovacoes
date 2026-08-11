@@ -1,1 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>SAVA Seguros | Central de Renovações</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- CABEÇALHO -->
+    <header class="topo">
+        <div>
+            <h1>SAVA SEGUROS</h1>
+            <p>Central de Renovações</p>
+        </div>
+
+        <div class="status-sistema">
+            <span class="bolinha"></span>
+            Sistema online
+        </div>
+    </header>
+
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container">
+
+        <!-- TÍTULO -->
+        <section class="titulo-pagina">
+            <div>
+                <h2>Painel de Renovações</h2>
+                <p>Acompanhe as apólices e seus próximos vencimentos.</p>
+            </div>
+
+            <button class="btn-principal" onclick="abrirCadastro()">
+                + Nova Apólice
+            </button>
+        </section>
+
+
+        <!-- CARDS -->
+        <section class="cards">
+
+            <div class="card">
+                <div class="card-icone">📋</div>
+                <div>
+                    <span>Total de apólices</span>
+                    <strong id="totalApolices">0</strong>
+                </div>
+            </div>
+
+            <div class="card card-vermelho">
+                <div class="card-icone">🔴</div>
+                <div>
+                    <span>Vencem hoje</span>
+                    <strong id="vencemHoje">0</strong>
+                </div>
+            </div>
+
+            <div class="card card-laranja">
+                <div class="card-icone">🟠</div>
+                <div>
+                    <span>Próximos 7 dias</span>
+                    <strong id="proximos7">0</strong>
+                </div>
+            </div>
+
+            <div class="card card-amarelo">
+                <div class="card-icone">🟡</div>
+                <div>
+                    <span>Próximos 30 dias</span>
+                    <strong id="proximos30">0</strong>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ÁREA DE APÓLICES -->
+        <section class="painel">
+
+            <div class="painel-topo">
+                <div>
+                    <h3>Apólices cadastradas</h3>
+                    <p>Confira os próximos vencimentos.</p>
+                </div>
+
+                <input
+                    type="text"
+                    id="campoBusca"
+                    placeholder="🔎 Buscar cliente..."
+                    oninput="buscarApolice()"
+                >
+            </div>
+
+
+            <!-- TABELA -->
+            <div class="tabela-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Seguro</th>
+                            <th>Seguradora</th>
+                            <th>Apólice</th>
+                            <th>Vencimento</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="listaApolices">
+
+                        <tr id="semApolices">
+                            <td colspan="6">
+                                <div class="estado-vazio">
+                                    <div>📄</div>
+                                    <h3>Nenhuma apólice cadastrada</h3>
+                                    <p>
+                                        Clique em "Nova Apólice" para cadastrar
+                                        a primeira.
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- MODAL DE CADASTRO -->
+    <div id="modalCadastro" class="modal">
+
+        <div class="modal-conteudo">
+
+            <div class="modal-cabecalho">
+                <div>
+                    <h2>Nova Apólice</h2>
+                    <p>Cadastre os dados da apólice.</p>
+                </div>
+
+                <button class="fechar" onclick="fecharCadastro()">
+                    ×
+                </button>
+            </div>
+
+
+            <form id="formApolice">
+
+                <!-- CLIENTE -->
+                <div class="campo">
+                    <label for="cliente">
+                        Nome do cliente
+                    </label>
+
+                    <input
+                        type="text"
+                        id="cliente"
+                        placeholder="Digite o nome completo"
+                        required
+                    >
+                </div>
+
+
+                <!-- TELEFONE -->
+                <div class="campo">
+                    <label for="telefone">
+                        WhatsApp
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="telefone"
+                        placeholder="(27) 99999-9999"
+                        required
+                    >
+                </div>
+
+
+                <!-- APÓLICE -->
+                <div class="campo">
+                    <label for="numeroApolice">
+                        Número da apólice
+                    </label>
+
+                    <input
+                        type="text"
+                        id="numeroApolice"
+                        placeholder="Digite o número da apólice"
+                        required
+                    >
+                </div>
+
+
+                <!-- SEGURADORA -->
+                <div class="campo">
+                    <label for="seguradora">
+                        Seguradora
+                    </label>
+
+                    <select id="seguradora" required>
+
+                        <option value="">
+                            Selecione a seguradora
+                        </option>
+
+                        <option>AIG GO</option>
+                        <option>AKAD</option>
+                        <option>ALLIANZ</option>
+                        <option>AXA</option>
+                        <option>AZOS</option>
+                        <option>BANESTE</option>
+                        <option>BRADESCO</option>
+                        <option>CAPEMISA</option>
+                        <option>CHUBB</option>
+                        <option>EXELSIOR</option>
+                        <option>EZZE SEGUROS</option>
+                        <option>FATOR</option>
+                        <option>FAIRFAX</option>
+                        <option>HS CONSÓRCIOS</option>
+                        <option>HDI</option>
+                        <option>JUNTO SEGUROS</option>
+                        <option>MAG</option>
+                        <option>MAPFRE</option>
+                        <option>PASI</option>
+                        <option>PORTO SEGURO</option>
+                        <option>POTTENCIAL SEGURADORA</option>
+                        <option>SAMP</option>
+                        <option>SANCOR</option>
+                        <option>SOMPO</option>
+                        <option>SUHAI SEGURADORA</option>
+                        <option>SULAMERICA SEGUROS</option>
+                        <option>SURA</option>
+                        <option>SWISS RE</option>
+                        <option>SWISS RE 2</option>
+                        <option>TOKIO MARINE</option>
+                        <option>UNIMED SEGUROS</option>
+                        <option>YELUM</option>
+                        <option>YOUSE</option>
+                        <option>ZURICH</option>
+
+                    </select>
+                </div>
+
+
+                <!-- TIPO DE SEGURO -->
+                <div class="campo">
+                    <label for="tipoSeguro">
+                        Tipo de seguro
+                    </label>
+
+                    <select id="tipoSeguro" required>
+
+                        <option value="">
+                            Selecione o tipo de seguro
+                        </option>
+
+                        <option>AUTO</option>
+                        <option>AUTO FROTA</option>
+                        <option>BIKE</option>
+                        <option>BIKE ELÉTRICA</option>
+                        <option>CELULAR</option>
+                        <option>CONDOMÍNIO</option>
+                        <option>RC CYBER</option>
+                        <option>E&O / RC GERAL</option>
+                        <option>D&O</option>
+                        <option>EMPRESARIAL</option>
+                        <option>EVENTO</option>
+                        <option>FIANÇA LOCATÍCIA</option>
+                        <option>GARANTIA</option>
+                        <option>TRANSPORTE</option>
+                        <option>RC MÉDICO</option>
+                        <option>RC OBRAS</option>
+                        <option>RC PROFISSIONAL</option>
+                        <option>RESIDENCIAL</option>
+                        <option>VIAGEM</option>
+                        <option>VIDA PF</option>
+                        <option>VIDA PJ</option>
+                        <option>VIDA AP</option>
+
+                    </select>
+                </div>
+
+
+                <!-- DATA -->
+                <div class="campo">
+                    <label for="dataVencimento">
+                        Data de vencimento
+                    </label>
+
+                    <input
+                        type="date"
+                        id="dataVencimento"
+                        required
+                    >
+                </div>
+
+
+                <!-- AVISOS -->
+                <div class="campo">
+
+                    <label>
+                        Alertas de renovação
+                    </label>
+
+                    <div class="checkboxes">
+
+                        <label>
+                            <input
+                                type="checkbox"
+                                id="alerta30"
+                                checked
+                            >
+                            30 dias antes
+                        </label>
+
+                        <label>
+                            <input
+                                type="checkbox"
+                                id="alerta15"
+                                checked
+                            >
+                            15 dias antes
+                        </label>
+
+                        <label>
+                            <input
+                                type="checkbox"
+                                id="alerta7"
+                                checked
+                            >
+                            7 dias antes
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OBSERVAÇÕES -->
+                <div class="campo">
+
+                    <label for="observacoes">
+                        Observações
+                    </label>
+
+                    <textarea
+                        id="observacoes"
+                        rows="3"
+                        placeholder="Alguma informação importante..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- BOTÕES -->
+                <div class="modal-acoes">
+
+                    <button
+                        type="button"
+                        class="btn-cancelar"
+                        onclick="fecharCadastro()"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn-principal"
+                    >
+                        Salvar Apólice
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>

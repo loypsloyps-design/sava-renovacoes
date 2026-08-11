@@ -795,18 +795,49 @@
                     ✏️ Editar
                 </button>
 
-                <button
-                    class="btn-excluir"
-                    onclick="excluirApoliceAtual()"
-                >
-                    🗑️ Excluir
-                </button>
+    <!-- =========================
+     MODAL DE CONFIRMAÇÃO
+========================= -->
 
-            </div>
+<div id="modalExcluir" class="modal-overlay">
+
+    <div class="modal-confirmacao">
+
+        <div class="modal-icone perigo">
+            🗑️
+        </div>
+
+        <h2>Excluir apólice?</h2>
+
+        <p>
+            Tem certeza que deseja excluir esta apólice?
+        </p>
+
+        <span class="modal-aviso">
+            Essa ação não poderá ser desfeita.
+        </span>
+
+        <div class="modal-botoes">
+
+            <button
+                type="button"
+                class="btn-modal cancelar"
+                onclick="fecharModalExcluir()">
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                class="btn-modal excluir"
+                onclick="confirmarExclusao()">
+                🗑️ Excluir apólice
+            </button>
 
         </div>
 
     </div>
+
+</div>
 
 
     <!-- =========================

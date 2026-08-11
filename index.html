@@ -21,6 +21,14 @@
 <body>
 
     <!-- ==============================
+         FUNDO DECORATIVO
+    =============================== -->
+
+    <div class="fundo-decorativo fundo-1"></div>
+    <div class="fundo-decorativo fundo-2"></div>
+
+
+    <!-- ==============================
          TOPO
     =============================== -->
 
@@ -29,7 +37,7 @@
         <div class="marca">
 
             <div class="logo-sava">
-                S
+                <span>S</span>
             </div>
 
             <div>
@@ -43,7 +51,7 @@
 
             <span class="bolinha"></span>
 
-            Sistema operacional
+            <span>Sistema operacional</span>
 
         </div>
 
@@ -58,7 +66,7 @@
 
         <section class="titulo-pagina">
 
-            <div>
+            <div class="titulo-conteudo">
 
                 <span class="subtitulo">
                     GESTÃO DE APÓLICES
@@ -75,11 +83,11 @@
             </div>
 
             <button
-                class="btn-principal"
+                class="btn-principal btn-nova"
                 onclick="abrirCadastro()"
             >
-                <span>＋</span>
-                Nova Apólice
+                <span class="btn-icone">＋</span>
+                <span>Nova Apólice</span>
             </button>
 
         </section>
@@ -181,13 +189,18 @@
                     </p>
                 </div>
 
+                <div class="busca-wrapper">
 
-                <input
-                    type="search"
-                    id="campoBusca"
-                    placeholder="🔎 Buscar cliente, apólice..."
-                    oninput="buscarApolice()"
-                >
+                    <span class="busca-icone">⌕</span>
+
+                    <input
+                        type="search"
+                        id="campoBusca"
+                        placeholder="Buscar cliente, apólice..."
+                        oninput="buscarApolice()"
+                    >
+
+                </div>
 
             </div>
 
@@ -240,28 +253,62 @@
 
             <div class="modal-cabecalho">
 
-                <div>
+                <div class="modal-titulo-area">
 
-                    <span class="modal-etiqueta">
-                        SAVA SEGUROS
-                    </span>
+                    <div class="modal-logo">
+                        S
+                    </div>
 
-                    <h2 id="tituloModal">
-                        Nova Apólice
-                    </h2>
+                    <div>
 
-                    <p>
-                        Preencha os dados da apólice.
-                    </p>
+                        <span class="modal-etiqueta">
+                            SAVA SEGUROS
+                        </span>
+
+                        <h2 id="tituloModal">
+                            Nova Apólice
+                        </h2>
+
+                        <p>
+                            Cadastre uma nova renovação na central.
+                        </p>
+
+                    </div>
 
                 </div>
 
                 <button
                     class="modal-fechar"
                     onclick="fecharCadastro()"
+                    type="button"
+                    aria-label="Fechar"
                 >
                     ×
                 </button>
+
+            </div>
+
+
+            <div class="progresso-formulario">
+
+                <div class="progresso-item ativo">
+                    <span>1</span>
+                    Cliente
+                </div>
+
+                <div class="progresso-linha"></div>
+
+                <div class="progresso-item ativo">
+                    <span>2</span>
+                    Apólice
+                </div>
+
+                <div class="progresso-linha"></div>
+
+                <div class="progresso-item ativo">
+                    <span>3</span>
+                    Renovação
+                </div>
 
             </div>
 
@@ -274,23 +321,45 @@
                 >
 
 
-                <div class="campo">
+                <!-- CLIENTE -->
 
-                    <label for="cliente">
-                        Cliente
-                    </label>
+                <div class="form-secao">
 
-                    <input
-                        type="text"
-                        id="cliente"
-                        placeholder="Nome completo do cliente"
-                        required
-                    >
+                    <div class="form-secao-titulo">
 
-                </div>
+                        <div class="form-secao-icone azul">
+                            👤
+                        </div>
+
+                        <div>
+                            <h3>Dados do cliente</h3>
+                            <p>Informações de contato do segurado.</p>
+                        </div>
+
+                    </div>
 
 
-                <div class="linha-campos">
+                    <div class="campo campo-destaque">
+
+                        <label for="cliente">
+                            Nome do cliente
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span>👤</span>
+
+                            <input
+                                type="text"
+                                id="cliente"
+                                placeholder="Digite o nome completo"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
 
                     <div class="campo">
 
@@ -298,92 +367,130 @@
                             Telefone / WhatsApp
                         </label>
 
-                        <input
-                            type="tel"
-                            id="telefone"
-                            placeholder="(27) 99999-9999"
-                            required
-                        >
+                        <div class="input-wrapper">
 
-                    </div>
+                            <span>📱</span>
 
+                            <input
+                                type="tel"
+                                id="telefone"
+                                placeholder="(27) 99999-9999"
+                                required
+                            >
 
-                    <div class="campo">
-
-                        <label for="numeroApolice">
-                            Número da apólice
-                        </label>
-
-                        <input
-                            type="text"
-                            id="numeroApolice"
-                            placeholder="Ex.: 123456789"
-                            required
-                        >
+                        </div>
 
                     </div>
 
                 </div>
 
 
-                <div class="linha-campos">
+                <!-- APÓLICE -->
 
-                    <div class="campo">
+                <div class="form-secao">
 
-                        <label for="seguradora">
-                            Seguradora
-                        </label>
+                    <div class="form-secao-titulo">
 
-                        <select
-                            id="seguradora"
-                            required
-                        >
+                        <div class="form-secao-icone roxo">
+                            🛡️
+                        </div>
 
-                            <option value="">
-                                Selecione a seguradora
-                            </option>
+                        <div>
+                            <h3>Dados da apólice</h3>
+                            <p>Informações principais do seguro.</p>
+                        </div>
 
-                            <option value="Porto Seguro">
-                                Porto Seguro
-                            </option>
+                    </div>
 
-                            <option value="Tokio Marine">
-                                Tokio Marine
-                            </option>
 
-                            <option value="Azul Seguros">
-                                Azul Seguros
-                            </option>
+                    <div class="linha-campos">
 
-                            <option value="Allianz">
-                                Allianz
-                            </option>
+                        <div class="campo">
 
-                            <option value="HDI">
-                                HDI
-                            </option>
+                            <label for="numeroApolice">
+                                Número da apólice
+                            </label>
 
-                            <option value="Mapfre">
-                                Mapfre
-                            </option>
+                            <div class="input-wrapper">
 
-                            <option value="Bradesco Seguros">
-                                Bradesco Seguros
-                            </option>
+                                <span>📄</span>
 
-                            <option value="Zurich">
-                                Zurich
-                            </option>
+                                <input
+                                    type="text"
+                                    id="numeroApolice"
+                                    placeholder="Ex.: 123456789"
+                                    required
+                                >
 
-                            <option value="Suhai">
-                                Suhai
-                            </option>
+                            </div>
 
-                            <option value="Outra">
-                                Outra
-                            </option>
+                        </div>
 
-                        </select>
+
+                        <div class="campo">
+
+                            <label for="seguradora">
+                                Seguradora
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <span>🏢</span>
+
+                                <select
+                                    id="seguradora"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Selecione
+                                    </option>
+
+                                    <option value="Porto Seguro">
+                                        Porto Seguro
+                                    </option>
+
+                                    <option value="Tokio Marine">
+                                        Tokio Marine
+                                    </option>
+
+                                    <option value="Azul Seguros">
+                                        Azul Seguros
+                                    </option>
+
+                                    <option value="Allianz">
+                                        Allianz
+                                    </option>
+
+                                    <option value="HDI">
+                                        HDI
+                                    </option>
+
+                                    <option value="Mapfre">
+                                        Mapfre
+                                    </option>
+
+                                    <option value="Bradesco Seguros">
+                                        Bradesco Seguros
+                                    </option>
+
+                                    <option value="Zurich">
+                                        Zurich
+                                    </option>
+
+                                    <option value="Suhai">
+                                        Suhai
+                                    </option>
+
+                                    <option value="Outra">
+                                        Outra
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
@@ -394,123 +501,198 @@
                             Tipo de seguro
                         </label>
 
-                        <select
-                            id="tipoSeguro"
-                            required
-                        >
+                        <div class="input-wrapper">
 
-                            <option value="">
-                                Selecione o tipo
-                            </option>
+                            <span>🚗</span>
 
-                            <option value="Automóvel">
-                                Automóvel
-                            </option>
+                            <select
+                                id="tipoSeguro"
+                                required
+                            >
 
-                            <option value="Moto">
-                                Moto
-                            </option>
+                                <option value="">
+                                    Selecione o tipo de seguro
+                                </option>
 
-                            <option value="Residencial">
-                                Residencial
-                            </option>
+                                <option value="Automóvel">
+                                    Automóvel
+                                </option>
 
-                            <option value="Empresarial">
-                                Empresarial
-                            </option>
+                                <option value="Moto">
+                                    Moto
+                                </option>
 
-                            <option value="Vida">
-                                Vida
-                            </option>
+                                <option value="Residencial">
+                                    Residencial
+                                </option>
 
-                            <option value="Outro">
-                                Outro
-                            </option>
+                                <option value="Empresarial">
+                                    Empresarial
+                                </option>
 
-                        </select>
+                                <option value="Vida">
+                                    Vida
+                                </option>
+
+                                <option value="Outro">
+                                    Outro
+                                </option>
+
+                            </select>
+
+                        </div>
 
                     </div>
 
                 </div>
 
 
-                <div class="campo">
+                <!-- RENOVAÇÃO -->
 
-                    <label for="dataVencimento">
-                        Data de vencimento
-                    </label>
+                <div class="form-secao renovacao-secao">
 
-                    <input
-                        type="date"
-                        id="dataVencimento"
-                        required
-                    >
+                    <div class="form-secao-titulo">
 
-                </div>
+                        <div class="form-secao-icone verde">
+                            📅
+                        </div>
+
+                        <div>
+                            <h3>Renovação</h3>
+                            <p>Defina quando a apólice deverá ser renovada.</p>
+                        </div>
+
+                    </div>
 
 
-                <div class="campo">
+                    <div class="campo">
 
-                    <label>
-                        Alertas de renovação
-                    </label>
-
-                    <div class="alertas">
-
-                        <label class="check-item">
-
-                            <input
-                                type="checkbox"
-                                id="alerta30"
-                            >
-
-                            30 dias antes
-
+                        <label for="dataVencimento">
+                            Data de vencimento
                         </label>
 
+                        <div class="input-wrapper input-data">
 
-                        <label class="check-item">
-
-                            <input
-                                type="checkbox"
-                                id="alerta15"
-                            >
-
-                            15 dias antes
-
-                        </label>
-
-
-                        <label class="check-item">
+                            <span>📅</span>
 
                             <input
-                                type="checkbox"
-                                id="alerta7"
+                                type="date"
+                                id="dataVencimento"
+                                required
                             >
 
-                            7 dias antes
+                        </div>
 
-                        </label>
+                    </div>
+
+
+                    <div class="alertas-bloco">
+
+                        <div class="alertas-titulo">
+
+                            <div>
+                                <strong>🔔 Alertas de renovação</strong>
+                                <span>Escolha quando deseja ser avisado.</span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="alertas">
+
+                            <label class="check-item">
+
+                                <input
+                                    type="checkbox"
+                                    id="alerta30"
+                                >
+
+                                <span class="check-visual">30</span>
+
+                                <div>
+                                    <strong>30 dias</strong>
+                                    <small>Antecedência</small>
+                                </div>
+
+                            </label>
+
+
+                            <label class="check-item">
+
+                                <input
+                                    type="checkbox"
+                                    id="alerta15"
+                                >
+
+                                <span class="check-visual">15</span>
+
+                                <div>
+                                    <strong>15 dias</strong>
+                                    <small>Antecedência</small>
+                                </div>
+
+                            </label>
+
+
+                            <label class="check-item">
+
+                                <input
+                                    type="checkbox"
+                                    id="alerta7"
+                                >
+
+                                <span class="check-visual">7</span>
+
+                                <div>
+                                    <strong>7 dias</strong>
+                                    <small>Antecedência</small>
+                                </div>
+
+                            </label>
+
+                        </div>
 
                     </div>
 
                 </div>
 
 
-                <div class="campo">
+                <!-- OBSERVAÇÕES -->
 
-                    <label for="observacoes">
-                        Observações
-                    </label>
+                <div class="form-secao">
 
-                    <textarea
-                        id="observacoes"
-                        rows="4"
-                        placeholder="Digite alguma observação..."
-                    ></textarea>
+                    <div class="form-secao-titulo">
+
+                        <div class="form-secao-icone cinza">
+                            📝
+                        </div>
+
+                        <div>
+                            <h3>Observações</h3>
+                            <p>Adicione informações importantes sobre o cadastro.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <div class="textarea-wrapper">
+
+                            <textarea
+                                id="observacoes"
+                                rows="4"
+                                placeholder="Ex.: Cliente solicitou contato após o dia 10..."
+                            ></textarea>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
+
+                <!-- AÇÕES -->
 
                 <div class="modal-acoes">
 
@@ -524,9 +706,10 @@
 
                     <button
                         type="submit"
-                        class="btn-principal"
+                        class="btn-salvar"
                     >
-                        💾 Salvar Apólice
+                        <span>✓</span>
+                        Salvar Apólice
                     </button>
 
                 </div>
@@ -551,25 +734,34 @@
 
             <div class="modal-cabecalho">
 
-                <div>
+                <div class="modal-titulo-area">
 
-                    <span class="modal-etiqueta">
-                        DETALHES DA APÓLICE
-                    </span>
+                    <div class="modal-logo">
+                        S
+                    </div>
 
-                    <h2 id="detalhesCliente">
-                        Cliente
-                    </h2>
+                    <div>
 
-                    <p>
-                        Informações completas do cadastro.
-                    </p>
+                        <span class="modal-etiqueta">
+                            DETALHES DA APÓLICE
+                        </span>
+
+                        <h2 id="detalhesCliente">
+                            Cliente
+                        </h2>
+
+                        <p>
+                            Informações completas do cadastro.
+                        </p>
+
+                    </div>
 
                 </div>
 
                 <button
                     class="modal-fechar"
                     onclick="fecharDetalhes()"
+                    type="button"
                 >
                     ×
                 </button>
@@ -581,9 +773,10 @@
 
                 <div class="detalhes-status-principal">
 
-                    <span>
-                        STATUS DA APÓLICE
-                    </span>
+                    <div>
+                        <span>STATUS DA APÓLICE</span>
+                        <strong>Situação atual</strong>
+                    </div>
 
                     <div id="detalhesStatus"></div>
 
@@ -593,68 +786,33 @@
                 <div class="info-grid">
 
                     <div class="info-item">
-
-                        <span>Telefone</span>
-
-                        <strong id="detalhesTelefone">
-                            -
-                        </strong>
-
+                        <span>📱 Telefone</span>
+                        <strong id="detalhesTelefone">-</strong>
                     </div>
 
-
                     <div class="info-item">
-
-                        <span>Número da apólice</span>
-
-                        <strong id="detalhesApolice">
-                            -
-                        </strong>
-
+                        <span>📄 Número da apólice</span>
+                        <strong id="detalhesApolice">-</strong>
                     </div>
 
-
                     <div class="info-item">
-
-                        <span>Seguradora</span>
-
-                        <strong id="detalhesSeguradora">
-                            -
-                        </strong>
-
+                        <span>🏢 Seguradora</span>
+                        <strong id="detalhesSeguradora">-</strong>
                     </div>
 
-
                     <div class="info-item">
-
-                        <span>Tipo de seguro</span>
-
-                        <strong id="detalhesSeguro">
-                            -
-                        </strong>
-
+                        <span>🛡️ Tipo de seguro</span>
+                        <strong id="detalhesSeguro">-</strong>
                     </div>
 
-
                     <div class="info-item">
-
-                        <span>Vencimento</span>
-
-                        <strong id="detalhesVencimento">
-                            -
-                        </strong>
-
+                        <span>📅 Vencimento</span>
+                        <strong id="detalhesVencimento">-</strong>
                     </div>
 
-
                     <div class="info-item">
-
-                        <span>Prazo</span>
-
-                        <strong id="detalhesDias">
-                            -
-                        </strong>
-
+                        <span>⏳ Prazo</span>
+                        <strong id="detalhesDias">-</strong>
                     </div>
 
                 </div>
@@ -662,9 +820,7 @@
 
                 <div class="observacao-box">
 
-                    <span>
-                        OBSERVAÇÕES
-                    </span>
+                    <span>📝 OBSERVAÇÕES</span>
 
                     <p id="detalhesObservacoes">
                         Nenhuma observação cadastrada.
@@ -676,7 +832,7 @@
                 <div class="alertas-detalhes">
 
                     <h3>
-                        Alertas configurados
+                        🔔 Alertas configurados
                     </h3>
 
                     <div id="detalhesAlertas"></div>
@@ -751,7 +907,7 @@
             </strong>
 
             <span class="modal-aviso">
-                ⚠ Essa ação não poderá ser desfeita.
+                ⚠ Esta ação não poderá ser desfeita.
             </span>
 
             <div class="modal-botoes">
@@ -759,6 +915,7 @@
                 <button
                     class="btn-modal cancelar"
                     onclick="fecharModalExcluir()"
+                    type="button"
                 >
                     Cancelar
                 </button>
@@ -766,6 +923,7 @@
                 <button
                     class="btn-modal excluir"
                     onclick="confirmarExclusao()"
+                    type="button"
                 >
                     🗑️ Excluir apólice
                 </button>
@@ -804,6 +962,7 @@
 
         <button
             onclick="fecharNotificacao()"
+            type="button"
         >
             ×
         </button>

@@ -15,234 +15,640 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
+    <!-- Ícones -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- ==============================
-         FUNDO DECORATIVO
-    =============================== -->
+    <!-- =========================================
+         ESTRUTURA PRINCIPAL
+    ========================================== -->
 
-    <div class="fundo-decorativo fundo-1"></div>
-    <div class="fundo-decorativo fundo-2"></div>
+    <div class="app">
 
+        <!-- =====================================
+             SIDEBAR
+        ====================================== -->
 
-    <!-- ==============================
-         TOPO
-    =============================== -->
+        <aside class="sidebar">
 
-    <header class="topo">
+            <div class="logo-area">
 
-        <div class="marca">
+                <div class="logo-sava">
+                    S
+                </div>
 
-            <div class="logo-sava">
-                <span>S</span>
+                <div class="logo-text">
+                    <strong>SAVA</strong>
+                    <span>SEGUROS</span>
+                </div>
+
             </div>
 
-            <div>
-                <h1>SAVA SEGUROS</h1>
-                <p>Central de Renovações</p>
-            </div>
 
-        </div>
+            <div class="sidebar-menu">
 
-        <div class="status-sistema">
-
-            <span class="bolinha"></span>
-
-            <span>Sistema operacional</span>
-
-        </div>
-
-    </header>
-
-
-    <!-- ==============================
-         CONTEÚDO
-    =============================== -->
-
-    <main class="container">
-
-        <section class="titulo-pagina">
-
-            <div class="titulo-conteudo">
-
-                <span class="subtitulo">
-                    GESTÃO DE APÓLICES
+                <span class="menu-titulo">
+                    MENU
                 </span>
 
-                <h2>
-                    Central de Renovações
-                </h2>
+                <button class="menu-item ativo" onclick="mostrarDashboard()">
+                    <i class="fa-solid fa-grid-2"></i>
+                    <span>Dashboard</span>
+                </button>
 
-                <p>
-                    Acompanhe suas apólices e nunca perca um vencimento.
-                </p>
+                <button class="menu-item" onclick="focarApolices()">
+                    <i class="fa-regular fa-file-lines"></i>
+                    <span>Apólices</span>
+                </button>
 
-            </div>
+                <button class="menu-item" onclick="mostrarAtencao()">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Renovações</span>
 
-            <button
-                class="btn-principal btn-nova"
-                onclick="abrirCadastro()"
-            >
-                <span class="btn-icone">＋</span>
-                <span>Nova Apólice</span>
-            </button>
+                    <span class="menu-badge" id="badgeRenovacoes">
+                        0
+                    </span>
+                </button>
 
-        </section>
-
-
-        <!-- ==============================
-             CARDS
-        =============================== -->
-
-        <section class="cards">
-
-            <div class="card">
-
-                <div class="card-icone azul">
-                    📄
-                </div>
-
-                <div>
-                    <span>Total de apólices</span>
-                    <strong id="totalApolices">0</strong>
-                </div>
-
-            </div>
+                <button class="menu-item" onclick="mostrarClientes()">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Clientes</span>
+                </button>
 
 
-            <div class="card">
+                <span class="menu-titulo menu-titulo-config">
+                    SISTEMA
+                </span>
 
-                <div class="card-icone vermelho">
-                    📅
-                </div>
+                <button class="menu-item" onclick="abrirCadastro()">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Nova Apólice</span>
+                </button>
 
-                <div>
-                    <span>Vencem hoje</span>
-                    <strong id="vencemHoje">0</strong>
-                </div>
+                <button class="menu-item" onclick="mostrarSobre()">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Sobre</span>
+                </button>
 
             </div>
 
 
-            <div class="card">
+            <div class="sidebar-footer">
 
-                <div class="card-icone laranja">
-                    ⚠️
+                <div class="sistema-status">
+
+                    <span class="status-ponto"></span>
+
+                    <div>
+                        <strong>Sistema online</strong>
+                        <small>Operação normal</small>
+                    </div>
+
                 </div>
 
-                <div>
-                    <span>Próximos 7 dias</span>
-                    <strong id="proximos7">0</strong>
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="card-icone amarelo">
-                    ⏳
-                </div>
-
-                <div>
-                    <span>Próximos 30 dias</span>
-                    <strong id="proximos30">0</strong>
+                <div class="sidebar-versao">
+                    SAVA Central v1.0
                 </div>
 
             </div>
 
-
-            <div class="card">
-
-                <div class="card-icone cinza">
-                    🕘
-                </div>
-
-                <div>
-                    <span>Vencidas</span>
-                    <strong id="vencidas">0</strong>
-                </div>
-
-            </div>
-
-        </section>
+        </aside>
 
 
-        <!-- ==============================
-             PAINEL
-        =============================== -->
+        <!-- =====================================
+             CONTEÚDO
+        ====================================== -->
 
-        <section class="painel">
+        <main class="conteudo">
 
-            <div class="painel-topo">
+            <!-- HEADER -->
 
-                <div>
-                    <h3>
-                        Apólices cadastradas
-                    </h3>
+            <header class="topbar">
 
-                    <p>
-                        Gerencie clientes, seguros e vencimentos.
-                    </p>
-                </div>
+                <div class="topbar-esquerda">
 
-                <div class="busca-wrapper">
-
-                    <span class="busca-icone">⌕</span>
-
-                    <input
-                        type="search"
-                        id="campoBusca"
-                        placeholder="Buscar cliente, apólice..."
-                        oninput="buscarApolice()"
+                    <button
+                        class="btn-menu-mobile"
+                        onclick="alternarSidebar()"
                     >
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+
+                    <div>
+
+                        <span class="topbar-data">
+                            CENTRAL DE RENOVAÇÕES
+                        </span>
+
+                        <h1>
+                            Dashboard
+                        </h1>
+
+                    </div>
 
                 </div>
 
-            </div>
+
+                <div class="topbar-direita">
+
+                    <div class="status-topo">
+
+                        <span></span>
+
+                        Sistema operacional
+
+                    </div>
+
+                    <div class="avatar-usuario">
+                        S
+                    </div>
+
+                </div>
+
+            </header>
 
 
-            <!-- ==============================
-                 TABELA
-            =============================== -->
+            <!-- =================================
+                 DASHBOARD
+            ================================== -->
 
-            <div class="tabela-container">
+            <section id="dashboard">
 
-                <table>
+                <div class="boas-vindas">
 
-                    <thead>
+                    <div>
 
-                        <tr>
+                        <span class="pequeno-titulo">
+                            VISÃO GERAL
+                        </span>
 
-                            <th>Cliente</th>
-                            <th>Seguro</th>
-                            <th>Seguradora</th>
-                            <th>Apólice</th>
-                            <th>Vencimento</th>
-                            <th>Status</th>
-                            <th>Ações</th>
+                        <h2>
+                            Olá! 👋
+                        </h2>
 
-                        </tr>
+                        <p>
+                            Acompanhe suas apólices e não deixe nenhuma renovação passar.
+                        </p>
 
-                    </thead>
+                    </div>
 
-                    <tbody id="listaApolices"></tbody>
+                    <button
+                        class="btn-principal"
+                        onclick="abrirCadastro()"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        Nova Apólice
+                    </button>
 
-                </table>
-
-            </div>
-
-        </section>
-
-    </main>
+                </div>
 
 
-    <!-- ==============================
-         MODAL CADASTRO / EDIÇÃO
-    =============================== -->
+                <!-- CARDS -->
+
+                <section class="cards">
+
+                    <div class="card-dashboard card-azul">
+
+                        <div class="card-topo">
+
+                            <div class="icone-card">
+                                <i class="fa-regular fa-file-lines"></i>
+                            </div>
+
+                            <span class="card-indicador">
+                                Total
+                            </span>
+
+                        </div>
+
+                        <span class="card-label">
+                            Total de apólices
+                        </span>
+
+                        <strong id="totalApolices">
+                            0
+                        </strong>
+
+                        <small>
+                            Cadastros ativos na central
+                        </small>
+
+                    </div>
+
+
+                    <div class="card-dashboard card-vermelho">
+
+                        <div class="card-topo">
+
+                            <div class="icone-card">
+                                <i class="fa-solid fa-calendar-day"></i>
+                            </div>
+
+                            <span class="card-indicador">
+                                Hoje
+                            </span>
+
+                        </div>
+
+                        <span class="card-label">
+                            Vencem hoje
+                        </span>
+
+                        <strong id="vencemHoje">
+                            0
+                        </strong>
+
+                        <small>
+                            Requer atenção imediata
+                        </small>
+
+                    </div>
+
+
+                    <div class="card-dashboard card-laranja">
+
+                        <div class="card-topo">
+
+                            <div class="icone-card">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+
+                            <span class="card-indicador">
+                                Atenção
+                            </span>
+
+                        </div>
+
+                        <span class="card-label">
+                            Próximos 7 dias
+                        </span>
+
+                        <strong id="proximos7">
+                            0
+                        </strong>
+
+                        <small>
+                            Renovações próximas
+                        </small>
+
+                    </div>
+
+
+                    <div class="card-dashboard card-amarelo">
+
+                        <div class="card-topo">
+
+                            <div class="icone-card">
+                                <i class="fa-regular fa-clock"></i>
+                            </div>
+
+                            <span class="card-indicador">
+                                Planejamento
+                            </span>
+
+                        </div>
+
+                        <span class="card-label">
+                            Próximos 30 dias
+                        </span>
+
+                        <strong id="proximos30">
+                            0
+                        </strong>
+
+                        <small>
+                            Renovações no período
+                        </small>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================
+                     LINHA PRINCIPAL
+                ================================== -->
+
+                <section class="dashboard-grid">
+
+                    <!-- GRÁFICO -->
+
+                    <div class="painel painel-grafico">
+
+                        <div class="painel-header">
+
+                            <div>
+
+                                <span class="painel-tag">
+                                    ANÁLISE
+                                </span>
+
+                                <h3>
+                                    Panorama das renovações
+                                </h3>
+
+                                <p>
+                                    Distribuição das apólices por mês de vencimento.
+                                </p>
+
+                            </div>
+
+                            <div class="legenda-grafico">
+
+                                <span>
+                                    <i></i>
+                                    Apólices
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="grafico"
+                            id="graficoRenovacoes"
+                        >
+                        </div>
+
+                    </div>
+
+
+                    <!-- RESUMO -->
+
+                    <div class="painel painel-resumo">
+
+                        <div class="painel-header">
+
+                            <div>
+
+                                <span class="painel-tag">
+                                    RESUMO
+                                </span>
+
+                                <h3>
+                                    Status da carteira
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="resumo-lista">
+
+                            <div class="resumo-item">
+
+                                <div class="resumo-icone verde">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+
+                                <div>
+                                    <span>Vigentes</span>
+                                    <small>Mais de 30 dias</small>
+                                </div>
+
+                                <strong id="totalVigentes">
+                                    0
+                                </strong>
+
+                            </div>
+
+
+                            <div class="resumo-item">
+
+                                <div class="resumo-icone laranja">
+                                    <i class="fa-solid fa-clock"></i>
+                                </div>
+
+                                <div>
+                                    <span>Em atenção</span>
+                                    <small>Até 30 dias</small>
+                                </div>
+
+                                <strong id="totalAtencao">
+                                    0
+                                </strong>
+
+                            </div>
+
+
+                            <div class="resumo-item">
+
+                                <div class="resumo-icone vermelho">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+
+                                <div>
+                                    <span>Urgentes</span>
+                                    <small>Até 7 dias</small>
+                                </div>
+
+                                <strong id="totalUrgentes">
+                                    0
+                                </strong>
+
+                            </div>
+
+
+                            <div class="resumo-item">
+
+                                <div class="resumo-icone cinza">
+                                    <i class="fa-solid fa-calendar-xmark"></i>
+                                </div>
+
+                                <div>
+                                    <span>Vencidas</span>
+                                    <small>Necessitam contato</small>
+                                </div>
+
+                                <strong id="totalVencidasResumo">
+                                    0
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================
+                     RENOVAÇÕES + APÓLICES
+                ================================== -->
+
+                <section class="dashboard-grid segunda-linha">
+
+                    <!-- ATENÇÃO -->
+
+                    <div class="painel painel-atencao">
+
+                        <div class="painel-header">
+
+                            <div>
+
+                                <span class="painel-tag vermelho-tag">
+                                    ATENÇÃO
+                                </span>
+
+                                <h3>
+                                    Renovações que precisam de atenção
+                                </h3>
+
+                                <p>
+                                    Priorize os clientes com vencimentos próximos.
+                                </p>
+
+                            </div>
+
+                            <button
+                                class="btn-link"
+                                onclick="mostrarAtencao()"
+                            >
+                                Ver todas
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="lista-atencao"
+                            id="listaAtencao"
+                        >
+                        </div>
+
+                    </div>
+
+
+                    <!-- DISTRIBUIÇÃO -->
+
+                    <div class="painel painel-distribuicao">
+
+                        <div class="painel-header">
+
+                            <div>
+
+                                <span class="painel-tag">
+                                    CARTEIRA
+                                </span>
+
+                                <h3>
+                                    Tipos de seguro
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="tipos-seguro"
+                            id="tiposSeguro"
+                        >
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================
+                     TABELA
+                ================================== -->
+
+                <section
+                    class="painel painel-tabela"
+                    id="painelApolices"
+                >
+
+                    <div class="painel-header painel-header-tabela">
+
+                        <div>
+
+                            <span class="painel-tag">
+                                GESTÃO
+                            </span>
+
+                            <h3>
+                                Apólices cadastradas
+                            </h3>
+
+                            <p>
+                                Gerencie clientes, seguros e vencimentos.
+                            </p>
+
+                        </div>
+
+
+                        <div class="acoes-tabela-topo">
+
+                            <div class="busca">
+
+                                <i class="fa-solid fa-magnifying-glass"></i>
+
+                                <input
+                                    type="search"
+                                    id="campoBusca"
+                                    placeholder="Buscar cliente, apólice..."
+                                    oninput="buscarApolice()"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="tabela-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Cliente</th>
+                                    <th>Seguro</th>
+                                    <th>Seguradora</th>
+                                    <th>Apólice</th>
+                                    <th>Vencimento</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="listaApolices">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================
+         MODAL CADASTRO
+    ========================================== -->
 
     <div
         class="modal-overlay"
@@ -255,8 +661,8 @@
 
                 <div class="modal-titulo-area">
 
-                    <div class="modal-logo">
-                        S
+                    <div class="modal-icone-topo">
+                        <i class="fa-solid fa-file-circle-plus"></i>
                     </div>
 
                     <div>
@@ -270,45 +676,20 @@
                         </h2>
 
                         <p>
-                            Cadastre uma nova renovação na central.
+                            Cadastre uma nova apólice na Central.
                         </p>
 
                     </div>
 
                 </div>
 
+
                 <button
                     class="modal-fechar"
                     onclick="fecharCadastro()"
-                    type="button"
-                    aria-label="Fechar"
                 >
                     ×
                 </button>
-
-            </div>
-
-
-            <div class="progresso-formulario">
-
-                <div class="progresso-item ativo">
-                    <span>1</span>
-                    Cliente
-                </div>
-
-                <div class="progresso-linha"></div>
-
-                <div class="progresso-item ativo">
-                    <span>2</span>
-                    Apólice
-                </div>
-
-                <div class="progresso-linha"></div>
-
-                <div class="progresso-item ativo">
-                    <span>3</span>
-                    Renovação
-                </div>
 
             </div>
 
@@ -321,41 +702,22 @@
                 >
 
 
-                <!-- CLIENTE -->
-
                 <div class="form-secao">
 
                     <div class="form-secao-titulo">
 
-                        <div class="form-secao-icone azul">
-                            👤
-                        </div>
+                        <span>
+                            <i class="fa-solid fa-user"></i>
+                        </span>
 
                         <div>
-                            <h3>Dados do cliente</h3>
-                            <p>Informações de contato do segurado.</p>
-                        </div>
+                            <strong>
+                                Dados do cliente
+                            </strong>
 
-                    </div>
-
-
-                    <div class="campo campo-destaque">
-
-                        <label for="cliente">
-                            Nome do cliente
-                        </label>
-
-                        <div class="input-wrapper">
-
-                            <span>👤</span>
-
-                            <input
-                                type="text"
-                                id="cliente"
-                                placeholder="Digite o nome completo"
-                                required
-                            >
-
+                            <small>
+                                Informações para contato
+                            </small>
                         </div>
 
                     </div>
@@ -363,41 +725,21 @@
 
                     <div class="campo">
 
-                        <label for="telefone">
-                            Telefone / WhatsApp
+                        <label for="cliente">
+                            Nome do cliente
                         </label>
 
-                        <div class="input-wrapper">
+                        <div class="input-com-icone">
 
-                            <span>📱</span>
+                            <i class="fa-regular fa-user"></i>
 
                             <input
-                                type="tel"
-                                id="telefone"
-                                placeholder="(27) 99999-9999"
+                                type="text"
+                                id="cliente"
+                                placeholder="Ex.: João da Silva"
                                 required
                             >
 
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- APÓLICE -->
-
-                <div class="form-secao">
-
-                    <div class="form-secao-titulo">
-
-                        <div class="form-secao-icone roxo">
-                            🛡️
-                        </div>
-
-                        <div>
-                            <h3>Dados da apólice</h3>
-                            <p>Informações principais do seguro.</p>
                         </div>
 
                     </div>
@@ -407,13 +749,35 @@
 
                         <div class="campo">
 
+                            <label for="telefone">
+                                Telefone / WhatsApp
+                            </label>
+
+                            <div class="input-com-icone">
+
+                                <i class="fa-brands fa-whatsapp"></i>
+
+                                <input
+                                    type="tel"
+                                    id="telefone"
+                                    placeholder="(27) 99999-9999"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="campo">
+
                             <label for="numeroApolice">
                                 Número da apólice
                             </label>
 
-                            <div class="input-wrapper">
+                            <div class="input-com-icone">
 
-                                <span>📄</span>
+                                <i class="fa-regular fa-file-lines"></i>
 
                                 <input
                                     type="text"
@@ -426,6 +790,33 @@
 
                         </div>
 
+                    </div>
+
+                </div>
+
+
+                <div class="form-secao">
+
+                    <div class="form-secao-titulo">
+
+                        <span>
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </span>
+
+                        <div>
+                            <strong>
+                                Dados do seguro
+                            </strong>
+
+                            <small>
+                                Informações da cobertura
+                            </small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="linha-campos">
 
                         <div class="campo">
 
@@ -433,9 +824,7 @@
                                 Seguradora
                             </label>
 
-                            <div class="input-wrapper">
-
-                                <span>🏢</span>
+                            <div class="select-wrapper">
 
                                 <select
                                     id="seguradora"
@@ -443,7 +832,7 @@
                                 >
 
                                     <option value="">
-                                        Selecione
+                                        Selecione a seguradora
                                     </option>
 
                                     <option value="Porto Seguro">
@@ -488,78 +877,60 @@
 
                                 </select>
 
+                                <i class="fa-solid fa-chevron-down"></i>
+
                             </div>
 
                         </div>
 
-                    </div>
 
+                        <div class="campo">
 
-                    <div class="campo">
+                            <label for="tipoSeguro">
+                                Tipo de seguro
+                            </label>
 
-                        <label for="tipoSeguro">
-                            Tipo de seguro
-                        </label>
+                            <div class="select-wrapper">
 
-                        <div class="input-wrapper">
+                                <select
+                                    id="tipoSeguro"
+                                    required
+                                >
 
-                            <span>🚗</span>
+                                    <option value="">
+                                        Selecione o tipo
+                                    </option>
 
-                            <select
-                                id="tipoSeguro"
-                                required
-                            >
+                                    <option value="Automóvel">
+                                        Automóvel
+                                    </option>
 
-                                <option value="">
-                                    Selecione o tipo de seguro
-                                </option>
+                                    <option value="Moto">
+                                        Moto
+                                    </option>
 
-                                <option value="Automóvel">
-                                    Automóvel
-                                </option>
+                                    <option value="Residencial">
+                                        Residencial
+                                    </option>
 
-                                <option value="Moto">
-                                    Moto
-                                </option>
+                                    <option value="Empresarial">
+                                        Empresarial
+                                    </option>
 
-                                <option value="Residencial">
-                                    Residencial
-                                </option>
+                                    <option value="Vida">
+                                        Vida
+                                    </option>
 
-                                <option value="Empresarial">
-                                    Empresarial
-                                </option>
+                                    <option value="Outro">
+                                        Outro
+                                    </option>
 
-                                <option value="Vida">
-                                    Vida
-                                </option>
+                                </select>
 
-                                <option value="Outro">
-                                    Outro
-                                </option>
+                                <i class="fa-solid fa-chevron-down"></i>
 
-                            </select>
+                            </div>
 
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- RENOVAÇÃO -->
-
-                <div class="form-secao renovacao-secao">
-
-                    <div class="form-secao-titulo">
-
-                        <div class="form-secao-icone verde">
-                            📅
-                        </div>
-
-                        <div>
-                            <h3>Renovação</h3>
-                            <p>Defina quando a apólice deverá ser renovada.</p>
                         </div>
 
                     </div>
@@ -571,9 +942,9 @@
                             Data de vencimento
                         </label>
 
-                        <div class="input-wrapper input-data">
+                        <div class="input-com-icone">
 
-                            <span>📅</span>
+                            <i class="fa-regular fa-calendar"></i>
 
                             <input
                                 type="date"
@@ -585,114 +956,111 @@
 
                     </div>
 
-
-                    <div class="alertas-bloco">
-
-                        <div class="alertas-titulo">
-
-                            <div>
-                                <strong>🔔 Alertas de renovação</strong>
-                                <span>Escolha quando deseja ser avisado.</span>
-                            </div>
-
-                        </div>
-
-
-                        <div class="alertas">
-
-                            <label class="check-item">
-
-                                <input
-                                    type="checkbox"
-                                    id="alerta30"
-                                >
-
-                                <span class="check-visual">30</span>
-
-                                <div>
-                                    <strong>30 dias</strong>
-                                    <small>Antecedência</small>
-                                </div>
-
-                            </label>
-
-
-                            <label class="check-item">
-
-                                <input
-                                    type="checkbox"
-                                    id="alerta15"
-                                >
-
-                                <span class="check-visual">15</span>
-
-                                <div>
-                                    <strong>15 dias</strong>
-                                    <small>Antecedência</small>
-                                </div>
-
-                            </label>
-
-
-                            <label class="check-item">
-
-                                <input
-                                    type="checkbox"
-                                    id="alerta7"
-                                >
-
-                                <span class="check-visual">7</span>
-
-                                <div>
-                                    <strong>7 dias</strong>
-                                    <small>Antecedência</small>
-                                </div>
-
-                            </label>
-
-                        </div>
-
-                    </div>
-
                 </div>
 
-
-                <!-- OBSERVAÇÕES -->
 
                 <div class="form-secao">
 
                     <div class="form-secao-titulo">
 
-                        <div class="form-secao-icone cinza">
-                            📝
-                        </div>
+                        <span>
+                            <i class="fa-regular fa-bell"></i>
+                        </span>
 
                         <div>
-                            <h3>Observações</h3>
-                            <p>Adicione informações importantes sobre o cadastro.</p>
+                            <strong>
+                                Alertas de renovação
+                            </strong>
+
+                            <small>
+                                Escolha quando deseja ser avisado
+                            </small>
                         </div>
 
                     </div>
 
 
-                    <div class="campo">
+                    <div class="alertas">
 
-                        <div class="textarea-wrapper">
+                        <label class="check-item">
 
-                            <textarea
-                                id="observacoes"
-                                rows="4"
-                                placeholder="Ex.: Cliente solicitou contato após o dia 10..."
-                            ></textarea>
+                            <input
+                                type="checkbox"
+                                id="alerta30"
+                            >
 
-                        </div>
+                            <span class="check-custom">
+                                <i class="fa-solid fa-check"></i>
+                            </span>
+
+                            <div>
+                                <strong>30 dias</strong>
+                                <small>Antes do vencimento</small>
+                            </div>
+
+                        </label>
+
+
+                        <label class="check-item">
+
+                            <input
+                                type="checkbox"
+                                id="alerta15"
+                            >
+
+                            <span class="check-custom">
+                                <i class="fa-solid fa-check"></i>
+                            </span>
+
+                            <div>
+                                <strong>15 dias</strong>
+                                <small>Antes do vencimento</small>
+                            </div>
+
+                        </label>
+
+
+                        <label class="check-item">
+
+                            <input
+                                type="checkbox"
+                                id="alerta7"
+                            >
+
+                            <span class="check-custom">
+                                <i class="fa-solid fa-check"></i>
+                            </span>
+
+                            <div>
+                                <strong>7 dias</strong>
+                                <small>Antes do vencimento</small>
+                            </div>
+
+                        </label>
 
                     </div>
 
                 </div>
 
 
-                <!-- AÇÕES -->
+                <div class="form-secao">
+
+                    <div class="campo">
+
+                        <label for="observacoes">
+                            Observações
+                        </label>
+
+                        <textarea
+                            id="observacoes"
+                            rows="3"
+                            placeholder="Digite alguma observação importante..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
 
                 <div class="modal-acoes">
 
@@ -706,9 +1074,9 @@
 
                     <button
                         type="submit"
-                        class="btn-salvar"
+                        class="btn-principal"
                     >
-                        <span>✓</span>
+                        <i class="fa-solid fa-check"></i>
                         Salvar Apólice
                     </button>
 
@@ -721,9 +1089,9 @@
     </div>
 
 
-    <!-- ==============================
+    <!-- =========================================
          MODAL DETALHES
-    =============================== -->
+    ========================================== -->
 
     <div
         class="modal-overlay"
@@ -736,8 +1104,8 @@
 
                 <div class="modal-titulo-area">
 
-                    <div class="modal-logo">
-                        S
+                    <div class="modal-icone-topo azul-modal">
+                        <i class="fa-regular fa-file-lines"></i>
                     </div>
 
                     <div>
@@ -758,10 +1126,10 @@
 
                 </div>
 
+
                 <button
                     class="modal-fechar"
                     onclick="fecharDetalhes()"
-                    type="button"
                 >
                     ×
                 </button>
@@ -774,11 +1142,19 @@
                 <div class="detalhes-status-principal">
 
                     <div>
-                        <span>STATUS DA APÓLICE</span>
-                        <strong>Situação atual</strong>
+
+                        <span>
+                            STATUS DA APÓLICE
+                        </span>
+
+                        <strong>
+                            Situação atual
+                        </strong>
+
                     </div>
 
-                    <div id="detalhesStatus"></div>
+                    <div id="detalhesStatus">
+                    </div>
 
                 </div>
 
@@ -786,32 +1162,32 @@
                 <div class="info-grid">
 
                     <div class="info-item">
-                        <span>📱 Telefone</span>
+                        <span>Telefone</span>
                         <strong id="detalhesTelefone">-</strong>
                     </div>
 
                     <div class="info-item">
-                        <span>📄 Número da apólice</span>
+                        <span>Número da apólice</span>
                         <strong id="detalhesApolice">-</strong>
                     </div>
 
                     <div class="info-item">
-                        <span>🏢 Seguradora</span>
+                        <span>Seguradora</span>
                         <strong id="detalhesSeguradora">-</strong>
                     </div>
 
                     <div class="info-item">
-                        <span>🛡️ Tipo de seguro</span>
+                        <span>Tipo de seguro</span>
                         <strong id="detalhesSeguro">-</strong>
                     </div>
 
                     <div class="info-item">
-                        <span>📅 Vencimento</span>
+                        <span>Vencimento</span>
                         <strong id="detalhesVencimento">-</strong>
                     </div>
 
                     <div class="info-item">
-                        <span>⏳ Prazo</span>
+                        <span>Prazo</span>
                         <strong id="detalhesDias">-</strong>
                     </div>
 
@@ -820,7 +1196,10 @@
 
                 <div class="observacao-box">
 
-                    <span>📝 OBSERVAÇÕES</span>
+                    <div class="observacao-titulo">
+                        <i class="fa-regular fa-note-sticky"></i>
+                        Observações
+                    </div>
 
                     <p id="detalhesObservacoes">
                         Nenhuma observação cadastrada.
@@ -832,7 +1211,7 @@
                 <div class="alertas-detalhes">
 
                     <h3>
-                        🔔 Alertas configurados
+                        Alertas configurados
                     </h3>
 
                     <div id="detalhesAlertas"></div>
@@ -848,21 +1227,24 @@
                     class="btn-whatsapp"
                     onclick="abrirWhatsAppAtual()"
                 >
-                    💬 WhatsApp
+                    <i class="fa-brands fa-whatsapp"></i>
+                    WhatsApp
                 </button>
 
                 <button
                     class="btn-secundario"
                     onclick="editarApoliceAtual()"
                 >
-                    ✏️ Editar
+                    <i class="fa-solid fa-pen"></i>
+                    Editar
                 </button>
 
                 <button
                     class="btn-excluir"
                     onclick="excluirApoliceAtual()"
                 >
-                    🗑️ Excluir
+                    <i class="fa-solid fa-trash"></i>
+                    Excluir
                 </button>
 
             </div>
@@ -872,9 +1254,9 @@
     </div>
 
 
-    <!-- ==============================
+    <!-- =========================================
          MODAL EXCLUSÃO
-    =============================== -->
+    ========================================== -->
 
     <div
         class="modal-overlay"
@@ -884,7 +1266,7 @@
         <div class="modal-confirmacao">
 
             <div class="modal-icone perigo">
-                🗑️
+                <i class="fa-solid fa-trash"></i>
             </div>
 
             <span class="modal-etiqueta perigo-texto">
@@ -896,7 +1278,7 @@
             </h2>
 
             <p>
-                Você está prestes a excluir a apólice de
+                Você está prestes a excluir o cadastro de
             </p>
 
             <strong
@@ -907,7 +1289,8 @@
             </strong>
 
             <span class="modal-aviso">
-                ⚠ Esta ação não poderá ser desfeita.
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Essa ação não poderá ser desfeita.
             </span>
 
             <div class="modal-botoes">
@@ -915,7 +1298,6 @@
                 <button
                     class="btn-modal cancelar"
                     onclick="fecharModalExcluir()"
-                    type="button"
                 >
                     Cancelar
                 </button>
@@ -923,9 +1305,9 @@
                 <button
                     class="btn-modal excluir"
                     onclick="confirmarExclusao()"
-                    type="button"
                 >
-                    🗑️ Excluir apólice
+                    <i class="fa-solid fa-trash"></i>
+                    Excluir apólice
                 </button>
 
             </div>
@@ -935,9 +1317,85 @@
     </div>
 
 
-    <!-- ==============================
+    <!-- =========================================
+         MODAL SOBRE
+    ========================================== -->
+
+    <div
+        class="modal-overlay"
+        id="modalSobre"
+    >
+
+        <div class="modal modal-sobre">
+
+            <div class="modal-cabecalho">
+
+                <div class="modal-titulo-area">
+
+                    <div class="modal-icone-topo">
+                        S
+                    </div>
+
+                    <div>
+
+                        <span class="modal-etiqueta">
+                            SAVA SEGUROS
+                        </span>
+
+                        <h2>
+                            Central de Renovações
+                        </h2>
+
+                        <p>
+                            Gestão inteligente de apólices.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <button
+                    class="modal-fechar"
+                    onclick="fecharSobre()"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <div class="sobre-corpo">
+
+                <div class="sobre-destaque">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    <div>
+                        <strong>
+                            SAVA Central
+                        </strong>
+
+                        <span>
+                            Organização, controle e agilidade.
+                        </span>
+                    </div>
+
+                </div>
+
+                <p>
+                    Sistema desenvolvido para facilitar o acompanhamento
+                    das apólices, vencimentos e renovações dos clientes.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
          NOTIFICAÇÃO
-    =============================== -->
+    ========================================== -->
 
     <div
         class="notificacao"
@@ -945,10 +1403,10 @@
     >
 
         <div class="notificacao-icone">
-            ✓
+            <i class="fa-solid fa-check"></i>
         </div>
 
-        <div>
+        <div class="notificacao-conteudo">
 
             <strong id="notificacaoTitulo">
                 Sucesso
@@ -962,7 +1420,7 @@
 
         <button
             onclick="fecharNotificacao()"
-            type="button"
+            aria-label="Fechar"
         >
             ×
         </button>

@@ -1,12 +1,13 @@
-/* =========================================
+/* =========================================================
    SAVA SEGUROS
    CENTRAL DE RENOVAÇÕES
-========================================= */
+   JAVASCRIPT
+========================================================= */
 
 
-/* =========================================
+/* =========================================================
    BANCO TEMPORÁRIO
-========================================= */
+========================================================= */
 
 let apolices =
     JSON.parse(
@@ -20,9 +21,9 @@ let apoliceExclusaoId = null;
 let temporizadorNotificacao = null;
 
 
-/* =========================================
+/* =========================================================
    ELEMENTOS
-========================================= */
+========================================================= */
 
 const modalCadastro =
     document.getElementById("modalCadastro");
@@ -32,6 +33,9 @@ const modalDetalhes =
 
 const modalExcluir =
     document.getElementById("modalExcluir");
+
+const modalSobre =
+    document.getElementById("modalSobre");
 
 const formulario =
     document.getElementById("formApolice");
@@ -43,9 +47,9 @@ const campoBusca =
     document.getElementById("campoBusca");
 
 
-/* =========================================
+/* =========================================================
    ABRIR CADASTRO
-========================================= */
+========================================================= */
 
 function abrirCadastro() {
 
@@ -62,163 +66,56 @@ function abrirCadastro() {
 
     modalCadastro.classList.add("ativo");
 
-    document.body.style.overflow = "hidden";
-
     setTimeout(function () {
 
-        document.getElementById("cliente").focus();
+        document
+            .getElementById("cliente")
+            .focus();
 
-    }, 180);
+    }, 150);
 }
 
 
-/* =========================================
+/* =========================================================
    FECHAR CADASTRO
-========================================= */
+========================================================= */
 
 function fecharCadastro() {
 
     modalCadastro.classList.remove("ativo");
-
-    if (
-        !modalDetalhes.classList.contains("ativo") &&
-        !modalExcluir.classList.contains("ativo")
-    ) {
-        document.body.style.overflow = "";
-    }
 }
 
 
-/* =========================================
+/* =========================================================
    FECHAR DETALHES
-========================================= */
+========================================================= */
 
 function fecharDetalhes() {
 
     modalDetalhes.classList.remove("ativo");
 
     apoliceAtualId = null;
-
-    if (!modalCadastro.classList.contains("ativo")) {
-        document.body.style.overflow = "";
-    }
 }
 
 
-/* =========================================
-   MODAL DE EXCLUSÃO
-========================================= */
+/* =========================================================
+   ABRIR SOBRE
+========================================================= */
 
-function abrirModalExcluir(id) {
+function mostrarSobre() {
 
-    const apolice =
-        apolices.find(function (item) {
+    modalSobre.classList.add("ativo");
+}
 
-            return String(item.id) === String(id);
+function fecharSobre() {
 
-        });
-
-
-    if (!apolice) {
-        return;
-    }
-
-
-    apoliceExclusaoId = id;
-
-
-    document.getElementById(
-        "clienteExclusao"
-    ).textContent =
-        apolice.cliente;
-
-
-    modalExcluir.classList.add("ativo");
-
-    document.body.style.overflow = "hidden";
+    modalSobre.classList.remove("ativo");
 }
 
 
-/* =========================================
-   FECHAR MODAL DE EXCLUSÃO
-========================================= */
-
-function fecharModalExcluir() {
-
-    modalExcluir.classList.remove("ativo");
-
-    apoliceExclusaoId = null;
-
-
-    if (
-        !modalCadastro.classList.contains("ativo") &&
-        !modalDetalhes.classList.contains("ativo")
-    ) {
-        document.body.style.overflow = "";
-    }
-}
-
-
-/* =========================================
-   CONFIRMAR EXCLUSÃO
-========================================= */
-
-function confirmarExclusao() {
-
-    if (!apoliceExclusaoId) {
-        return;
-    }
-
-
-    const apolice =
-        apolices.find(function (item) {
-
-            return String(item.id) ===
-                String(apoliceExclusaoId);
-
-        });
-
-
-    if (!apolice) {
-
-        fecharModalExcluir();
-
-        return;
-    }
-
-
-    const cliente =
-        apolice.cliente;
-
-
-    apolices =
-        apolices.filter(function (item) {
-
-            return String(item.id) !==
-                String(apoliceExclusaoId);
-
-        });
-
-
-    salvarDados();
-
-    atualizarSistema();
-
-    fecharModalExcluir();
-
-    fecharDetalhes();
-
-
-    mostrarNotificacao(
-        "Apólice removida",
-        `O cadastro de ${cliente} foi removido da central.`
-    );
-}
-
-
-/* =========================================
+/* =========================================================
    CLICAR FORA DOS MODAIS
-========================================= */
+========================================================= */
 
 modalCadastro.addEventListener(
     "click",
@@ -262,9 +159,23 @@ modalExcluir.addEventListener(
 );
 
 
-/* =========================================
-   TECLA ESC
-========================================= */
+modalSobre.addEventListener(
+    "click",
+    function (event) {
+
+        if (event.target === modalSobre) {
+
+            fecharSobre();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   ESC FECHA MODAL
+========================================================= */
 
 document.addEventListener(
     "keydown",
@@ -274,36 +185,18 @@ document.addEventListener(
             return;
         }
 
-
-        if (modalExcluir.classList.contains("ativo")) {
-
-            fecharModalExcluir();
-
-            return;
-        }
-
-
-        if (modalDetalhes.classList.contains("ativo")) {
-
-            fecharDetalhes();
-
-            return;
-        }
-
-
-        if (modalCadastro.classList.contains("ativo")) {
-
-            fecharCadastro();
-
-        }
+        fecharCadastro();
+        fecharDetalhes();
+        fecharModalExcluir();
+        fecharSobre();
 
     }
 );
 
 
-/* =========================================
+/* =========================================================
    TELEFONE
-========================================= */
+========================================================= */
 
 document
     .getElementById("telefone")
@@ -312,8 +205,8 @@ document
         function (event) {
 
             let telefone =
-                event.target.value.replace(/\D/g, "");
-
+                event.target.value
+                    .replace(/\D/g, "");
 
             if (telefone.length > 11) {
 
@@ -321,7 +214,6 @@ document
                     telefone.substring(0, 11);
 
             }
-
 
             if (telefone.length <= 10) {
 
@@ -353,7 +245,6 @@ document
 
             }
 
-
             event.target.value =
                 telefone;
 
@@ -361,9 +252,9 @@ document
     );
 
 
-/* =========================================
+/* =========================================================
    SALVAR APÓLICE
-========================================= */
+========================================================= */
 
 formulario.addEventListener(
     "submit",
@@ -500,7 +391,6 @@ formulario.addEventListener(
                     `Os dados de ${cliente} foram atualizados com sucesso.`
                 );
 
-
                 return;
             }
         }
@@ -569,9 +459,9 @@ formulario.addEventListener(
 );
 
 
-/* =========================================
+/* =========================================================
    SALVAR DADOS
-========================================= */
+========================================================= */
 
 function salvarDados() {
 
@@ -582,20 +472,18 @@ function salvarDados() {
 }
 
 
-/* =========================================
+/* =========================================================
    CALCULAR DIAS
-========================================= */
+========================================================= */
 
 function calcularDias(data) {
 
     if (!data) {
-        return 0;
+        return 99999;
     }
-
 
     const hoje =
         new Date();
-
 
     hoje.setHours(
         0,
@@ -609,7 +497,6 @@ function calcularDias(data) {
         new Date(
             data + "T00:00:00"
         );
-
 
     vencimento.setHours(
         0,
@@ -631,16 +518,15 @@ function calcularDias(data) {
 }
 
 
-/* =========================================
+/* =========================================================
    FORMATAR DATA
-========================================= */
+========================================================= */
 
 function formatarData(data) {
 
     if (!data) {
         return "-";
     }
-
 
     const partes =
         data.split("-");
@@ -656,9 +542,9 @@ function formatarData(data) {
 }
 
 
-/* =========================================
+/* =========================================================
    STATUS
-========================================= */
+========================================================= */
 
 function descobrirStatus(apolice) {
 
@@ -736,9 +622,9 @@ function descobrirStatus(apolice) {
 }
 
 
-/* =========================================
+/* =========================================================
    CONTADORES
-========================================= */
+========================================================= */
 
 function atualizarContadores() {
 
@@ -749,6 +635,8 @@ function atualizarContadores() {
     let proximos30 = 0;
 
     let vencidas = 0;
+
+    let vigentes = 0;
 
 
     apolices.forEach(
@@ -785,6 +673,11 @@ function atualizarContadores() {
                 vencidas++;
             }
 
+
+            if (dias > 30) {
+                vigentes++;
+            }
+
         }
     );
 
@@ -814,15 +707,39 @@ function atualizarContadores() {
 
 
     document.getElementById(
-        "vencidas"
+        "totalVigentes"
+    ).textContent =
+        vigentes;
+
+
+    document.getElementById(
+        "totalAtencao"
+    ).textContent =
+        proximos30;
+
+
+    document.getElementById(
+        "totalUrgentes"
+    ).textContent =
+        proximos7 + vencemHoje;
+
+
+    document.getElementById(
+        "totalVencidasResumo"
     ).textContent =
         vencidas;
+
+
+    document.getElementById(
+        "badgeRenovacoes"
+    ).textContent =
+        proximos7 + vencemHoje;
 }
 
 
-/* =========================================
-   RENDERIZAR
-========================================= */
+/* =========================================================
+   RENDERIZAR TABELA
+========================================================= */
 
 function renderizarApolices(
     lista = apolices
@@ -842,7 +759,7 @@ function renderizarApolices(
                     <div class="estado-vazio">
 
                         <div class="icone-vazio">
-                            📄
+                            <i class="fa-regular fa-file"></i>
                         </div>
 
                         <h3>
@@ -969,7 +886,7 @@ function renderizarApolices(
                             title="Ver detalhes"
                             onclick="abrirDetalhes(${apolice.id})"
                         >
-                            👁️
+                            <i class="fa-regular fa-eye"></i>
                         </button>
 
 
@@ -978,16 +895,16 @@ function renderizarApolices(
                             title="Editar"
                             onclick="editarApolice(${apolice.id})"
                         >
-                            ✏️
+                            <i class="fa-solid fa-pen"></i>
                         </button>
 
 
                         <button
                             class="btn-acao"
                             title="Excluir"
-                            onclick="abrirModalExcluir(${apolice.id})"
+                            onclick="abrirConfirmacaoExclusao(${apolice.id})"
                         >
-                            🗑️
+                            <i class="fa-solid fa-trash"></i>
                         </button>
 
                     </div>
@@ -1006,9 +923,9 @@ function renderizarApolices(
 }
 
 
-/* =========================================
+/* =========================================================
    BUSCA
-========================================= */
+========================================================= */
 
 function buscarApolice() {
 
@@ -1032,31 +949,31 @@ function buscarApolice() {
 
                 return (
 
-                    apolice.cliente
+                    String(apolice.cliente || "")
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    apolice.numeroApolice
+                    String(apolice.numeroApolice || "")
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    apolice.telefone
+                    String(apolice.telefone || "")
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    apolice.seguradora
+                    String(apolice.seguradora || "")
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    apolice.tipoSeguro
+                    String(apolice.tipoSeguro || "")
                         .toLowerCase()
                         .includes(termo)
 
@@ -1072,9 +989,9 @@ function buscarApolice() {
 }
 
 
-/* =========================================
+/* =========================================================
    ABRIR DETALHES
-========================================= */
+========================================================= */
 
 function abrirDetalhes(id) {
 
@@ -1095,7 +1012,7 @@ function abrirDetalhes(id) {
 
 
     apoliceAtualId =
-        id;
+        apolice.id;
 
 
     const dias =
@@ -1130,25 +1047,25 @@ function abrirDetalhes(id) {
     document.getElementById(
         "detalhesTelefone"
     ).textContent =
-        apolice.telefone;
+        apolice.telefone || "-";
 
 
     document.getElementById(
         "detalhesApolice"
     ).textContent =
-        apolice.numeroApolice;
+        apolice.numeroApolice || "-";
 
 
     document.getElementById(
         "detalhesSeguradora"
     ).textContent =
-        apolice.seguradora;
+        apolice.seguradora || "-";
 
 
     document.getElementById(
         "detalhesSeguro"
     ).textContent =
-        apolice.tipoSeguro;
+        apolice.tipoSeguro || "-";
 
 
     document.getElementById(
@@ -1198,14 +1115,12 @@ function abrirDetalhes(id) {
     modalDetalhes.classList.add(
         "ativo"
     );
-
-    document.body.style.overflow = "hidden";
 }
 
 
-/* =========================================
+/* =========================================================
    ALERTAS DOS DETALHES
-========================================= */
+========================================================= */
 
 function mostrarAlertasDetalhes(apolice) {
 
@@ -1218,31 +1133,24 @@ function mostrarAlertasDetalhes(apolice) {
     container.innerHTML = "";
 
 
-    const configuracao =
-        apolice.alertas || {
-
-            dias30: true,
-            dias15: true,
-            dias7: true
-
-        };
-
-
     const alertas = [
 
         {
             nome: "30 dias antes",
-            ativo: configuracao.dias30
+            ativo:
+                apolice.alertas?.dias30 ?? true
         },
 
         {
             nome: "15 dias antes",
-            ativo: configuracao.dias15
+            ativo:
+                apolice.alertas?.dias15 ?? true
         },
 
         {
             nome: "7 dias antes",
-            ativo: configuracao.dias7
+            ativo:
+                apolice.alertas?.dias7 ?? true
         }
 
     ];
@@ -1291,9 +1199,9 @@ function mostrarAlertasDetalhes(apolice) {
 }
 
 
-/* =========================================
+/* =========================================================
    EDITAR
-========================================= */
+========================================================= */
 
 function editarApolice(id) {
 
@@ -1361,32 +1269,22 @@ function editarApolice(id) {
         apolice.observacoes || "";
 
 
-    const alertas =
-        apolice.alertas || {
-
-            dias30: true,
-            dias15: true,
-            dias7: true
-
-        };
-
-
     document.getElementById(
         "alerta30"
     ).checked =
-        alertas.dias30;
+        apolice.alertas?.dias30 ?? true;
 
 
     document.getElementById(
         "alerta15"
     ).checked =
-        alertas.dias15;
+        apolice.alertas?.dias15 ?? true;
 
 
     document.getElementById(
         "alerta7"
     ).checked =
-        alertas.dias7;
+        apolice.alertas?.dias7 ?? true;
 
 
     document.getElementById(
@@ -1403,24 +1301,12 @@ function editarApolice(id) {
     modalCadastro.classList.add(
         "ativo"
     );
-
-
-    document.body.style.overflow = "hidden";
-
-
-    setTimeout(function () {
-
-        document.getElementById(
-            "cliente"
-        ).focus();
-
-    }, 150);
 }
 
 
-/* =========================================
+/* =========================================================
    EDITAR PELOS DETALHES
-========================================= */
+========================================================= */
 
 function editarApoliceAtual() {
 
@@ -1434,19 +1320,114 @@ function editarApoliceAtual() {
 }
 
 
-/* =========================================
-   EXCLUIR PELA TABELA
-========================================= */
+/* =========================================================
+   CONFIRMAÇÃO DE EXCLUSÃO
+========================================================= */
 
-function excluirApolice(id) {
+function abrirConfirmacaoExclusao(id) {
 
-    abrirModalExcluir(id);
+    const apolice =
+        apolices.find(
+            function (item) {
+
+                return String(item.id) ===
+                    String(id);
+
+            }
+        );
+
+
+    if (!apolice) {
+        return;
+    }
+
+
+    apoliceExclusaoId =
+        apolice.id;
+
+
+    document.getElementById(
+        "clienteExclusao"
+    ).textContent =
+        apolice.cliente;
+
+
+    modalExcluir.classList.add(
+        "ativo"
+    );
 }
 
 
-/* =========================================
+function fecharModalExcluir() {
+
+    modalExcluir.classList.remove(
+        "ativo"
+    );
+
+    apoliceExclusaoId = null;
+}
+
+
+function confirmarExclusao() {
+
+    if (!apoliceExclusaoId) {
+        return;
+    }
+
+
+    const apolice =
+        apolices.find(
+            function (item) {
+
+                return String(item.id) ===
+                    String(apoliceExclusaoId);
+
+            }
+        );
+
+
+    if (!apolice) {
+
+        fecharModalExcluir();
+
+        return;
+    }
+
+
+    const nome =
+        apolice.cliente;
+
+
+    apolices =
+        apolices.filter(
+            function (item) {
+
+                return String(item.id) !==
+                    String(apoliceExclusaoId);
+
+            }
+        );
+
+
+    salvarDados();
+
+    atualizarSistema();
+
+    fecharModalExcluir();
+
+    fecharDetalhes();
+
+
+    mostrarNotificacao(
+        "Apólice removida",
+        `O cadastro de ${nome} foi removido da central.`
+    );
+}
+
+
+/* =========================================================
    EXCLUIR PELOS DETALHES
-========================================= */
+========================================================= */
 
 function excluirApoliceAtual() {
 
@@ -1455,15 +1436,15 @@ function excluirApoliceAtual() {
     }
 
 
-    abrirModalExcluir(
+    abrirConfirmacaoExclusao(
         apoliceAtualId
     );
 }
 
 
-/* =========================================
+/* =========================================================
    WHATSAPP
-========================================= */
+========================================================= */
 
 function abrirWhatsAppAtual() {
 
@@ -1484,7 +1465,7 @@ function abrirWhatsAppAtual() {
 
 
     let telefone =
-        apolice.telefone
+        String(apolice.telefone || "")
             .replace(/\D/g, "");
 
 
@@ -1496,7 +1477,6 @@ function abrirWhatsAppAtual() {
         telefone =
             "55" +
             telefone;
-
     }
 
 
@@ -1507,6 +1487,7 @@ function abrirWhatsAppAtual() {
 
 
     const mensagem =
+
 `Olá! 👋
 
 Aqui é da SAVA Seguros.
@@ -1542,9 +1523,489 @@ SAVA Seguros`;
 }
 
 
-/* =========================================
+/* =========================================================
+   PAINEL DE ATENÇÃO
+========================================================= */
+
+function renderizarAtencao() {
+
+    const container =
+        document.getElementById(
+            "listaAtencao"
+        );
+
+
+    const lista =
+        [...apolices]
+            .filter(
+                function (apolice) {
+
+                    return calcularDias(
+                        apolice.dataVencimento
+                    ) <= 30;
+
+                }
+            )
+            .sort(
+                function (a, b) {
+
+                    return calcularDias(
+                        a.dataVencimento
+                    ) -
+                    calcularDias(
+                        b.dataVencimento
+                    );
+
+                }
+            )
+            .slice(0, 5);
+
+
+    if (lista.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="atencao-vazio">
+
+                <i class="fa-solid fa-check"></i>
+
+                <strong>
+                    Tudo sob controle!
+                </strong>
+
+                <span>
+                    Nenhuma renovação próxima.
+                </span>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    lista.forEach(
+        function (apolice) {
+
+            const dias =
+                calcularDias(
+                    apolice.dataVencimento
+                );
+
+
+            let textoPrazo = "";
+
+            let classePrazo = "";
+
+
+            if (dias < 0) {
+
+                textoPrazo =
+                    "Vencida";
+
+                classePrazo =
+                    "prazo-urgente";
+
+            } else if (dias === 0) {
+
+                textoPrazo =
+                    "Hoje";
+
+                classePrazo =
+                    "prazo-urgente";
+
+            } else {
+
+                textoPrazo =
+                    `${dias} dia${dias === 1 ? "" : "s"}`;
+
+                classePrazo =
+                    dias <= 7
+                        ? "prazo-urgente"
+                        : "prazo-atencao";
+
+            }
+
+
+            const iniciais =
+                gerarIniciais(
+                    apolice.cliente
+                );
+
+
+            const item =
+                document.createElement("div");
+
+
+            item.className =
+                "atencao-item";
+
+
+            item.innerHTML = `
+
+                <div class="atencao-avatar">
+                    ${iniciais}
+                </div>
+
+                <div class="atencao-info">
+
+                    <strong>
+                        ${escaparHTML(
+                            apolice.cliente
+                        )}
+                    </strong>
+
+                    <span>
+                        ${escaparHTML(
+                            apolice.seguradora
+                        )}
+                        •
+                        ${escaparHTML(
+                            apolice.tipoSeguro
+                        )}
+                    </span>
+
+                </div>
+
+                <div class="atencao-prazo">
+
+                    <strong class="${classePrazo}">
+                        ${textoPrazo}
+                    </strong>
+
+                    <span>
+                        ${formatarData(
+                            apolice.dataVencimento
+                        )}
+                    </span>
+
+                </div>
+
+            `;
+
+
+            item.addEventListener(
+                "click",
+                function () {
+
+                    abrirDetalhes(
+                        apolice.id
+                    );
+
+                }
+            );
+
+
+            item.style.cursor =
+                "pointer";
+
+
+            container.appendChild(
+                item
+            );
+
+        }
+    );
+}
+
+
+/* =========================================================
+   TIPOS DE SEGURO
+========================================================= */
+
+function renderizarTiposSeguro() {
+
+    const container =
+        document.getElementById(
+            "tiposSeguro"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (apolices.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="atencao-vazio">
+
+                <i class="fa-solid fa-chart-simple"></i>
+
+                <strong>
+                    Nenhum dado ainda
+                </strong>
+
+                <span>
+                    Cadastre apólices para visualizar.
+                </span>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    const contagem = {};
+
+
+    apolices.forEach(
+        function (apolice) {
+
+            const tipo =
+                apolice.tipoSeguro ||
+                "Outro";
+
+
+            contagem[tipo] =
+                (contagem[tipo] || 0) + 1;
+
+        }
+    );
+
+
+    const tipos =
+        Object.entries(
+            contagem
+        )
+        .sort(
+            function (a, b) {
+                return b[1] - a[1];
+            }
+        )
+        .slice(0, 5);
+
+
+    const maior =
+        tipos.length
+            ? tipos[0][1]
+            : 1;
+
+
+    tipos.forEach(
+        function ([tipo, quantidade]) {
+
+            const percentual =
+                Math.round(
+                    (quantidade / maior) * 100
+                );
+
+
+            const item =
+                document.createElement("div");
+
+
+            item.className =
+                "tipo-item";
+
+
+            item.innerHTML = `
+
+                <div class="tipo-cor"></div>
+
+                <div class="tipo-info">
+
+                    <span>
+                        ${escaparHTML(tipo)}
+                    </span>
+
+                    <div class="tipo-barra">
+
+                        <div
+                            style="width: ${percentual}%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+                <strong>
+                    ${quantidade}
+                </strong>
+
+            `;
+
+
+            container.appendChild(
+                item
+            );
+
+        }
+    );
+}
+
+
+/* =========================================================
+   GRÁFICO
+========================================================= */
+
+function renderizarGrafico() {
+
+    const container =
+        document.getElementById(
+            "graficoRenovacoes"
+        );
+
+
+    container.innerHTML = "";
+
+
+    const hoje =
+        new Date();
+
+
+    const meses = [];
+
+
+    for (let i = -5; i <= 6; i++) {
+
+        const data =
+            new Date(
+                hoje.getFullYear(),
+                hoje.getMonth() + i,
+                1
+            );
+
+
+        meses.push({
+
+            numero:
+                data.getMonth(),
+
+            ano:
+                data.getFullYear(),
+
+            nome:
+                data.toLocaleDateString(
+                    "pt-BR",
+                    {
+                        month: "short"
+                    }
+                )
+                .replace(".", "")
+
+        });
+
+    }
+
+
+    const valores =
+        meses.map(
+            function (mes) {
+
+                return apolices.filter(
+                    function (apolice) {
+
+                        if (!apolice.dataVencimento) {
+                            return false;
+                        }
+
+                        const data =
+                            new Date(
+                                apolice.dataVencimento +
+                                "T00:00:00"
+                            );
+
+
+                        return (
+                            data.getMonth() ===
+                                mes.numero
+                            &&
+                            data.getFullYear() ===
+                                mes.ano
+                        );
+
+                    }
+                ).length;
+
+            }
+        );
+
+
+    const maior =
+        Math.max(
+            ...valores,
+            1
+        );
+
+
+    meses.forEach(
+        function (mes, index) {
+
+            const coluna =
+                document.createElement("div");
+
+
+            coluna.className =
+                "coluna-grafico";
+
+
+            const altura =
+                valores[index] === 0
+                    ? 3
+                    : Math.max(
+                        8,
+                        (valores[index] / maior) *
+                        190
+                    );
+
+
+            coluna.innerHTML = `
+
+                <div
+                    class="barra-grafico"
+                    style="height: ${altura}px"
+                >
+
+                    <span class="valor-barra">
+                        ${valores[index]}
+                    </span>
+
+                </div>
+
+                <span class="mes-grafico">
+                    ${mes.nome}
+                </span>
+
+            `;
+
+
+            container.appendChild(
+                coluna
+            );
+
+        }
+    );
+}
+
+
+/* =========================================================
+   ATUALIZAR SISTEMA
+========================================================= */
+
+function atualizarSistema() {
+
+    atualizarContadores();
+
+    renderizarApolices();
+
+    renderizarAtencao();
+
+    renderizarTiposSeguro();
+
+    renderizarGrafico();
+}
+
+
+/* =========================================================
    NOTIFICAÇÃO
-========================================= */
+========================================================= */
 
 function mostrarNotificacao(
     titulo,
@@ -1591,9 +2052,9 @@ function mostrarNotificacao(
 }
 
 
-/* =========================================
+/* =========================================================
    FECHAR NOTIFICAÇÃO
-========================================= */
+========================================================= */
 
 function fecharNotificacao() {
 
@@ -1607,13 +2068,13 @@ function fecharNotificacao() {
 }
 
 
-/* =========================================
+/* =========================================================
    SEGURANÇA HTML
-========================================= */
+========================================================= */
 
 function escaparHTML(texto) {
 
-    return String(texto)
+    return String(texto ?? "")
 
         .replace(
             /&/g,
@@ -1642,21 +2103,207 @@ function escaparHTML(texto) {
 }
 
 
-/* =========================================
-   ATUALIZAR SISTEMA
-========================================= */
+/* =========================================================
+   INICIAIS
+========================================================= */
 
-function atualizarSistema() {
+function gerarIniciais(nome) {
 
-    atualizarContadores();
+    const partes =
+        String(nome || "")
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
 
-    renderizarApolices();
+
+    if (partes.length === 0) {
+        return "?";
+    }
+
+
+    if (partes.length === 1) {
+
+        return partes[0]
+            .substring(0, 2)
+            .toUpperCase();
+    }
+
+
+    return (
+        partes[0][0] +
+        partes[partes.length - 1][0]
+    ).toUpperCase();
 }
 
 
-/* =========================================
+/* =========================================================
+   NAVEGAÇÃO
+========================================================= */
+
+function limparMenuAtivo() {
+
+    document
+        .querySelectorAll(".menu-item")
+        .forEach(
+            function (item) {
+
+                item.classList.remove(
+                    "ativo"
+                );
+
+            }
+        );
+}
+
+
+function ativarMenu(indice) {
+
+    const itens =
+        document.querySelectorAll(
+            ".menu-item"
+        );
+
+
+    if (itens[indice]) {
+
+        itens[indice].classList.add(
+            "ativo"
+        );
+
+    }
+}
+
+
+function mostrarDashboard() {
+
+    limparMenuAtivo();
+
+    ativarMenu(0);
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+function focarApolices() {
+
+    limparMenuAtivo();
+
+    ativarMenu(1);
+
+
+    const painel =
+        document.getElementById(
+            "painelApolices"
+        );
+
+
+    painel.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+
+function mostrarAtencao() {
+
+    limparMenuAtivo();
+
+    ativarMenu(2);
+
+
+    const painel =
+        document.querySelector(
+            ".painel-atencao"
+        );
+
+
+    painel.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+
+function mostrarClientes() {
+
+    limparMenuAtivo();
+
+    ativarMenu(3);
+
+
+    const painel =
+        document.getElementById(
+            "painelApolices"
+        );
+
+
+    painel.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+
+    campoBusca.focus();
+}
+
+
+/* =========================================================
+   SIDEBAR MOBILE
+========================================================= */
+
+function alternarSidebar() {
+
+    document
+        .querySelector(".sidebar")
+        .classList.toggle(
+            "aberta"
+        );
+}
+
+
+/* =========================================================
+   FECHAR SIDEBAR AO CLICAR FORA
+========================================================= */
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const sidebar =
+            document.querySelector(
+                ".sidebar"
+            );
+
+
+        const botao =
+            document.querySelector(
+                ".btn-menu-mobile"
+            );
+
+
+        if (
+            window.innerWidth <= 850 &&
+            sidebar.classList.contains("aberta") &&
+            !sidebar.contains(event.target) &&
+            !botao.contains(event.target)
+        ) {
+
+            sidebar.classList.remove(
+                "aberta"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
    INICIALIZAÇÃO
-========================================= */
+========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",

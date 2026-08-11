@@ -1,1 +1,480 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+:root {
+    --azul: #0b3d91;
+    --azul-escuro: #082b66;
+    --azul-claro: #eaf1ff;
+    --branco: #ffffff;
+    --cinza-fundo: #f5f7fb;
+    --cinza-texto: #667085;
+    --cinza-borda: #e4e7ec;
+    --verde: #12b76a;
+    --vermelho: #f04438;
+    --laranja: #f79009;
+    --amarelo: #fdb022;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--cinza-fundo);
+    color: #101828;
+    min-height: 100vh;
+}
+
+/* =========================
+   TOPO
+========================= */
+
+.topo {
+    min-height: 82px;
+    background: var(--branco);
+    border-bottom: 1px solid var(--cinza-borda);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+}
+
+.topo h1 {
+    color: var(--azul);
+    font-size: 25px;
+    letter-spacing: 1px;
+}
+
+.topo p {
+    color: var(--cinza-texto);
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.status-sistema {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #475467;
+}
+
+.bolinha {
+    width: 9px;
+    height: 9px;
+    background: var(--verde);
+    border-radius: 50%;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+
+.container {
+    width: min(1400px, calc(100% - 60px));
+    margin: 35px auto;
+}
+
+/* =========================
+   TÍTULO
+========================= */
+
+.titulo-pagina {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.titulo-pagina h2 {
+    font-size: 27px;
+    margin-bottom: 6px;
+}
+
+.titulo-pagina p {
+    color: var(--cinza-texto);
+}
+
+/* =========================
+   BOTÕES
+========================= */
+
+.btn-principal {
+    border: none;
+    background: var(--azul);
+    color: white;
+    padding: 12px 19px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-principal:hover {
+    background: var(--azul-escuro);
+    transform: translateY(-1px);
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: var(--branco);
+    border: 1px solid var(--cinza-borda);
+    border-radius: 12px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 5px rgba(16, 24, 40, 0.03);
+}
+
+.card-icone {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--azul-claro);
+    font-size: 20px;
+}
+
+.card span {
+    display: block;
+    color: var(--cinza-texto);
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.card strong {
+    font-size: 25px;
+}
+
+.card-vermelho {
+    border-left: 4px solid var(--vermelho);
+}
+
+.card-laranja {
+    border-left: 4px solid var(--laranja);
+}
+
+.card-amarelo {
+    border-left: 4px solid var(--amarelo);
+}
+
+/* =========================
+   PAINEL
+========================= */
+
+.painel {
+    background: var(--branco);
+    border: 1px solid var(--cinza-borda);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.painel-topo {
+    padding: 22px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--cinza-borda);
+}
+
+.painel-topo h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.painel-topo p {
+    color: var(--cinza-texto);
+    font-size: 13px;
+}
+
+#campoBusca {
+    width: 270px;
+    padding: 11px 14px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+}
+
+#campoBusca:focus {
+    border-color: var(--azul);
+}
+
+/* =========================
+   TABELA
+========================= */
+
+.tabela-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f9fafb;
+}
+
+th {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 12px;
+    color: #475467;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+td {
+    padding: 17px 20px;
+    border-top: 1px solid var(--cinza-borda);
+    font-size: 14px;
+}
+
+tbody tr:hover {
+    background: #fafcff;
+}
+
+/* =========================
+   ESTADO VAZIO
+========================= */
+
+.estado-vazio {
+    text-align: center;
+    padding: 55px 20px;
+}
+
+.estado-vazio div {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.estado-vazio h3 {
+    margin-bottom: 6px;
+}
+
+.estado-vazio p {
+    color: var(--cinza-texto);
+    font-size: 14px;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(16, 24, 40, 0.55);
+    z-index: 1000;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.modal.ativo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-conteudo {
+    width: min(650px, 100%);
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+}
+
+.modal-cabecalho {
+    padding: 22px 25px;
+    border-bottom: 1px solid var(--cinza-borda);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-cabecalho h2 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.modal-cabecalho p {
+    color: var(--cinza-texto);
+    font-size: 13px;
+}
+
+.fechar {
+    border: none;
+    background: transparent;
+    font-size: 30px;
+    color: #667085;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.fechar:hover {
+    color: #101828;
+}
+
+/* =========================
+   FORMULÁRIO
+========================= */
+
+#formApolice {
+    padding: 25px;
+}
+
+.campo {
+    margin-bottom: 18px;
+}
+
+.campo > label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    font-family: inherit;
+    background: white;
+}
+
+.campo textarea {
+    resize: vertical;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    border-color: var(--azul);
+    box-shadow: 0 0 0 3px rgba(11, 61, 145, 0.08);
+}
+
+/* =========================
+   CHECKBOXES
+========================= */
+
+.checkboxes {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.checkboxes label {
+    font-size: 13px;
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+/* =========================
+   AÇÕES DO MODAL
+========================= */
+
+.modal-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--cinza-borda);
+}
+
+.btn-cancelar {
+    border: 1px solid var(--cinza-borda);
+    background: white;
+    color: #344054;
+    padding: 12px 19px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-cancelar:hover {
+    background: #f9fafb;
+}
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 1000px) {
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .topo {
+        padding: 0 25px;
+    }
+}
+
+@media (max-width: 700px) {
+
+    .container {
+        width: calc(100% - 30px);
+        margin: 25px auto;
+    }
+
+    .topo {
+        padding: 15px;
+        min-height: auto;
+        gap: 15px;
+    }
+
+    .titulo-pagina {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .painel-topo {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    #campoBusca {
+        width: 100%;
+    }
+
+    .modal {
+        padding: 15px;
+    }
+
+    .checkboxes {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

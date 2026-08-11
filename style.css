@@ -31,9 +31,9 @@
 
 body {
 
+
     font-family:
-        Arial,
-        Helvetica,
+        'Inter',
         sans-serif;
 
     background:
@@ -44,6 +44,7 @@ body {
 
     min-height:
         100vh;
+
 }
 
 

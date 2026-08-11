@@ -2,29 +2,27 @@
 <html lang="pt-BR">
 
 <head>
- 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>SAVA Seguros | Central de Renovações</title>
 
-    <link rel="stylesheet" href="style.css">
-
+    <!-- Fontes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-    >
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- =========================
+    <!-- ==============================
          TOPO
-    ========================== -->
+    =============================== -->
 
     <header class="topo">
 
@@ -42,35 +40,36 @@
         </div>
 
         <div class="status-sistema">
+
             <span class="bolinha"></span>
-            Sistema online
+
+            Sistema operacional
+
         </div>
 
     </header>
 
 
-    <!-- =========================
+    <!-- ==============================
          CONTEÚDO
-    ========================== -->
+    =============================== -->
 
     <main class="container">
-
-        <!-- CABEÇALHO -->
 
         <section class="titulo-pagina">
 
             <div>
 
                 <span class="subtitulo">
-                    CENTRAL DE CONTROLE
+                    GESTÃO DE APÓLICES
                 </span>
 
                 <h2>
-                    Painel de Renovações
+                    Central de Renovações
                 </h2>
 
                 <p>
-                    Acompanhe as apólices e nunca perca um vencimento.
+                    Acompanhe suas apólices e nunca perca um vencimento.
                 </p>
 
             </div>
@@ -86,26 +85,21 @@
         </section>
 
 
-        <!-- =========================
+        <!-- ==============================
              CARDS
-        ========================== -->
+        =============================== -->
 
         <section class="cards">
 
             <div class="card">
 
                 <div class="card-icone azul">
-                    📋
+                    📄
                 </div>
 
                 <div>
-
                     <span>Total de apólices</span>
-
-                    <strong id="totalApolices">
-                        0
-                    </strong>
-
+                    <strong id="totalApolices">0</strong>
                 </div>
 
             </div>
@@ -114,17 +108,12 @@
             <div class="card">
 
                 <div class="card-icone vermelho">
-                    🔴
+                    📅
                 </div>
 
                 <div>
-
                     <span>Vencem hoje</span>
-
-                    <strong id="vencemHoje">
-                        0
-                    </strong>
-
+                    <strong id="vencemHoje">0</strong>
                 </div>
 
             </div>
@@ -133,17 +122,12 @@
             <div class="card">
 
                 <div class="card-icone laranja">
-                    🟠
+                    ⚠️
                 </div>
 
                 <div>
-
                     <span>Próximos 7 dias</span>
-
-                    <strong id="proximos7">
-                        0
-                    </strong>
-
+                    <strong id="proximos7">0</strong>
                 </div>
 
             </div>
@@ -152,17 +136,12 @@
             <div class="card">
 
                 <div class="card-icone amarelo">
-                    🟡
+                    ⏳
                 </div>
 
                 <div>
-
                     <span>Próximos 30 dias</span>
-
-                    <strong id="proximos30">
-                        0
-                    </strong>
-
+                    <strong id="proximos30">0</strong>
                 </div>
 
             </div>
@@ -171,17 +150,12 @@
             <div class="card">
 
                 <div class="card-icone cinza">
-                    ⚠️
+                    🕘
                 </div>
 
                 <div>
-
-                    <span>Apólices vencidas</span>
-
-                    <strong id="vencidas">
-                        0
-                    </strong>
-
+                    <span>Vencidas</span>
+                    <strong id="vencidas">0</strong>
                 </div>
 
             </div>
@@ -189,42 +163,38 @@
         </section>
 
 
-        <!-- =========================
-             PAINEL DE APÓLICES
-        ========================== -->
+        <!-- ==============================
+             PAINEL
+        =============================== -->
 
         <section class="painel">
 
             <div class="painel-topo">
 
                 <div>
-
                     <h3>
                         Apólices cadastradas
                     </h3>
 
                     <p>
-                        Consulte, acompanhe e gerencie suas renovações.
+                        Gerencie clientes, seguros e vencimentos.
                     </p>
-
                 </div>
 
 
-                <div class="acoes-painel">
-
-                    <input
-                        type="text"
-                        id="campoBusca"
-                        placeholder="🔎  Buscar cliente, apólice..."
-                        oninput="buscarApolice()"
-                    >
-
-                </div>
+                <input
+                    type="search"
+                    id="campoBusca"
+                    placeholder="🔎 Buscar cliente, apólice..."
+                    oninput="buscarApolice()"
+                >
 
             </div>
 
 
-            <!-- TABELA -->
+            <!-- ==============================
+                 TABELA
+            =============================== -->
 
             <div class="tabela-container">
 
@@ -235,58 +205,18 @@
                         <tr>
 
                             <th>Cliente</th>
-
                             <th>Seguro</th>
-
                             <th>Seguradora</th>
-
                             <th>Apólice</th>
-
                             <th>Vencimento</th>
-
                             <th>Status</th>
-
                             <th>Ações</th>
 
                         </tr>
 
                     </thead>
 
-
-                    <tbody id="listaApolices">
-
-                        <tr>
-
-                            <td colspan="7">
-
-                                <div class="estado-vazio">
-
-                                    <div class="icone-vazio">
-                                        📄
-                                    </div>
-
-                                    <h3>
-                                        Nenhuma apólice cadastrada
-                                    </h3>
-
-                                    <p>
-                                        Clique em "Nova Apólice" para cadastrar a primeira.
-                                    </p>
-
-                                    <button
-                                        class="btn-vazio"
-                                        onclick="abrirCadastro()"
-                                    >
-                                        + Cadastrar primeira apólice
-                                    </button>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    </tbody>
+                    <tbody id="listaApolices"></tbody>
 
                 </table>
 
@@ -297,16 +227,16 @@
     </main>
 
 
-    <!-- =========================
-         MODAL — CADASTRO
-    ========================== -->
+    <!-- ==============================
+         MODAL CADASTRO / EDIÇÃO
+    =============================== -->
 
     <div
+        class="modal-overlay"
         id="modalCadastro"
-        class="modal"
     >
 
-        <div class="modal-conteudo">
+        <div class="modal cadastro">
 
             <div class="modal-cabecalho">
 
@@ -327,7 +257,7 @@
                 </div>
 
                 <button
-                    class="fechar"
+                    class="modal-fechar"
                     onclick="fecharCadastro()"
                 >
                     ×
@@ -344,36 +274,16 @@
                 >
 
 
-                <!-- CLIENTE -->
-
                 <div class="campo">
 
                     <label for="cliente">
-                        Nome do cliente
+                        Cliente
                     </label>
 
                     <input
                         type="text"
                         id="cliente"
-                        placeholder="Digite o nome completo"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- TELEFONE -->
-
-                <div class="campo">
-
-                    <label for="telefone">
-                        WhatsApp do cliente
-                    </label>
-
-                    <input
-                        type="tel"
-                        id="telefone"
-                        placeholder="(27) 99999-9999"
+                        placeholder="Nome completo do cliente"
                         required
                     >
 
@@ -382,7 +292,21 @@
 
                 <div class="linha-campos">
 
-                    <!-- APÓLICE -->
+                    <div class="campo">
+
+                        <label for="telefone">
+                            Telefone / WhatsApp
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="telefone"
+                            placeholder="(27) 99999-9999"
+                            required
+                        >
+
+                    </div>
+
 
                     <div class="campo">
 
@@ -393,24 +317,7 @@
                         <input
                             type="text"
                             id="numeroApolice"
-                            placeholder="Número da apólice"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- DATA -->
-
-                    <div class="campo">
-
-                        <label for="dataVencimento">
-                            Data de vencimento
-                        </label>
-
-                        <input
-                            type="date"
-                            id="dataVencimento"
+                            placeholder="Ex.: 123456789"
                             required
                         >
 
@@ -420,8 +327,6 @@
 
 
                 <div class="linha-campos">
-
-                    <!-- SEGURADORA -->
 
                     <div class="campo">
 
@@ -435,50 +340,53 @@
                         >
 
                             <option value="">
-                                Selecione
+                                Selecione a seguradora
                             </option>
 
-                            <option>AIG GO</option>
-                            <option>AKAD</option>
-                            <option>ALLIANZ</option>
-                            <option>AXA</option>
-                            <option>AZOS</option>
-                            <option>BANESTE</option>
-                            <option>BRADESCO</option>
-                            <option>CAPEMISA</option>
-                            <option>CHUBB</option>
-                            <option>EXELSIOR</option>
-                            <option>EZZE SEGUROS</option>
-                            <option>FATOR</option>
-                            <option>FAIRFAX</option>
-                            <option>HS CONSÓRCIOS</option>
-                            <option>HDI</option>
-                            <option>JUNTO SEGUROS</option>
-                            <option>MAG</option>
-                            <option>MAPFRE</option>
-                            <option>PASI</option>
-                            <option>PORTO SEGURO</option>
-                            <option>POTTENCIAL SEGURADORA</option>
-                            <option>SAMP</option>
-                            <option>SANCOR</option>
-                            <option>SOMPO</option>
-                            <option>SUHAI SEGURADORA</option>
-                            <option>SULAMERICA SEGUROS</option>
-                            <option>SURA</option>
-                            <option>SWISS RE</option>
-                            <option>SWISS RE 2</option>
-                            <option>TOKIO MARINE</option>
-                            <option>UNIMED SEGUROS</option>
-                            <option>YELUM</option>
-                            <option>YOUSE</option>
-                            <option>ZURICH</option>
+                            <option value="Porto Seguro">
+                                Porto Seguro
+                            </option>
+
+                            <option value="Tokio Marine">
+                                Tokio Marine
+                            </option>
+
+                            <option value="Azul Seguros">
+                                Azul Seguros
+                            </option>
+
+                            <option value="Allianz">
+                                Allianz
+                            </option>
+
+                            <option value="HDI">
+                                HDI
+                            </option>
+
+                            <option value="Mapfre">
+                                Mapfre
+                            </option>
+
+                            <option value="Bradesco Seguros">
+                                Bradesco Seguros
+                            </option>
+
+                            <option value="Zurich">
+                                Zurich
+                            </option>
+
+                            <option value="Suhai">
+                                Suhai
+                            </option>
+
+                            <option value="Outra">
+                                Outra
+                            </option>
 
                         </select>
 
                     </div>
 
-
-                    <!-- TIPO -->
 
                     <div class="campo">
 
@@ -492,31 +400,32 @@
                         >
 
                             <option value="">
-                                Selecione
+                                Selecione o tipo
                             </option>
 
-                            <option>AUTO</option>
-                            <option>AUTO FROTA</option>
-                            <option>BIKE</option>
-                            <option>BIKE ELÉTRICA</option>
-                            <option>CELULAR</option>
-                            <option>CONDOMÍNIO</option>
-                            <option>RC CYBER</option>
-                            <option>E&O / RC GERAL</option>
-                            <option>D&O</option>
-                            <option>EMPRESARIAL</option>
-                            <option>EVENTO</option>
-                            <option>FIANÇA LOCATÍCIA</option>
-                            <option>GARANTIA</option>
-                            <option>TRANSPORTE</option>
-                            <option>RC MÉDICO</option>
-                            <option>RC OBRAS</option>
-                            <option>RC PROFISSIONAL</option>
-                            <option>RESIDENCIAL</option>
-                            <option>VIAGEM</option>
-                            <option>VIDA PF</option>
-                            <option>VIDA PJ</option>
-                            <option>VIDA AP</option>
+                            <option value="Automóvel">
+                                Automóvel
+                            </option>
+
+                            <option value="Moto">
+                                Moto
+                            </option>
+
+                            <option value="Residencial">
+                                Residencial
+                            </option>
+
+                            <option value="Empresarial">
+                                Empresarial
+                            </option>
+
+                            <option value="Vida">
+                                Vida
+                            </option>
+
+                            <option value="Outro">
+                                Outro
+                            </option>
 
                         </select>
 
@@ -525,7 +434,20 @@
                 </div>
 
 
-                <!-- ALERTAS -->
+                <div class="campo">
+
+                    <label for="dataVencimento">
+                        Data de vencimento
+                    </label>
+
+                    <input
+                        type="date"
+                        id="dataVencimento"
+                        required
+                    >
+
+                </div>
+
 
                 <div class="campo">
 
@@ -540,12 +462,9 @@
                             <input
                                 type="checkbox"
                                 id="alerta30"
-                                checked
                             >
 
-                            <span>
-                                30 dias antes
-                            </span>
+                            30 dias antes
 
                         </label>
 
@@ -555,12 +474,9 @@
                             <input
                                 type="checkbox"
                                 id="alerta15"
-                                checked
                             >
 
-                            <span>
-                                15 dias antes
-                            </span>
+                            15 dias antes
 
                         </label>
 
@@ -570,12 +486,9 @@
                             <input
                                 type="checkbox"
                                 id="alerta7"
-                                checked
                             >
 
-                            <span>
-                                7 dias antes
-                            </span>
+                            7 dias antes
 
                         </label>
 
@@ -583,8 +496,6 @@
 
                 </div>
 
-
-                <!-- OBSERVAÇÕES -->
 
                 <div class="campo">
 
@@ -594,14 +505,12 @@
 
                     <textarea
                         id="observacoes"
-                        rows="3"
-                        placeholder="Digite alguma informação importante..."
+                        rows="4"
+                        placeholder="Digite alguma observação..."
                     ></textarea>
 
                 </div>
 
-
-                <!-- AÇÕES -->
 
                 <div class="modal-acoes">
 
@@ -617,8 +526,7 @@
                         type="submit"
                         class="btn-principal"
                     >
-                        <span>✓</span>
-                        Salvar Apólice
+                        💾 Salvar Apólice
                     </button>
 
                 </div>
@@ -630,16 +538,16 @@
     </div>
 
 
-    <!-- =========================
-         MODAL — DETALHES
-    ========================== -->
+    <!-- ==============================
+         MODAL DETALHES
+    =============================== -->
 
     <div
+        class="modal-overlay"
         id="modalDetalhes"
-        class="modal"
     >
 
-        <div class="modal-conteudo detalhes">
+        <div class="modal detalhes">
 
             <div class="modal-cabecalho">
 
@@ -653,14 +561,14 @@
                         Cliente
                     </h2>
 
-                    <p id="detalhesStatus">
-                        Status
+                    <p>
+                        Informações completas do cadastro.
                     </p>
 
                 </div>
 
                 <button
-                    class="fechar"
+                    class="modal-fechar"
                     onclick="fecharDetalhes()"
                 >
                     ×
@@ -671,13 +579,22 @@
 
             <div class="detalhes-corpo">
 
+                <div class="detalhes-status-principal">
+
+                    <span>
+                        STATUS DA APÓLICE
+                    </span>
+
+                    <div id="detalhesStatus"></div>
+
+                </div>
+
+
                 <div class="info-grid">
 
                     <div class="info-item">
 
-                        <span>
-                            WhatsApp
-                        </span>
+                        <span>Telefone</span>
 
                         <strong id="detalhesTelefone">
                             -
@@ -688,9 +605,7 @@
 
                     <div class="info-item">
 
-                        <span>
-                            Número da apólice
-                        </span>
+                        <span>Número da apólice</span>
 
                         <strong id="detalhesApolice">
                             -
@@ -701,9 +616,7 @@
 
                     <div class="info-item">
 
-                        <span>
-                            Seguradora
-                        </span>
+                        <span>Seguradora</span>
 
                         <strong id="detalhesSeguradora">
                             -
@@ -714,9 +627,7 @@
 
                     <div class="info-item">
 
-                        <span>
-                            Tipo de seguro
-                        </span>
+                        <span>Tipo de seguro</span>
 
                         <strong id="detalhesSeguro">
                             -
@@ -727,9 +638,7 @@
 
                     <div class="info-item">
 
-                        <span>
-                            Vencimento
-                        </span>
+                        <span>Vencimento</span>
 
                         <strong id="detalhesVencimento">
                             -
@@ -740,9 +649,7 @@
 
                     <div class="info-item">
 
-                        <span>
-                            Dias restantes
-                        </span>
+                        <span>Prazo</span>
 
                         <strong id="detalhesDias">
                             -
@@ -756,7 +663,7 @@
                 <div class="observacao-box">
 
                     <span>
-                        Observações
+                        OBSERVAÇÕES
                     </span>
 
                     <p id="detalhesObservacoes">
@@ -769,7 +676,7 @@
                 <div class="alertas-detalhes">
 
                     <h3>
-                        🔔 Alertas configurados
+                        Alertas configurados
                     </h3>
 
                     <div id="detalhesAlertas"></div>
@@ -779,13 +686,13 @@
             </div>
 
 
-            <div class="modal-acoes detalhes-acoes">
+            <div class="detalhes-acoes">
 
                 <button
                     class="btn-whatsapp"
                     onclick="abrirWhatsAppAtual()"
                 >
-                    📱 WhatsApp
+                    💬 WhatsApp
                 </button>
 
                 <button
@@ -795,58 +702,88 @@
                     ✏️ Editar
                 </button>
 
-    <!-- =========================
-     MODAL DE CONFIRMAÇÃO
-========================= -->
+                <button
+                    class="btn-excluir"
+                    onclick="excluirApoliceAtual()"
+                >
+                    🗑️ Excluir
+                </button>
 
-<div id="modalExcluir" class="modal-overlay">
-
-    <div class="modal-confirmacao">
-
-        <div class="modal-icone perigo">
-            🗑️
-        </div>
-
-        <h2>Excluir apólice?</h2>
-
-        <p>
-            Tem certeza que deseja excluir esta apólice?
-        </p>
-
-        <span class="modal-aviso">
-            Essa ação não poderá ser desfeita.
-        </span>
-
-        <div class="modal-botoes">
-
-            <button
-                type="button"
-                class="btn-modal cancelar"
-                onclick="fecharModalExcluir()">
-                Cancelar
-            </button>
-
-            <button
-                type="button"
-                class="btn-modal excluir"
-                onclick="confirmarExclusao()">
-                🗑️ Excluir apólice
-            </button>
+            </div>
 
         </div>
 
     </div>
 
-</div>
 
-
-    <!-- =========================
-         NOTIFICAÇÃO
-    ========================== -->
+    <!-- ==============================
+         MODAL EXCLUSÃO
+    =============================== -->
 
     <div
-        id="notificacao"
+        class="modal-overlay"
+        id="modalExcluir"
+    >
+
+        <div class="modal-confirmacao">
+
+            <div class="modal-icone perigo">
+                🗑️
+            </div>
+
+            <span class="modal-etiqueta perigo-texto">
+                CONFIRMAÇÃO
+            </span>
+
+            <h2>
+                Excluir apólice?
+            </h2>
+
+            <p>
+                Você está prestes a excluir a apólice de
+            </p>
+
+            <strong
+                id="clienteExclusao"
+                class="cliente-exclusao"
+            >
+                -
+            </strong>
+
+            <span class="modal-aviso">
+                ⚠ Essa ação não poderá ser desfeita.
+            </span>
+
+            <div class="modal-botoes">
+
+                <button
+                    class="btn-modal cancelar"
+                    onclick="fecharModalExcluir()"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    class="btn-modal excluir"
+                    onclick="confirmarExclusao()"
+                >
+                    🗑️ Excluir apólice
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================
+         NOTIFICAÇÃO
+    =============================== -->
+
+    <div
         class="notificacao"
+        id="notificacao"
     >
 
         <div class="notificacao-icone">
@@ -856,7 +793,7 @@
         <div>
 
             <strong id="notificacaoTitulo">
-                Sucesso!
+                Sucesso
             </strong>
 
             <p id="notificacaoMensagem">

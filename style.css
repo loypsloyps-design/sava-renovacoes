@@ -813,167 +813,194 @@ tbody tr:hover {
         pointer;
 }
 
+/* =========================
+   MODAL DE CONFIRMAÇÃO
+========================= */
 
-/* =========================================
-   MODAL
-========================================= */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
 
-.modal {
+    background: rgba(15, 23, 42, 0.55);
 
-    display:
-        none;
+    display: none;
+    align-items: center;
+    justify-content: center;
 
-    position:
-        fixed;
+    z-index: 9999;
 
-    inset:
-        0;
-
-    background:
-        rgba(16, 24, 40, 0.58);
-
-    z-index:
-        1000;
-
-    padding:
-        25px;
-
-    overflow-y:
-        auto;
+    backdrop-filter: blur(5px);
 }
 
-.modal.ativo {
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
+.modal-overlay.ativo {
+    display: flex;
+    animation: aparecerFundo 0.2s ease;
 }
 
-.modal-conteudo {
+.modal-confirmacao {
+    width: min(430px, calc(100% - 40px));
 
-    width:
-        min(700px, 100%);
+    background: #ffffff;
 
-    background:
-        white;
+    border-radius: 20px;
 
-    border-radius:
-        15px;
+    padding: 32px;
+
+    text-align: center;
 
     box-shadow:
-        0 25px 70px rgba(0, 0, 0, 0.22);
+        0 25px 60px rgba(0, 0, 0, 0.25);
 
-    overflow:
-        hidden;
-
-    animation:
-        aparecer 0.2s ease;
+    animation: aparecerModal 0.25s ease;
 }
 
-@keyframes aparecer {
+.modal-icone {
+    width: 70px;
+    height: 70px;
 
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 30px;
+}
+
+.modal-icone.perigo {
+    background: #fee2e2;
+}
+
+.modal-confirmacao h2 {
+    margin: 0 0 10px;
+
+    color: #172033;
+
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 24px;
+
+    font-weight: 700;
+}
+
+.modal-confirmacao p {
+    margin: 0 0 8px;
+
+    color: #64748b;
+
+    font-size: 15px;
+}
+
+.modal-aviso {
+    display: block;
+
+    margin-bottom: 25px;
+
+    color: #ef4444;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.modal-botoes {
+    display: flex;
+
+    gap: 12px;
+}
+
+.btn-modal {
+    flex: 1;
+
+    border: none;
+
+    padding: 13px 16px;
+
+    border-radius: 10px;
+
+    font-family: 'Poppins', sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.btn-modal.cancelar {
+    background: #f1f5f9;
+
+    color: #475569;
+}
+
+.btn-modal.cancelar:hover {
+    background: #e2e8f0;
+}
+
+.btn-modal.excluir {
+    background: #ef4444;
+
+    color: white;
+}
+
+.btn-modal.excluir:hover {
+    background: #dc2626;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.25);
+}
+
+
+/* =========================
+   ANIMAÇÕES
+========================= */
+
+@keyframes aparecerFundo {
     from {
-
-        opacity:
-            0;
-
-        transform:
-            translateY(10px) scale(0.98);
+        opacity: 0;
     }
 
     to {
-
-        opacity:
-            1;
-
-        transform:
-            translateY(0) scale(1);
+        opacity: 1;
     }
 }
 
-.modal-cabecalho {
+@keyframes aparecerModal {
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(10px);
+    }
 
-    padding:
-        23px 26px;
-
-    border-bottom:
-        1px solid var(--cinza-borda);
-
-    display:
-        flex;
-
-    justify-content:
-        space-between;
-
-    align-items:
-        flex-start;
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
-.modal-etiqueta {
 
-    color:
-        var(--azul);
+/* =========================
+   CELULAR
+========================= */
 
-    font-size:
-        10px;
+@media (max-width: 500px) {
 
-    font-weight:
-        bold;
+    .modal-confirmacao {
+        padding: 25px;
+    }
 
-    letter-spacing:
-        1.2px;
+    .modal-botoes {
+        flex-direction: column;
+    }
+
+    .btn-modal {
+        width: 100%;
+    }
 }
-
-.modal-cabecalho h2 {
-
-    font-size:
-        21px;
-
-    margin:
-        5px 0;
-}
-
-.modal-cabecalho p {
-
-    color:
-        var(--cinza-texto);
-
-    font-size:
-        13px;
-}
-
-.fechar {
-
-    border:
-        none;
-
-    background:
-        transparent;
-
-    font-size:
-        29px;
-
-    color:
-        #667085;
-
-    cursor:
-        pointer;
-
-    line-height:
-        1;
-}
-
-.fechar:hover {
-
-    color:
-        #101828;
-}
-
 
 /* =========================================
    FORMULÁRIO

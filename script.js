@@ -8,11 +8,14 @@
    BANCO TEMPORÁRIO
 ========================================= */
 
-let apolices = JSON.parse(
-    localStorage.getItem("savaApolices")
-) || [];
+let apolices =
+    JSON.parse(
+        localStorage.getItem("savaApolices")
+    ) || [];
 
 let apoliceAtualId = null;
+
+let apoliceExclusaoId = null;
 
 let temporizadorNotificacao = null;
 
@@ -26,6 +29,9 @@ const modalCadastro =
 
 const modalDetalhes =
     document.getElementById("modalDetalhes");
+
+const modalExcluir =
+    document.getElementById("modalExcluir");
 
 const formulario =
     document.getElementById("formApolice");
@@ -56,12 +62,11 @@ function abrirCadastro() {
 
     modalCadastro.classList.add("ativo");
 
-    setTimeout(function() {
+    setTimeout(function () {
 
         document.getElementById("cliente").focus();
 
     }, 100);
-
 }
 
 
@@ -72,7 +77,6 @@ function abrirCadastro() {
 function fecharCadastro() {
 
     modalCadastro.classList.remove("ativo");
-
 }
 
 
@@ -85,17 +89,28 @@ function fecharDetalhes() {
     modalDetalhes.classList.remove("ativo");
 
     apoliceAtualId = null;
-
 }
 
 
 /* =========================================
-   CLICAR FORA DO MODAL
+   FECHAR MODAL EXCLUSÃO
+========================================= */
+
+function fecharModalExcluir() {
+
+    modalExcluir.classList.remove("ativo");
+
+    apoliceExclusaoId = null;
+}
+
+
+/* =========================================
+   CLICAR FORA DOS MODAIS
 ========================================= */
 
 modalCadastro.addEventListener(
     "click",
-    function(event) {
+    function (event) {
 
         if (event.target === modalCadastro) {
 
@@ -109,13 +124,49 @@ modalCadastro.addEventListener(
 
 modalDetalhes.addEventListener(
     "click",
-    function(event) {
+    function (event) {
 
         if (event.target === modalDetalhes) {
 
             fecharDetalhes();
 
         }
+
+    }
+);
+
+
+modalExcluir.addEventListener(
+    "click",
+    function (event) {
+
+        if (event.target === modalExcluir) {
+
+            fecharModalExcluir();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   ESC FECHA MODAIS
+========================================= */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (event.key !== "Escape") {
+            return;
+        }
+
+        fecharCadastro();
+
+        fecharDetalhes();
+
+        fecharModalExcluir();
 
     }
 );
@@ -129,7 +180,7 @@ document
     .getElementById("telefone")
     .addEventListener(
         "input",
-        function(event) {
+        function (event) {
 
             let telefone =
                 event.target.value.replace(/\D/g, "");
@@ -184,7 +235,7 @@ document
 
 formulario.addEventListener(
     "submit",
-    function(event) {
+    function (event) {
 
         event.preventDefault();
 
@@ -269,7 +320,7 @@ formulario.addEventListener(
 
             const indice =
                 apolices.findIndex(
-                    function(apolice) {
+                    function (apolice) {
 
                         return String(apolice.id) ===
                             String(idEdicao);
@@ -304,11 +355,13 @@ formulario.addEventListener(
                 apolices[indice].alertas =
                     alertas;
 
+
                 salvarDados();
 
                 atualizarSistema();
 
                 fecharCadastro();
+
 
                 mostrarNotificacao(
                     "Apólice atualizada!",
@@ -377,7 +430,7 @@ formulario.addEventListener(
 
 
         mostrarNotificacao(
-            "Apólice cadastrada com sucesso!",
+            "Apólice cadastrada!",
             `${cliente} foi adicionado à Central de Renovações.`
         );
 
@@ -395,7 +448,6 @@ function salvarDados() {
         "savaApolices",
         JSON.stringify(apolices)
     );
-
 }
 
 
@@ -404,6 +456,10 @@ function salvarDados() {
 ========================================= */
 
 function calcularDias(data) {
+
+    if (!data) {
+        return 99999;
+    }
 
     const hoje =
         new Date();
@@ -438,7 +494,6 @@ function calcularDias(data) {
         diferenca /
         (1000 * 60 * 60 * 24)
     );
-
 }
 
 
@@ -465,7 +520,6 @@ function formatarData(data) {
         "/" +
         partes[0]
     );
-
 }
 
 
@@ -550,7 +604,6 @@ function descobrirStatus(apolice) {
             "status-normal"
 
     };
-
 }
 
 
@@ -570,7 +623,7 @@ function atualizarContadores() {
 
 
     apolices.forEach(
-        function(apolice) {
+        function (apolice) {
 
             const dias =
                 calcularDias(
@@ -643,7 +696,6 @@ function atualizarContadores() {
         "vencidas"
     ).textContent =
         vencidas;
-
 }
 
 
@@ -702,7 +754,7 @@ function renderizarApolices(
 
     const listaOrdenada =
         [...lista].sort(
-            function(a, b) {
+            function (a, b) {
 
                 return new Date(
                     a.dataVencimento
@@ -716,7 +768,7 @@ function renderizarApolices(
 
 
     listaOrdenada.forEach(
-        function(apolice) {
+        function (apolice) {
 
             const status =
                 descobrirStatus(
@@ -742,38 +794,30 @@ function renderizarApolices(
 
 
                 <td>
-
                     ${escaparHTML(
                         apolice.tipoSeguro
                     )}
-
                 </td>
 
 
                 <td>
-
                     ${escaparHTML(
                         apolice.seguradora
                     )}
-
                 </td>
 
 
                 <td>
-
                     ${escaparHTML(
                         apolice.numeroApolice
                     )}
-
                 </td>
 
 
                 <td>
-
                     ${formatarData(
                         apolice.dataVencimento
                     )}
-
                 </td>
 
 
@@ -831,7 +875,6 @@ function renderizarApolices(
 
         }
     );
-
 }
 
 
@@ -858,35 +901,35 @@ function buscarApolice() {
 
     const resultado =
         apolices.filter(
-            function(apolice) {
+            function (apolice) {
 
                 return (
 
-                    apolice.cliente
+                    String(apolice.cliente || "")
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    apolice.numeroApolice
+                    String(apolice.numeroApolice || "")
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    apolice.telefone
+                    String(apolice.telefone || "")
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    apolice.seguradora
+                    String(apolice.seguradora || "")
                         .toLowerCase()
                         .includes(termo)
 
                     ||
 
-                    apolice.tipoSeguro
+                    String(apolice.tipoSeguro || "")
                         .toLowerCase()
                         .includes(termo)
 
@@ -899,7 +942,6 @@ function buscarApolice() {
     renderizarApolices(
         resultado
     );
-
 }
 
 
@@ -911,7 +953,7 @@ function abrirDetalhes(id) {
 
     const apolice =
         apolices.find(
-            function(item) {
+            function (item) {
 
                 return item.id === id;
 
@@ -1030,7 +1072,6 @@ function abrirDetalhes(id) {
     modalDetalhes.classList.add(
         "ativo"
     );
-
 }
 
 
@@ -1049,28 +1090,38 @@ function mostrarAlertasDetalhes(apolice) {
     container.innerHTML = "";
 
 
+    const alertasSalvos =
+        apolice.alertas || {};
+
+
     const alertas = [
 
         {
             nome: "30 dias antes",
-            ativo: apolice.alertas.dias30
+            ativo: Boolean(
+                alertasSalvos.dias30
+            )
         },
 
         {
             nome: "15 dias antes",
-            ativo: apolice.alertas.dias15
+            ativo: Boolean(
+                alertasSalvos.dias15
+            )
         },
 
         {
             nome: "7 dias antes",
-            ativo: apolice.alertas.dias7
+            ativo: Boolean(
+                alertasSalvos.dias7
+            )
         }
 
     ];
 
 
     alertas.forEach(
-        function(alerta) {
+        function (alerta) {
 
             const div =
                 document.createElement("div");
@@ -1108,7 +1159,6 @@ function mostrarAlertasDetalhes(apolice) {
 
         }
     );
-
 }
 
 
@@ -1120,7 +1170,7 @@ function editarApolice(id) {
 
     const apolice =
         apolices.find(
-            function(item) {
+            function (item) {
 
                 return item.id === id;
 
@@ -1133,6 +1183,10 @@ function editarApolice(id) {
         return;
 
     }
+
+
+    const alertas =
+        apolice.alertas || {};
 
 
     document.getElementById(
@@ -1186,19 +1240,19 @@ function editarApolice(id) {
     document.getElementById(
         "alerta30"
     ).checked =
-        apolice.alertas.dias30;
+        Boolean(alertas.dias30);
 
 
     document.getElementById(
         "alerta15"
     ).checked =
-        apolice.alertas.dias15;
+        Boolean(alertas.dias15);
 
 
     document.getElementById(
         "alerta7"
     ).checked =
-        apolice.alertas.dias7;
+        Boolean(alertas.dias7);
 
 
     document.getElementById(
@@ -1215,7 +1269,6 @@ function editarApolice(id) {
     modalCadastro.classList.add(
         "ativo"
     );
-
 }
 
 
@@ -1232,19 +1285,18 @@ function editarApoliceAtual() {
         );
 
     }
-
 }
 
 
 /* =========================================
-   EXCLUIR
+   ABRIR MODAL DE EXCLUSÃO
 ========================================= */
 
 function excluirApolice(id) {
 
     const apolice =
         apolices.find(
-            function(item) {
+            function (item) {
 
                 return item.id === id;
 
@@ -1259,24 +1311,84 @@ function excluirApolice(id) {
     }
 
 
-    const confirmar =
-        confirm(
-            `Tem certeza que deseja excluir a apólice de ${apolice.cliente}?\n\nEssa ação não poderá ser desfeita.`
-        );
+    apoliceExclusaoId =
+        id;
 
 
-    if (!confirmar) {
+    document.getElementById(
+        "clienteExclusao"
+    ).textContent =
+        apolice.cliente;
+
+
+    modalExcluir.classList.add(
+        "ativo"
+    );
+}
+
+
+/* =========================================
+   EXCLUIR PELOS DETALHES
+========================================= */
+
+function excluirApoliceAtual() {
+
+    if (!apoliceAtualId) {
 
         return;
 
     }
 
 
+    excluirApolice(
+        apoliceAtualId
+    );
+}
+
+
+/* =========================================
+   CONFIRMAR EXCLUSÃO
+========================================= */
+
+function confirmarExclusao() {
+
+    if (!apoliceExclusaoId) {
+
+        return;
+
+    }
+
+
+    const apolice =
+        apolices.find(
+            function (item) {
+
+                return item.id ===
+                    apoliceExclusaoId;
+
+            }
+        );
+
+
+    if (!apolice) {
+
+        fecharModalExcluir();
+
+        return;
+
+    }
+
+
+    const nomeCliente =
+        apolice.cliente;
+
+
     apolices =
         apolices.filter(
-            function(item) {
+            function (item) {
 
-                return item.id !== id;
+                return item.id !==
+                    apoliceExclusaoId;
 
             }
         );
@@ -1287,33 +1399,28 @@ function excluirApolice(id) {
     atualizarSistema();
 
 
-    mostrarNotificacao(
-        "Apólice removida",
-        `O cadastro de ${apolice.cliente} foi removido da central.`
-    );
-
-}
+    const eraDetalhes =
+        apoliceAtualId ===
+        apoliceExclusaoId;
 
 
-/* =========================================
-   EXCLUIR PELOS DETALHES
-========================================= */
+    fecharModalExcluir();
 
-function excluirApoliceAtual() {
 
-    if (apoliceAtualId) {
-
-        const id =
-            apoliceAtualId;
+    if (eraDetalhes) {
 
         fecharDetalhes();
 
-        excluirApolice(
-            id
-        );
-
     }
 
+
+    apoliceAtualId = null;
+
+
+    mostrarNotificacao(
+        "Apólice removida",
+        `O cadastro de ${nomeCliente} foi removido da central.`
+    );
 }
 
 
@@ -1325,9 +1432,10 @@ function abrirWhatsAppAtual() {
 
     const apolice =
         apolices.find(
-            function(item) {
+            function (item) {
 
-                return item.id === apoliceAtualId;
+                return item.id ===
+                    apoliceAtualId;
 
             }
         );
@@ -1363,9 +1471,7 @@ function abrirWhatsAppAtual() {
         );
 
 
-    const mensagem =
-
-`Olá! 👋
+    const mensagem = `Olá! 👋
 
 Aqui é da SAVA Seguros.
 
@@ -1377,12 +1483,12 @@ Gostaríamos de entrar em contato sobre a apólice do cliente ${apolice.cliente}
 📅 Vencimento: ${formatarData(apolice.dataVencimento)}
 
 ⏳ Prazo: ${
-    dias === 0
-        ? "vence hoje"
-        : dias > 0
-            ? `faltam ${dias} dias`
-            : "apólice vencida"
-}
+        dias === 0
+            ? "vence hoje"
+            : dias > 0
+                ? `faltam ${dias} dias`
+                : "apólice vencida"
+    }
 
 Podemos conversar sobre a renovação?
 
@@ -1397,7 +1503,6 @@ SAVA Seguros`;
         url,
         "_blank"
     );
-
 }
 
 
@@ -1440,14 +1545,13 @@ function mostrarNotificacao(
 
     temporizadorNotificacao =
         setTimeout(
-            function() {
+            function () {
 
                 fecharNotificacao();
 
             },
             4500
         );
-
 }
 
 
@@ -1464,7 +1568,6 @@ function fecharNotificacao() {
         .classList.remove(
             "ativo"
         );
-
 }
 
 
@@ -1474,7 +1577,7 @@ function fecharNotificacao() {
 
 function escaparHTML(texto) {
 
-    return String(texto)
+    return String(texto || "")
 
         .replace(
             /&/g,
@@ -1500,7 +1603,6 @@ function escaparHTML(texto) {
             /'/g,
             "&#039;"
         );
-
 }
 
 
@@ -1513,7 +1615,6 @@ function atualizarSistema() {
     atualizarContadores();
 
     renderizarApolices();
-
 }
 
 
@@ -1523,7 +1624,7 @@ function atualizarSistema() {
 
 document.addEventListener(
     "DOMContentLoaded",
-    function() {
+    function () {
 
         atualizarSistema();
 

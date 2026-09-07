@@ -835,6 +835,18 @@ function renderClients(){
                 ＋ Apólice
               </button>
 
+              <button
+                class="action-btn"
+                style="
+                  color:#b42318;
+                  border-color:#fecdca;
+                  background:#fff5f5;
+                "
+                onclick="deleteClient('${c.id}')"
+              >
+                🗑 Excluir
+              </button>
+
             </div>
 
           </article>
@@ -848,7 +860,6 @@ function renderClients(){
         </div>
       `;
 }
-
 function renderPolicies(){
 
   const q=
@@ -1372,20 +1383,20 @@ async function editPolicy(id){
   $("#policyNotes").value=
     p.notes||"";
 
- $("#alert30").checked=
-  p.alerts?.[30]!==false;
+  $("#alert30").checked=
+    p.alerts?.[30]!==false;
 
-$("#alert15").checked=
-  p.alerts?.[15]!==false;
+  $("#alert15").checked=
+    p.alerts?.[15]!==false;
 
-$("#alert7").checked=
-  p.alerts?.[7]!==false;
+  $("#alert7").checked=
+    p.alerts?.[7]!==false;
 
-$("#alert1").checked=
-  p.alerts?.[1]!==false;
+  $("#alert1").checked=
+    p.alerts?.[1]!==false;
 
-$("#alertExpired").checked=
-  p.alerts?.expired!==false;
+  $("#alertExpired").checked=
+    p.alerts?.expired!==false;
 
   if(p.pdfId)
     $("#currentPdfName").textContent=
@@ -1708,7 +1719,6 @@ function changeStatus(id,status){
 
   });
 }
-
 function openDetails(id){
 
   const p=policyById(id);
@@ -1885,6 +1895,18 @@ function openDetails(id){
       </button>
 
       <button
+        class="btn btn-secondary"
+        style="
+          color:#b42318;
+          border-color:#fecdca;
+          background:#fff5f5;
+        "
+        onclick="deletePolicy('${p.id}')"
+      >
+        🗑 Excluir
+      </button>
+
+      <button
         class="btn btn-primary"
         onclick="
           renewPolicy('${p.id}');
@@ -1932,6 +1954,129 @@ function openDetails(id){
   `;
 
   openModal("detailsModal");
+}
+
+async function deletePolicy(id){
+
+  const p=policyById(id);
+
+  if(!p){
+    toast("Apólice não encontrada.");
+    return;
+  }
+
+  const c=clientById(p.clientId);
+
+  const confirmar=confirm(
+    `Tem certeza que deseja excluir esta apólice?\n\n`+
+    `Cliente: ${c?.name||"Cliente"}\n`+
+    `Apólice: ${p.number||"Sem número"}\n`+
+    `Seguro: ${p.type}\n\n`+
+    `O histórico e o PDF desta apólice também serão excluídos.\n`+
+    `Essa ação não pode ser desfeita.`
+  );
+
+  if(!confirmar)
+    return;
+
+  if(p.pdfId){
+    await del("pdfs",p.pdfId);
+    state.pdfs.delete(p.pdfId);
+  }
+
+  const eventos=
+    state.events.filter(
+      e=>e.policyId===id
+    );
+
+  for(const evento of eventos){
+    await del("events",evento.id);
+  }
+
+  state.events=
+    state.events.filter(
+      e=>e.policyId!==id
+    );
+
+  const vinculadas=
+    state.policies.filter(
+      x=>x.renewedFrom===id
+    );
+
+  for(const apolice of vinculadas){
+    apolice.renewedFrom=null;
+    await put("policies",apolice);
+  }
+
+  await del("policies",id);
+
+  state.policies=
+    state.policies.filter(
+      x=>x.id!==id
+    );
+
+  closeModal("detailsModal");
+
+  renderAll();
+
+  toast(
+    "Apólice excluída com sucesso."
+  );
+}
+
+async function deleteClient(id){
+
+  const c=clientById(id);
+
+  if(!c){
+    toast("Cliente não encontrado.");
+    return;
+  }
+
+  const apolices=
+    state.policies.filter(
+      p=>p.clientId===id
+    );
+
+  if(apolices.length>0){
+
+    alert(
+      `Não é possível excluir este cliente.\n\n`+
+      `${c.name} possui ${apolices.length} `+
+      `apólice${apolices.length===1?"":"s"} cadastrada${apolices.length===1?"":"s"}.\n\n`+
+      `Exclua primeiro as apólices desse cliente.`
+    );
+
+    return;
+  }
+
+  const confirmar=confirm(
+    `Tem certeza que deseja excluir o cliente "${c.name}"?\n\n`+
+    `Essa ação não pode ser desfeita.`
+  );
+
+  if(!confirmar)
+    return;
+
+  await del(
+    "clients",
+    id
+  );
+
+  state.clients=
+    state.clients.filter(
+      x=>x.id!==id
+    );
+
+  closeModal(
+    "clientModal"
+  );
+
+  renderAll();
+
+  toast(
+    "Cliente excluído com sucesso."
+  );
 }
 
 function renewPolicy(id){
@@ -2473,7 +2618,6 @@ function showReport(){
 
   go("relatorios");
 }
-
 function setupEvents(){
 
   $$("[data-view]")
@@ -3066,3 +3210,9 @@ window.manualWhatsApp=
 
 window.sendEmail=
   sendEmail;
+
+window.deletePolicy=
+  deletePolicy;
+
+window.deleteClient=
+  deleteClient;

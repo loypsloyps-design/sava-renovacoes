@@ -104,10 +104,22 @@ const iso=d=>{
   ).toISOString().slice(0,10)
 };
 
-const daysUntil=d=>
-  Math.ceil(
-    (new Date(d+"T23:59:59")-today())/86400000
+const daysUntil = d => {
+  if (!d) return 0;
+
+  const [year, month, day] = d.split("-").map(Number);
+
+  const target = Date.UTC(year, month - 1, day);
+
+  const now = new Date();
+  const current = Date.UTC(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
   );
+
+  return Math.round((target - current) / 86400000);
+};
 
 const initials=n=>
   (n||"?")

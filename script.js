@@ -1,2315 +1,3056 @@
-/* =========================================================
-   SAVA SEGUROS
-   CENTRAL DE RENOVAÇÕES
-   JAVASCRIPT
-========================================================= */
-
-
-/* =========================================================
-   BANCO TEMPORÁRIO
-========================================================= */
-
-let apolices =
-    JSON.parse(
-        localStorage.getItem("savaApolices")
-    ) || [];
-
-let apoliceAtualId = null;
-
-let apoliceExclusaoId = null;
-
-let temporizadorNotificacao = null;
-
-
-/* =========================================================
-   ELEMENTOS
-========================================================= */
-
-const modalCadastro =
-    document.getElementById("modalCadastro");
-
-const modalDetalhes =
-    document.getElementById("modalDetalhes");
-
-const modalExcluir =
-    document.getElementById("modalExcluir");
-
-const modalSobre =
-    document.getElementById("modalSobre");
-
-const formulario =
-    document.getElementById("formApolice");
-
-const listaApolices =
-    document.getElementById("listaApolices");
-
-const campoBusca =
-    document.getElementById("campoBusca");
-
-
-/* =========================================================
-   ABRIR CADASTRO
-========================================================= */
-
-function abrirCadastro() {
-
-    formulario.reset();
-
-    document.getElementById("idEdicao").value = "";
-
-    document.getElementById("tituloModal").textContent =
-        "Nova Apólice";
-
-    document.getElementById("alerta30").checked = true;
-    document.getElementById("alerta15").checked = true;
-    document.getElementById("alerta7").checked = true;
-
-    modalCadastro.classList.add("ativo");
-
-    setTimeout(function () {
-
-        document
-            .getElementById("cliente")
-            .focus();
-
-    }, 150);
-}
-
-
-/* =========================================================
-   FECHAR CADASTRO
-========================================================= */
-
-function fecharCadastro() {
-
-    modalCadastro.classList.remove("ativo");
-}
-
-
-/* =========================================================
-   FECHAR DETALHES
-========================================================= */
-
-function fecharDetalhes() {
-
-    modalDetalhes.classList.remove("ativo");
-
-    apoliceAtualId = null;
-}
-
-
-/* =========================================================
-   ABRIR SOBRE
-========================================================= */
-
-function mostrarSobre() {
-
-    modalSobre.classList.add("ativo");
-}
-
-function fecharSobre() {
-
-    modalSobre.classList.remove("ativo");
-}
-
-
-/* =========================================================
-   CLICAR FORA DOS MODAIS
-========================================================= */
-
-modalCadastro.addEventListener(
-    "click",
-    function (event) {
-
-        if (event.target === modalCadastro) {
-
-            fecharCadastro();
-
-        }
-
-    }
-);
-
-
-modalDetalhes.addEventListener(
-    "click",
-    function (event) {
-
-        if (event.target === modalDetalhes) {
-
-            fecharDetalhes();
-
-        }
-
-    }
-);
-
-
-modalExcluir.addEventListener(
-    "click",
-    function (event) {
-
-        if (event.target === modalExcluir) {
-
-            fecharModalExcluir();
-
-        }
-
-    }
-);
-
-
-modalSobre.addEventListener(
-    "click",
-    function (event) {
-
-        if (event.target === modalSobre) {
-
-            fecharSobre();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   ESC FECHA MODAL
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (event.key !== "Escape") {
-            return;
-        }
-
-        fecharCadastro();
-        fecharDetalhes();
-        fecharModalExcluir();
-        fecharSobre();
-
-    }
-);
-
-
-/* =========================================================
-   TELEFONE
-========================================================= */
-
-document
-    .getElementById("telefone")
-    .addEventListener(
-        "input",
-        function (event) {
-
-            let telefone =
-                event.target.value
-                    .replace(/\D/g, "");
-
-            if (telefone.length > 11) {
-
-                telefone =
-                    telefone.substring(0, 11);
-
-            }
-
-            if (telefone.length <= 10) {
-
-                telefone =
-                    telefone.replace(
-                        /^(\d{2})(\d)/,
-                        "($1) $2"
-                    );
-
-                telefone =
-                    telefone.replace(
-                        /(\d{4})(\d)/,
-                        "$1-$2"
-                    );
-
-            } else {
-
-                telefone =
-                    telefone.replace(
-                        /^(\d{2})(\d)/,
-                        "($1) $2"
-                    );
-
-                telefone =
-                    telefone.replace(
-                        /(\d{5})(\d)/,
-                        "$1-$2"
-                    );
-
-            }
-
-            event.target.value =
-                telefone;
-
-        }
-    );
-
-
-/* =========================================================
-   SALVAR APÓLICE
-========================================================= */
-
-formulario.addEventListener(
-    "submit",
-    function (event) {
-
-        event.preventDefault();
-
-
-        const cliente =
-            document
-                .getElementById("cliente")
-                .value
-                .trim();
-
-
-        const telefone =
-            document
-                .getElementById("telefone")
-                .value
-                .trim();
-
-
-        const numeroApolice =
-            document
-                .getElementById("numeroApolice")
-                .value
-                .trim();
-
-
-        const seguradora =
-            document
-                .getElementById("seguradora")
-                .value;
-
-
-        const tipoSeguro =
-            document
-                .getElementById("tipoSeguro")
-                .value;
-
-
-        const dataVencimento =
-            document
-                .getElementById("dataVencimento")
-                .value;
-
-
-        const observacoes =
-            document
-                .getElementById("observacoes")
-                .value
-                .trim();
-
-
-        const alertas = {
-
-            dias30:
-                document
-                    .getElementById("alerta30")
-                    .checked,
-
-            dias15:
-                document
-                    .getElementById("alerta15")
-                    .checked,
-
-            dias7:
-                document
-                    .getElementById("alerta7")
-                    .checked
-
-        };
-
-
-        const idEdicao =
-            document
-                .getElementById("idEdicao")
-                .value;
-
-
-        /* =========================================
-           EDIÇÃO
-        ========================================== */
-
-        if (idEdicao) {
-
-            const indice =
-                apolices.findIndex(
-                    function (apolice) {
-
-                        return String(apolice.id) ===
-                            String(idEdicao);
-
-                    }
-                );
-
-
-            if (indice !== -1) {
-
-                apolices[indice].cliente =
-                    cliente;
-
-                apolices[indice].telefone =
-                    telefone;
-
-                apolices[indice].numeroApolice =
-                    numeroApolice;
-
-                apolices[indice].seguradora =
-                    seguradora;
-
-                apolices[indice].tipoSeguro =
-                    tipoSeguro;
-
-                apolices[indice].dataVencimento =
-                    dataVencimento;
-
-                apolices[indice].observacoes =
-                    observacoes;
-
-                apolices[indice].alertas =
-                    alertas;
-
-
-                salvarDados();
-
-                atualizarSistema();
-
-                fecharCadastro();
-
-
-                mostrarNotificacao(
-                    "Apólice atualizada!",
-                    `Os dados de ${cliente} foram atualizados com sucesso.`
-                );
-
-                return;
-            }
-        }
-
-
-        /* =========================================
-           NOVA APÓLICE
-        ========================================== */
-
-        const novaApolice = {
-
-            id:
-                Date.now(),
-
-            cliente:
-                cliente,
-
-            telefone:
-                telefone,
-
-            numeroApolice:
-                numeroApolice,
-
-            seguradora:
-                seguradora,
-
-            tipoSeguro:
-                tipoSeguro,
-
-            dataVencimento:
-                dataVencimento,
-
-            observacoes:
-                observacoes,
-
-            alertas:
-                alertas,
-
-            status:
-                "Pendente",
-
-            criadaEm:
-                new Date().toISOString()
-
-        };
-
-
-        apolices.push(
-            novaApolice
-        );
-
-
-        salvarDados();
-
-        atualizarSistema();
-
-        fecharCadastro();
-
-
-        mostrarNotificacao(
-            "Apólice cadastrada!",
-            `${cliente} foi adicionado à Central de Renovações.`
-        );
-
-    }
-);
-
-
-/* =========================================================
-   SALVAR DADOS
-========================================================= */
-
-function salvarDados() {
-
-    localStorage.setItem(
-        "savaApolices",
-        JSON.stringify(apolices)
-    );
-}
-
-
-/* =========================================================
-   CALCULAR DIAS
-========================================================= */
-
-function calcularDias(data) {
-
-    if (!data) {
-        return 99999;
-    }
-
-    const hoje =
-        new Date();
-
-    hoje.setHours(
-        0,
-        0,
-        0,
-        0
-    );
-
-
-    const vencimento =
-        new Date(
-            data + "T00:00:00"
-        );
-
-    vencimento.setHours(
-        0,
-        0,
-        0,
-        0
-    );
-
-
-    const diferenca =
-        vencimento.getTime() -
-        hoje.getTime();
-
-
-    return Math.ceil(
-        diferenca /
-        (1000 * 60 * 60 * 24)
-    );
-}
-
-
-/* =========================================================
-   FORMATAR DATA
-========================================================= */
-
-function formatarData(data) {
-
-    if (!data) {
-        return "-";
-    }
-
-    const partes =
-        data.split("-");
-
-
-    return (
-        partes[2] +
-        "/" +
-        partes[1] +
-        "/" +
-        partes[0]
-    );
-}
-
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-function descobrirStatus(apolice) {
-
-    const dias =
-        calcularDias(
-            apolice.dataVencimento
-        );
-
-
-    if (dias < 0) {
-
-        return {
-
-            texto:
-                "Vencida",
-
-            classe:
-                "status-vencida"
-
-        };
-    }
-
-
-    if (dias === 0) {
-
-        return {
-
-            texto:
-                "Vence hoje",
-
-            classe:
-                "status-hoje"
-
-        };
-    }
-
-
-    if (dias <= 7) {
-
-        return {
-
-            texto:
-                `Vence em ${dias} dia${dias === 1 ? "" : "s"}`,
-
-            classe:
-                "status-urgente"
-
-        };
-    }
-
-
-    if (dias <= 30) {
-
-        return {
-
-            texto:
-                `Vence em ${dias} dias`,
-
-            classe:
-                "status-atencao"
-
-        };
-    }
-
-
-    return {
-
-        texto:
-            "Vigente",
-
-        classe:
-            "status-normal"
-
+/* SAVA CRM - versão do zero
+   Persistência: IndexedDB para dados + PDFs.
+   Migração: importa automaticamente o antigo localStorage savaApolices.
+*/
+
+const DB_NAME="savaCRMv2", DB_VERSION=1;
+
+const TYPES=[
+"Auto",
+"Auto Frota",
+"Residencial",
+"Empresarial",
+"Vida PJ",
+"Vida PF",
+"RC Cyber",
+"RC Profissional",
+"RC Obra",
+"RC Médico",
+"Fiança Locatícia",
+"Garantia",
+"Transporte",
+"Viagem",
+"Vida AP",
+"Evento",
+"D&O",
+"Bike",
+"Bike Elétrica",
+"Vida",
+"Outro"
+];
+
+const INSURERS=[
+"Porto Seguro",
+"Tokio Marine",
+"Azul Seguros",
+"Allianz",
+"HDI Seguros",
+"Mapfre",
+"Bradesco Seguros",
+"Zurich",
+"Suhai",
+"Sompo",
+"Liberty",
+"Itaú Seguros",
+"SulAmérica",
+"Mitsui Sumitomo",
+"Chubb",
+"AXA",
+"Generali",
+"Zurich Santander",
+"MAG Seguros",
+"Prudential",
+"MetLife",
+"Icatu",
+"Pottencial",
+"Junto Seguros",
+"Essor",
+"Fairfax",
+"Argo Seguros",
+"Akad Seguros",
+"Excelsior",
+"Too Seguros",
+"Alfa Seguradora",
+"Austral",
+"Sancor",
+"Kovr",
+"Newe",
+"Outra"
+];
+
+const state={
+  clients:[],
+  policies:[],
+  settings:{
+    user:"admin",
+    pass:"sava123",
+    endpoint:"",
+    managerEmail:"",
+    language:"pt-BR"
+  },
+  events:[],
+  pdfs:new Map(),
+  db:null
+};
+
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+
+const fmtDate=d=>
+  d
+    ?new Intl.DateTimeFormat("pt-BR").format(new Date(d+"T12:00:00"))
+    :"—";
+
+const today=()=>{
+  const d=new Date();
+  d.setHours(0,0,0,0);
+  return d
+};
+
+const iso=d=>{
+  const x=new Date(d);
+  return new Date(
+    x.getTime()-x.getTimezoneOffset()*60000
+  ).toISOString().slice(0,10)
+};
+
+const daysUntil=d=>
+  Math.ceil(
+    (new Date(d+"T23:59:59")-today())/86400000
+  );
+
+const initials=n=>
+  (n||"?")
+    .split(" ")
+    .slice(0,2)
+    .map(x=>x[0])
+    .join("")
+    .toUpperCase();
+
+const esc=s=>
+  String(s??"").replace(
+    /[&<>"']/g,
+    m=>({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[m])
+  );
+
+const uid=()=>
+  crypto.randomUUID
+    ?crypto.randomUUID()
+    :Date.now()+"-"+Math.random();
+
+function openDB(){
+
+  return new Promise((resolve,reject)=>{
+
+    const r=indexedDB.open(DB_NAME,DB_VERSION);
+
+    r.onupgradeneeded=e=>{
+
+      const db=e.target.result;
+
+      if(!db.objectStoreNames.contains("clients"))
+        db.createObjectStore("clients",{keyPath:"id"});
+
+      if(!db.objectStoreNames.contains("policies"))
+        db.createObjectStore("policies",{keyPath:"id"});
+
+      if(!db.objectStoreNames.contains("events"))
+        db.createObjectStore("events",{keyPath:"id"});
+
+      if(!db.objectStoreNames.contains("settings"))
+        db.createObjectStore("settings",{keyPath:"id"});
+
+      if(!db.objectStoreNames.contains("pdfs"))
+        db.createObjectStore("pdfs",{keyPath:"id"});
     };
+
+    r.onsuccess=()=>resolve(r.result);
+    r.onerror=()=>reject(r.error);
+
+  });
 }
 
-
-/* =========================================================
-   CONTADORES
-========================================================= */
-
-function atualizarContadores() {
-
-    let vencemHoje = 0;
-
-    let proximos7 = 0;
-
-    let proximos30 = 0;
-
-    let vencidas = 0;
-
-    let vigentes = 0;
-
-
-    apolices.forEach(
-        function (apolice) {
-
-            const dias =
-                calcularDias(
-                    apolice.dataVencimento
-                );
-
-
-            if (dias === 0) {
-                vencemHoje++;
-            }
-
-
-            if (
-                dias >= 1 &&
-                dias <= 7
-            ) {
-                proximos7++;
-            }
-
-
-            if (
-                dias >= 1 &&
-                dias <= 30
-            ) {
-                proximos30++;
-            }
-
-
-            if (dias < 0) {
-                vencidas++;
-            }
-
-
-            if (dias > 30) {
-                vigentes++;
-            }
-
-        }
-    );
-
-
-    document.getElementById(
-        "totalApolices"
-    ).textContent =
-        apolices.length;
-
-
-    document.getElementById(
-        "vencemHoje"
-    ).textContent =
-        vencemHoje;
-
-
-    document.getElementById(
-        "proximos7"
-    ).textContent =
-        proximos7;
-
-
-    document.getElementById(
-        "proximos30"
-    ).textContent =
-        proximos30;
-
-
-    document.getElementById(
-        "totalVigentes"
-    ).textContent =
-        vigentes;
-
-
-    document.getElementById(
-        "totalAtencao"
-    ).textContent =
-        proximos30;
-
-
-    document.getElementById(
-        "totalUrgentes"
-    ).textContent =
-        proximos7 + vencemHoje;
-
-
-    document.getElementById(
-        "totalVencidasResumo"
-    ).textContent =
-        vencidas;
-
-
-    document.getElementById(
-        "badgeRenovacoes"
-    ).textContent =
-        proximos7 + vencemHoje;
+function tx(store,mode="readonly"){
+  return state.db
+    .transaction(store,mode)
+    .objectStore(store)
 }
 
+function getAll(store){
 
-/* =========================================================
-   RENDERIZAR TABELA
-========================================================= */
+  return new Promise((res,rej)=>{
 
-function renderizarApolices(
-    lista = apolices
-) {
+    const r=tx(store).getAll();
 
-    listaApolices.innerHTML = "";
+    r.onsuccess=()=>res(r.result);
+    r.onerror=()=>rej(r.error);
 
+  });
 
-    if (lista.length === 0) {
-
-        listaApolices.innerHTML = `
-
-            <tr>
-
-                <td colspan="7">
-
-                    <div class="estado-vazio">
-
-                        <div class="icone-vazio">
-                            <i class="fa-regular fa-file"></i>
-                        </div>
-
-                        <h3>
-                            Nenhuma apólice encontrada
-                        </h3>
-
-                        <p>
-                            Cadastre uma apólice ou altere sua busca.
-                        </p>
-
-                        <button
-                            class="btn-vazio"
-                            onclick="abrirCadastro()"
-                        >
-                            + Nova Apólice
-                        </button>
-
-                    </div>
-
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-    }
-
-
-    const listaOrdenada =
-        [...lista].sort(
-            function (a, b) {
-
-                return new Date(
-                    a.dataVencimento
-                ) -
-                new Date(
-                    b.dataVencimento
-                );
-
-            }
-        );
-
-
-    listaOrdenada.forEach(
-        function (apolice) {
-
-            const status =
-                descobrirStatus(
-                    apolice
-                );
-
-
-            const linha =
-                document.createElement("tr");
-
-
-            linha.innerHTML = `
-
-                <td>
-
-                    <strong>
-                        ${escaparHTML(
-                            apolice.cliente
-                        )}
-                    </strong>
-
-                </td>
-
-
-                <td>
-
-                    ${escaparHTML(
-                        apolice.tipoSeguro
-                    )}
-
-                </td>
-
-
-                <td>
-
-                    ${escaparHTML(
-                        apolice.seguradora
-                    )}
-
-                </td>
-
-
-                <td>
-
-                    ${escaparHTML(
-                        apolice.numeroApolice
-                    )}
-
-                </td>
-
-
-                <td>
-
-                    ${formatarData(
-                        apolice.dataVencimento
-                    )}
-
-                </td>
-
-
-                <td>
-
-                    <span
-                        class="status ${status.classe}"
-                    >
-                        ${status.texto}
-                    </span>
-
-                </td>
-
-
-                <td>
-
-                    <div class="acoes-tabela">
-
-                        <button
-                            class="btn-acao"
-                            title="Ver detalhes"
-                            onclick="abrirDetalhes(${apolice.id})"
-                        >
-                            <i class="fa-regular fa-eye"></i>
-                        </button>
-
-
-                        <button
-                            class="btn-acao"
-                            title="Editar"
-                            onclick="editarApolice(${apolice.id})"
-                        >
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-
-
-                        <button
-                            class="btn-acao"
-                            title="Excluir"
-                            onclick="abrirConfirmacaoExclusao(${apolice.id})"
-                        >
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-
-                    </div>
-
-                </td>
-
-            `;
-
-
-            listaApolices.appendChild(
-                linha
-            );
-
-        }
-    );
 }
 
+function put(store,obj){
 
-/* =========================================================
-   BUSCA
-========================================================= */
+  return new Promise((res,rej)=>{
 
-function buscarApolice() {
+    const r=tx(store,"readwrite").put(obj);
 
-    const termo =
-        campoBusca.value
-            .toLowerCase()
-            .trim();
+    r.onsuccess=()=>res(r.result);
+    r.onerror=()=>rej(r.error);
 
+  });
 
-    if (!termo) {
-
-        renderizarApolices();
-
-        return;
-    }
-
-
-    const resultado =
-        apolices.filter(
-            function (apolice) {
-
-                return (
-
-                    String(apolice.cliente || "")
-                        .toLowerCase()
-                        .includes(termo)
-
-                    ||
-
-                    String(apolice.numeroApolice || "")
-                        .toLowerCase()
-                        .includes(termo)
-
-                    ||
-
-                    String(apolice.telefone || "")
-                        .toLowerCase()
-                        .includes(termo)
-
-                    ||
-
-                    String(apolice.seguradora || "")
-                        .toLowerCase()
-                        .includes(termo)
-
-                    ||
-
-                    String(apolice.tipoSeguro || "")
-                        .toLowerCase()
-                        .includes(termo)
-
-                );
-
-            }
-        );
-
-
-    renderizarApolices(
-        resultado
-    );
 }
 
+function del(store,id){
 
-/* =========================================================
-   ABRIR DETALHES
-========================================================= */
+  return new Promise((res,rej)=>{
 
-function abrirDetalhes(id) {
+    const r=tx(store,"readwrite").delete(id);
 
-    const apolice =
-        apolices.find(
-            function (item) {
+    r.onsuccess=()=>res();
+    r.onerror=()=>rej(r.error);
 
-                return String(item.id) ===
-                    String(id);
+  });
 
-            }
-        );
-
-
-    if (!apolice) {
-        return;
-    }
-
-
-    apoliceAtualId =
-        apolice.id;
-
-
-    const dias =
-        calcularDias(
-            apolice.dataVencimento
-        );
-
-
-    const status =
-        descobrirStatus(
-            apolice
-        );
-
-
-    document.getElementById(
-        "detalhesCliente"
-    ).textContent =
-        apolice.cliente;
-
-
-    document.getElementById(
-        "detalhesStatus"
-    ).innerHTML = `
-
-        <span class="status ${status.classe}">
-            ${status.texto}
-        </span>
-
-    `;
-
-
-    document.getElementById(
-        "detalhesTelefone"
-    ).textContent =
-        apolice.telefone || "-";
-
-
-    document.getElementById(
-        "detalhesApolice"
-    ).textContent =
-        apolice.numeroApolice || "-";
-
-
-    document.getElementById(
-        "detalhesSeguradora"
-    ).textContent =
-        apolice.seguradora || "-";
-
-
-    document.getElementById(
-        "detalhesSeguro"
-    ).textContent =
-        apolice.tipoSeguro || "-";
-
-
-    document.getElementById(
-        "detalhesVencimento"
-    ).textContent =
-        formatarData(
-            apolice.dataVencimento
-        );
-
-
-    if (dias < 0) {
-
-        document.getElementById(
-            "detalhesDias"
-        ).textContent =
-            `${Math.abs(dias)} dias atrasada`;
-
-    } else if (dias === 0) {
-
-        document.getElementById(
-            "detalhesDias"
-        ).textContent =
-            "Vence hoje";
-
-    } else {
-
-        document.getElementById(
-            "detalhesDias"
-        ).textContent =
-            `${dias} dias`;
-
-    }
-
-
-    document.getElementById(
-        "detalhesObservacoes"
-    ).textContent =
-        apolice.observacoes ||
-        "Nenhuma observação cadastrada.";
-
-
-    mostrarAlertasDetalhes(
-        apolice
-    );
-
-
-    modalDetalhes.classList.add(
-        "ativo"
-    );
 }
 
+async function load(){
 
-/* =========================================================
-   ALERTAS DOS DETALHES
-========================================================= */
+  state.db=await openDB();
 
-function mostrarAlertasDetalhes(apolice) {
+  state.clients=await getAll("clients");
 
-    const container =
-        document.getElementById(
-            "detalhesAlertas"
-        );
+  state.policies=await getAll("policies");
 
+  state.events=await getAll("events");
 
-    container.innerHTML = "";
+  const sets=await getAll("settings");
 
+  const s=sets.find(x=>x.id==="main");
 
-    const alertas = [
+  if(s)
+    state.settings={
+      ...state.settings,
+      ...s
+    };
 
-        {
-            nome: "30 dias antes",
-            ativo:
-                apolice.alertas?.dias30 ?? true
+  const pdfs=await getAll("pdfs");
+
+  pdfs.forEach(p=>
+    state.pdfs.set(p.id,p)
+  );
+
+  await migrateOld();
+
+  renderAll();
+}
+
+async function migrateOld(){
+
+  if(localStorage.getItem("savaCRMv2Migrated"))
+    return;
+
+  let old=[];
+
+  try{
+    old=JSON.parse(
+      localStorage.getItem("savaApolices")||"[]"
+    );
+  }catch{}
+
+  if(old.length){
+
+    for(const a of old){
+
+      let c=state.clients.find(
+        x=>x.name.toLowerCase()===
+        String(a.cliente||"").toLowerCase()
+      );
+
+      if(!c){
+
+        c={
+          id:uid(),
+          name:a.cliente||"Cliente sem nome",
+          birthDate:"",
+          phone:cleanPhone(a.telefone),
+          document:"",
+          email:"",
+          notes:"",
+          createdAt:new Date().toISOString()
+        };
+
+        await put("clients",c);
+
+        state.clients.push(c);
+      }
+
+      const p={
+        id:uid(),
+        clientId:c.id,
+        insurer:a.seguradora||"Outra",
+        type:a.tipoSeguro==="Moto"
+          ?"Auto"
+          :a.tipoSeguro||"Outro",
+        number:a.numeroApolice||"",
+        startDate:a.dataInicio||"",
+        endDate:a.dataVencimento||"",
+        status:a.status||"Pendente",
+        notes:a.observacoes||"",
+        alerts:{
+          30:true,
+          15:true,
+          7:true,
+          1:true,
+          expired:true
         },
+        pdfId:null,
+        renewedFrom:null,
+        createdAt:a.criadaEm||new Date().toISOString(),
+        updatedAt:new Date().toISOString()
+      };
 
-        {
-            nome: "15 dias antes",
-            ativo:
-                apolice.alertas?.dias15 ?? true
-        },
+      await put("policies",p);
 
-        {
-            nome: "7 dias antes",
-            ativo:
-                apolice.alertas?.dias7 ?? true
-        }
+      state.policies.push(p);
+    }
 
-    ];
+    toast(
+      "Dados antigos migrados para a nova versão."
+    );
+  }
 
+  localStorage.setItem(
+    "savaCRMv2Migrated",
+    "1"
+  );
+}
 
-    alertas.forEach(
-        function (alerta) {
+function cleanPhone(v){
+  return String(v||"").replace(/\D/g,"")
+}
 
-            const div =
-                document.createElement("div");
+function validPhone(v){
 
+  const n=cleanPhone(v);
 
-            div.className =
-                "alerta-item";
+  return(
+    (n.length===10||n.length===11)&&
+    !/^(\d)\1+$/.test(n)&&
+    n.startsWith("2")===false
+  )
+  ?true
+  :(n.length===10||n.length===11)&&
+    !/^(\d)\1+$/.test(n);
 
+}
 
-            div.innerHTML = `
+function validBrazilPhone(v){
 
-                <span>
-                    ${alerta.nome}
+  const n=cleanPhone(v);
+
+  if(n.length!==10&&n.length!==11)
+    return false;
+
+  const d=n.slice(-8);
+
+  if(/^(\d)\1+$/.test(n))
+    return false;
+
+  if(/^0/.test(n)||/^1/.test(n))
+    return false;
+
+  return /^[1-9]{2}9?[2-9]\d{7}$/.test(n);
+}
+
+function clientById(id){
+  return state.clients.find(c=>c.id===id)
+}
+
+function policyById(id){
+  return state.policies.find(p=>p.id===id)
+}
+
+function processClass(s){
+  return s==="Ganho"
+    ?"green"
+    :s==="Em andamento"
+      ?"orange"
+      :"gray";
+}
+
+function expiryLabel(p){
+
+  const d=daysUntil(p.endDate);
+
+  if(d<0)
+    return{
+      text:`Vencida há ${Math.abs(d)} dias`,
+      cls:"red"
+    };
+
+  if(d===0)
+    return{
+      text:"Vence hoje",
+      cls:"red"
+    };
+
+  if(d<=7)
+    return{
+      text:`Vence em ${d} dias`,
+      cls:"orange"
+    };
+
+  if(d<=30)
+    return{
+      text:`Vence em ${d} dias`,
+      cls:"orange"
+    };
+
+  return{
+    text:"Vigente",
+    cls:"green"
+  };
+}
+
+function saveSettings(){
+  return put(
+    "settings",
+    {
+      id:"main",
+      ...state.settings
+    }
+  );
+}
+
+function populateSelects(){
+
+  const type=$("#typeFilter");
+  const ins=$("#insurerFilter");
+  const pType=$("#policyType");
+  const pIns=$("#policyInsurer");
+  const pClient=$("#policyClient");
+
+  pType.innerHTML=
+    TYPES
+      .map(x=>`<option>${esc(x)}</option>`)
+      .join("");
+
+  pIns.innerHTML=
+    INSURERS
+      .map(x=>`<option>${esc(x)}</option>`)
+      .join("");
+
+  type.innerHTML=
+    `<option value="all">Todos os tipos</option>`+
+    TYPES
+      .map(x=>`<option>${esc(x)}</option>`)
+      .join("");
+
+  ins.innerHTML=
+    `<option value="all">Todas as seguradoras</option>`+
+    INSURERS
+      .map(x=>`<option>${esc(x)}</option>`)
+      .join("");
+
+  pClient.innerHTML=
+    `<option value="">Selecione...</option>`+
+    state.clients
+      .sort((a,b)=>a.name.localeCompare(b.name))
+      .map(c=>
+        `<option value="${c.id}">
+          ${esc(c.name)}
+        </option>`
+      )
+      .join("");
+}
+
+function renderAll(){
+
+  populateSelects();
+
+  renderDashboard();
+
+  renderClients();
+
+  renderPolicies();
+
+  renderKanban();
+
+  renderConfig();
+
+  checkAutomation();
+}
+
+function renderDashboard(){
+
+  const total=state.policies.length;
+
+  const e7=
+    state.policies.filter(
+      p=>
+        daysUntil(p.endDate)>=0&&
+        daysUntil(p.endDate)<=7
+    ).length;
+
+  const expired=
+    state.policies.filter(
+      p=>daysUntil(p.endDate)<0
+    ).length;
+
+  const won=
+    state.policies.filter(
+      p=>p.status==="Ganho"
+    ).length;
+
+  $("#statTotal").textContent=total;
+
+  $("#stat7").textContent=e7;
+
+  $("#statExpired").textContent=expired;
+
+  $("#statWon").textContent=won;
+
+  const upcoming=
+    [...state.policies]
+      .sort(
+        (a,b)=>
+          new Date(a.endDate)-
+          new Date(b.endDate)
+      )
+      .filter(
+        p=>daysUntil(p.endDate)<=30
+      )
+      .slice(0,8);
+
+  $("#upcomingList").innerHTML=
+    upcoming.length
+      ?upcoming
+        .map(p=>{
+
+          const c=clientById(p.clientId);
+          const e=expiryLabel(p);
+
+          return`
+            <div class="upcoming-item">
+
+              <div>
+                <div class="name">
+                  ${esc(c?.name||"Cliente")}
+                </div>
+
+                <small>
+                  ${esc(p.type)} · ${esc(p.insurer)}
+                </small>
+              </div>
+
+              <div>
+                <small>Vigência</small>
+
+                <b>
+                  ${fmtDate(p.startDate)}
+                  →
+                  ${fmtDate(p.endDate)}
+                </b>
+              </div>
+
+              <div>
+                <span class="pill ${e.cls}">
+                  ${e.text}
                 </span>
+              </div>
 
-                <strong class="${
-                    alerta.ativo
-                        ? "alerta-ativo"
-                        : "alerta-inativo"
-                }">
+              <div class="actions">
 
-                    ${
-                        alerta.ativo
-                            ? "✓ Ativo"
-                            : "Desativado"
-                    }
+                <button
+                  class="action-btn"
+                  onclick="openDetails('${p.id}')"
+                >
+                  Abrir
+                </button>
 
-                </strong>
+              </div>
 
-            `;
+            </div>
+          `
 
+        })
+        .join("")
+      :`
+        <div class="empty">
+          Nenhuma apólice vencendo nos próximos 30 dias.
+        </div>
+      `;
 
-            container.appendChild(
-                div
-            );
+  const counts={
+    Pendente:
+      state.policies.filter(
+        p=>p.status==="Pendente"
+      ).length,
 
-        }
-    );
+    "Em andamento":
+      state.policies.filter(
+        p=>p.status==="Em andamento"
+      ).length,
+
+    Ganho:won
+  };
+
+  const max=Math.max(total,1);
+
+  $("#processSummary").innerHTML=
+    Object.entries(counts)
+      .map(([k,v])=>
+        `
+          <div class="process-line">
+
+            <div class="line-top">
+              <span>${k}</span>
+              <b>${v}</b>
+            </div>
+
+            <div
+              class="bar ${
+                k==="Pendente"
+                  ?"pendente"
+                  :k==="Ganho"
+                    ?"ganho"
+                    :"andamento"
+              }"
+            >
+              <i style="width:${v/max*100}%"></i>
+            </div>
+
+          </div>
+        `
+      )
+      .join("");
+
+  const ic={};
+
+  state.policies.forEach(
+    p=>{
+      ic[p.insurer]=
+        (ic[p.insurer]||0)+1
+    }
+  );
+
+  const top=
+    Object.entries(ic)
+      .sort((a,b)=>b[1]-a[1])
+      .slice(0,10);
+
+  $("#insurerSummary").innerHTML=
+    top.length
+      ?top
+        .map(([k,v])=>
+          `
+            <div class="insurer-chip">
+              <strong>${v}</strong>
+              <span>${esc(k)}</span>
+            </div>
+          `
+        )
+        .join("")
+      :`
+        <div class="empty">
+          Cadastre uma apólice para começar.
+        </div>
+      `;
 }
 
+function renderClients(){
 
-/* =========================================================
-   EDITAR
-========================================================= */
+  const q=
+    ($("#clientSearch")?.value||"")
+      .toLowerCase();
 
-function editarApolice(id) {
+  const f=
+    $("#clientFilter")?.value||
+    "all";
 
-    const apolice =
-        apolices.find(
-            function (item) {
+  let arr=
+    state.clients.filter(c=>{
 
-                return String(item.id) ===
-                    String(id);
+      const ps=
+        state.policies.filter(
+          p=>p.clientId===c.id
+        );
 
+      if(
+        f==="withPolicies"&&
+        !ps.length
+      )
+        return false;
+
+      if(
+        f==="withoutPolicies"&&
+        ps.length
+      )
+        return false;
+
+      return[
+        c.name,
+        c.document,
+        c.phone,
+        c.email
+      ]
+      .join(" ")
+      .toLowerCase()
+      .includes(q);
+    });
+
+  $("#clientsGrid").innerHTML=
+    arr.length
+      ?arr.map(c=>{
+
+        const ps=
+          state.policies.filter(
+            p=>p.clientId===c.id
+          );
+
+        return`
+          <article class="client-card">
+
+            <div class="client-card-head">
+
+              <div class="client-cell">
+
+                <div class="avatar">
+                  ${initials(c.name)}
+                </div>
+
+                <div>
+
+                  <h4>
+                    ${esc(c.name)}
+                  </h4>
+
+                  <small>
+                    ${fmtDate(c.birthDate)}
+                  </small>
+
+                </div>
+
+              </div>
+
+              <span class="policy-count">
+                ${ps.length}
+                apólice${ps.length===1?"":"s"}
+              </span>
+
+            </div>
+
+            <div class="client-meta">
+
+              <span>
+                ☎
+                ${esc(
+                  formatPhone(c.phone)||
+                  "Sem telefone"
+                )}
+              </span>
+
+              <span>
+                ✉
+                ${esc(
+                  c.email||
+                  "Sem e-mail"
+                )}
+              </span>
+
+              <span>
+                ▣
+                ${esc(
+                  c.document||
+                  "Documento não informado"
+                )}
+              </span>
+
+            </div>
+
+            <div class="client-policies">
+
+              ${
+                ps
+                  .slice(0,5)
+                  .map(p=>
+                    `
+                      <div class="mini-policy">
+
+                        <span>
+                          ${esc(p.type)}
+                          ·
+                          ${esc(p.insurer)}
+                        </span>
+
+                        <b>
+                          ${fmtDate(p.endDate)}
+                        </b>
+
+                      </div>
+                    `
+                  )
+                  .join("")
+              }
+
+              ${
+                ps.length>5
+                  ?`
+                    <small>
+                      + ${ps.length-5}
+                      apólice(s)
+                    </small>
+                  `
+                  :""
+              }
+
+            </div>
+
+            <div
+              class="actions"
+              style="margin-top:13px"
+            >
+
+              <button
+                class="action-btn"
+                onclick="openClient('${c.id}')"
+              >
+                Editar
+              </button>
+
+              <button
+                class="action-btn"
+                onclick="newPolicyFor('${c.id}')"
+              >
+                ＋ Apólice
+              </button>
+
+            </div>
+
+          </article>
+        `
+
+      })
+      .join("")
+      :`
+        <div class="empty">
+          Nenhum cliente encontrado.
+        </div>
+      `;
+}
+
+function renderPolicies(){
+
+  const q=
+    ($("#policySearch")?.value||"")
+      .toLowerCase();
+
+  const sf=
+    $("#statusFilter")?.value||
+    "all";
+
+  const ef=
+    $("#expiryFilter")?.value||
+    "all";
+
+  const tf=
+    $("#typeFilter")?.value||
+    "all";
+
+  const inf=
+    $("#insurerFilter")?.value||
+    "all";
+
+  let arr=
+    [...state.policies]
+      .filter(p=>{
+
+        const c=clientById(p.clientId);
+
+        const hay=[
+          c?.name,
+          p.number,
+          p.insurer,
+          p.type
+        ]
+        .join(" ")
+        .toLowerCase();
+
+        if(q&&!hay.includes(q))
+          return false;
+
+        if(
+          sf!=="all"&&
+          p.status!==sf
+        )
+          return false;
+
+        if(
+          tf!=="all"&&
+          p.type!==tf
+        )
+          return false;
+
+        if(
+          inf!=="all"&&
+          p.insurer!==inf
+        )
+          return false;
+
+        const d=daysUntil(p.endDate);
+
+        if(
+          ef==="expired"&&
+          d>=0
+        )
+          return false;
+
+        if(
+          ef!=="all"&&
+          ef!=="expired"&&
+          !(d>=0&&d<=Number(ef))
+        )
+          return false;
+
+        return true;
+
+      })
+      .sort(
+        (a,b)=>
+          new Date(a.endDate)-
+          new Date(b.endDate)
+      );
+
+  $("#policiesTable").innerHTML=
+    arr.length
+      ?arr.map(p=>{
+
+        const c=
+          clientById(p.clientId);
+
+        const e=
+          expiryLabel(p);
+
+        return`
+          <tr>
+
+            <td>
+
+              <div class="client-cell">
+
+                <div class="avatar">
+                  ${initials(c?.name)}
+                </div>
+
+                <div>
+
+                  <strong>
+                    ${esc(
+                      c?.name||
+                      "Cliente"
+                    )}
+                  </strong>
+
+                  <small>
+                    ${esc(
+                      formatPhone(c?.phone)||
+                      ""
+                    )}
+                  </small>
+
+                </div>
+
+              </div>
+
+            </td>
+
+            <td>
+
+              <b>
+                ${esc(p.type)}
+              </b>
+
+              <small
+                style="
+                  display:block;
+                  color:#667085
+                "
+              >
+                ${esc(p.number)}
+              </small>
+
+            </td>
+
+            <td>
+              ${esc(p.insurer)}
+            </td>
+
+            <td>
+              ${fmtDate(p.startDate)}
+              →
+              ${fmtDate(p.endDate)}
+            </td>
+
+            <td>
+
+              <span
+                class="pill ${processClass(p.status)}"
+              >
+                ${esc(p.status)}
+              </span>
+
+            </td>
+
+            <td>
+
+              <span class="pill ${e.cls}">
+                ${e.text}
+              </span>
+
+            </td>
+
+            <td>
+
+              <div class="actions">
+
+                <button
+                  class="action-btn"
+                  title="Detalhes"
+                  onclick="openDetails('${p.id}')"
+                >
+                  Ver
+                </button>
+
+                <button
+                  class="action-btn"
+                  title="Editar"
+                  onclick="editPolicy('${p.id}')"
+                >
+                  Editar
+                </button>
+
+                <button
+                  class="action-btn"
+                  title="Renovar"
+                  onclick="renewPolicy('${p.id}')"
+                >
+                  ↻
+                </button>
+
+                ${
+                  p.pdfId
+                    ?`
+                      <button
+                        class="action-btn"
+                        onclick="openPdf('${p.id}')"
+                      >
+                        PDF
+                      </button>
+                    `
+                    :""
+                }
+
+              </div>
+
+            </td>
+
+          </tr>
+        `
+
+      })
+      .join("")
+      :`
+        <tr>
+
+          <td colspan="7">
+
+            <div class="empty">
+              Nenhuma apólice encontrada.
+            </div>
+
+          </td>
+
+        </tr>
+      `;
+}
+
+function renderKanban(){
+
+  const cols=[
+    "Pendente",
+    "Em andamento",
+    "Ganho"
+  ];
+
+  $("#kanban").innerHTML=
+    cols
+      .map(s=>{
+
+        const ps=
+          state.policies.filter(
+            p=>p.status===s
+          );
+
+        return`
+          <div
+            class="
+              kanban-col
+              ${
+                s==="Pendente"
+                  ?"pendente"
+                  :s==="Ganho"
+                    ?"ganho"
+                    :"andamento"
+              }
+            "
+          >
+
+            <h4>
+
+              <span>${s}</span>
+
+              <span>${ps.length}</span>
+
+            </h4>
+
+            ${
+              ps
+                .map(p=>{
+
+                  const c=
+                    clientById(p.clientId);
+
+                  return`
+                    <div class="kanban-card">
+
+                      <strong>
+                        ${esc(
+                          c?.name||
+                          "Cliente"
+                        )}
+                      </strong>
+
+                      <small>
+                        ${esc(p.type)}
+                        ·
+                        ${esc(p.insurer)}
+
+                        <br>
+
+                        Vence:
+                        ${fmtDate(p.endDate)}
+                      </small>
+
+                      <select
+                        onchange="
+                          changeStatus(
+                            '${p.id}',
+                            this.value
+                          )
+                        "
+                      >
+
+                        <option
+                          ${
+                            p.status==="Pendente"
+                              ?"selected"
+                              :""
+                          }
+                        >
+                          Pendente
+                        </option>
+
+                        <option
+                          ${
+                            p.status==="Em andamento"
+                              ?"selected"
+                              :""
+                          }
+                        >
+                          Em andamento
+                        </option>
+
+                        <option
+                          ${
+                            p.status==="Ganho"
+                              ?"selected"
+                              :""
+                          }
+                        >
+                          Ganho
+                        </option>
+
+                      </select>
+
+                    </div>
+                  `
+
+                })
+                .join("")
             }
-        );
 
+          </div>
+        `
 
-    if (!apolice) {
-        return;
-    }
-
-
-    document.getElementById(
-        "idEdicao"
-    ).value =
-        apolice.id;
-
-
-    document.getElementById(
-        "cliente"
-    ).value =
-        apolice.cliente;
-
-
-    document.getElementById(
-        "telefone"
-    ).value =
-        apolice.telefone;
-
-
-    document.getElementById(
-        "numeroApolice"
-    ).value =
-        apolice.numeroApolice;
-
-
-    document.getElementById(
-        "seguradora"
-    ).value =
-        apolice.seguradora;
-
-
-    document.getElementById(
-        "tipoSeguro"
-    ).value =
-        apolice.tipoSeguro;
-
-
-    document.getElementById(
-        "dataVencimento"
-    ).value =
-        apolice.dataVencimento;
-
-
-    document.getElementById(
-        "observacoes"
-    ).value =
-        apolice.observacoes || "";
-
-
-    document.getElementById(
-        "alerta30"
-    ).checked =
-        apolice.alertas?.dias30 ?? true;
-
-
-    document.getElementById(
-        "alerta15"
-    ).checked =
-        apolice.alertas?.dias15 ?? true;
-
-
-    document.getElementById(
-        "alerta7"
-    ).checked =
-        apolice.alertas?.dias7 ?? true;
-
-
-    document.getElementById(
-        "tituloModal"
-    ).textContent =
-        "Editar Apólice";
-
-
-    modalDetalhes.classList.remove(
-        "ativo"
-    );
-
-
-    modalCadastro.classList.add(
-        "ativo"
-    );
+      })
+      .join("");
 }
 
+function renderConfig(){
 
-/* =========================================================
-   EDITAR PELOS DETALHES
-========================================================= */
+  $("#cfgUser").value=
+    state.settings.user;
 
-function editarApoliceAtual() {
+  $("#emailEndpoint").value=
+    state.settings.endpoint;
 
-    if (apoliceAtualId) {
-
-        editarApolice(
-            apoliceAtualId
-        );
-
-    }
+  $("#managerEmail").value=
+    state.settings.managerEmail;
 }
 
+function go(view){
 
-/* =========================================================
-   CONFIRMAÇÃO DE EXCLUSÃO
-========================================================= */
+  $$(".view").forEach(
+    v=>v.classList.remove("active")
+  );
 
-function abrirConfirmacaoExclusao(id) {
+  $("#"+view).classList.add("active");
 
-    const apolice =
-        apolices.find(
-            function (item) {
+  $$(".nav-item").forEach(
+    b=>
+      b.classList.toggle(
+        "active",
+        b.dataset.view===view
+      )
+  );
 
-                return String(item.id) ===
-                    String(id);
+  const titles={
+    dashboard:"Dashboard",
+    clientes:"Clientes",
+    apolices:"Apólices",
+    renovacoes:"Renovações",
+    relatorios:"Relatórios",
+    config:"Configurações"
+  };
 
-            }
-        );
+  $("#pageTitle").textContent=
+    titles[view]||
+    "Dashboard";
 
+  if(view==="dashboard")
+    renderDashboard();
+}
 
-    if (!apolice) {
-        return;
-    }
+function openModal(id){
+  $("#"+id).classList.add("open")
+}
 
+function closeModal(id){
 
-    apoliceExclusaoId =
-        apolice.id;
+  $("#"+id).classList.remove("open");
 
+  if(id==="pdfModal")
+    $("#pdfFrame").src="";
+}
 
-    document.getElementById(
-        "clienteExclusao"
-    ).textContent =
-        apolice.cliente;
+function resetPolicyForm(clientId=""){
 
+  $("#policyForm").reset();
 
-    modalExcluir.classList.add(
-        "ativo"
+  $("#policyId").value="";
+
+  $("#policyParentId").value="";
+
+  $("#policyRenewedFrom").value="";
+
+  $("#currentPdfName").textContent="";
+
+  $("#renewInfo").classList.add("hidden");
+
+  populateSelects();
+
+  $("#policyClient").value=
+    clientId;
+
+  $("#policyStatus").value=
+    "Pendente";
+
+  $("#policyModalTitle").textContent=
+    "Nova apólice";
+}
+
+function newPolicyFor(clientId=""){
+
+  resetPolicyForm(clientId);
+
+  openModal("policyModal");
+}
+
+function openClient(id){
+
+  const c=clientById(id);
+
+  if(!c)
+    return;
+
+  $("#clientId").value=c.id;
+
+  $("#clientName").value=c.name;
+
+  $("#clientBirth").value=
+    c.birthDate;
+
+  $("#clientPhone").value=
+    formatPhone(c.phone);
+
+  $("#clientDoc").value=
+    c.document||"";
+
+  $("#clientEmail").value=
+    c.email||"";
+
+  $("#clientNotes").value=
+    c.notes||"";
+
+  $("#clientModalTitle").textContent=
+    "Editar cliente";
+
+  openModal("clientModal");
+}
+
+function newClient(){
+
+  $("#clientForm").reset();
+
+  $("#clientId").value="";
+
+  $("#clientModalTitle").textContent=
+    "Novo cliente";
+
+  openModal("clientModal");
+}
+
+async function editPolicy(id){
+
+  const p=policyById(id);
+
+  if(!p)
+    return;
+
+  resetPolicyForm(p.clientId);
+
+  $("#policyId").value=p.id;
+
+  $("#policyInsurer").value=
+    p.insurer;
+
+  $("#policyType").value=
+    p.type;
+
+  $("#policyNumber").value=
+    p.number;
+
+  $("#policyStart").value=
+    p.startDate;
+
+  $("#policyEnd").value=
+    p.endDate;
+
+  $("#policyStatus").value=
+    p.status;
+
+  $("#policyNotes").value=
+    p.notes||"";
+
+  $("#alert30").checked=
+    p.alerts?.30!==false;
+
+  $("#alert15").checked=
+    p.alerts?.15!==false;
+
+  $("#alert7").checked=
+    p.alerts?.7!==false;
+
+  $("#alert1").checked=
+    p.alerts?.1!==false;
+
+  $("#alertExpired").checked=
+    p.alerts?.expired!==false;
+
+  if(p.pdfId)
+    $("#currentPdfName").textContent=
+      "PDF atual: "+
+      (
+        state.pdfs.get(p.pdfId)?.name||
+        "anexo.pdf"
+      );
+
+  $("#policyModalTitle").textContent=
+    "Editar apólice";
+
+  openModal("policyModal");
+}
+
+async function saveClient(e){
+
+  e.preventDefault();
+
+  const phone=
+    cleanPhone(
+      $("#clientPhone").value
     );
-}
 
+  if(!validBrazilPhone(phone)){
 
-function fecharModalExcluir() {
-
-    modalExcluir.classList.remove(
-        "ativo"
+    toast(
+      "Informe um telefone celular válido com DDD."
     );
 
-    apoliceExclusaoId = null;
-}
+    return;
+  }
 
+  const id=
+    $("#clientId").value||
+    uid();
 
-function confirmarExclusao() {
+  const c={
+    id,
+    name:
+      $("#clientName")
+        .value
+        .trim(),
 
-    if (!apoliceExclusaoId) {
-        return;
-    }
+    birthDate:
+      $("#clientBirth")
+        .value,
 
+    phone,
 
-    const apolice =
-        apolices.find(
-            function (item) {
+    document:
+      $("#clientDoc")
+        .value
+        .trim(),
 
-                return String(item.id) ===
-                    String(apoliceExclusaoId);
+    email:
+      $("#clientEmail")
+        .value
+        .trim(),
 
-            }
-        );
+    notes:
+      $("#clientNotes")
+        .value
+        .trim(),
 
+    createdAt:
+      clientById(id)?.createdAt||
+      new Date().toISOString(),
 
-    if (!apolice) {
+    updatedAt:
+      new Date().toISOString()
+  };
 
-        fecharModalExcluir();
+  await put("clients",c);
 
-        return;
-    }
-
-
-    const nome =
-        apolice.cliente;
-
-
-    apolices =
-        apolices.filter(
-            function (item) {
-
-                return String(item.id) !==
-                    String(apoliceExclusaoId);
-
-            }
-        );
-
-
-    salvarDados();
-
-    atualizarSistema();
-
-    fecharModalExcluir();
-
-    fecharDetalhes();
-
-
-    mostrarNotificacao(
-        "Apólice removida",
-        `O cadastro de ${nome} foi removido da central.`
+  const idx=
+    state.clients.findIndex(
+      x=>x.id===id
     );
+
+  if(idx>=0)
+    state.clients[idx]=c;
+  else
+    state.clients.push(c);
+
+  closeModal("clientModal");
+
+  renderAll();
+
+  toast(
+    "Cliente salvo com sucesso."
+  );
 }
 
+async function savePolicy(e){
 
-/* =========================================================
-   EXCLUIR PELOS DETALHES
-========================================================= */
+  e.preventDefault();
 
-function excluirApoliceAtual() {
+  const clientId=
+    $("#policyClient").value;
 
-    if (!apoliceAtualId) {
-        return;
-    }
+  if(!clientId){
 
-
-    abrirConfirmacaoExclusao(
-        apoliceAtualId
+    toast(
+      "Selecione o cliente."
     );
+
+    return;
+  }
+
+  if(
+    $("#policyStart").value>
+    $("#policyEnd").value
+  ){
+
+    toast(
+      "O fim da vigência não pode ser anterior ao início."
+    );
+
+    return;
+  }
+
+  const oldId=
+    $("#policyId").value;
+
+  const existing=
+    oldId
+      ?policyById(oldId)
+      :null;
+
+  let pdfId=
+    existing?.pdfId||
+    null;
+
+  const file=
+    $("#policyPdf").files[0];
+
+  if(file){
+
+    if(file.type!=="application/pdf"){
+
+      toast(
+        "O anexo precisa ser PDF."
+      );
+
+      return;
+    }
+
+    pdfId=uid();
+
+    const rec={
+      id:pdfId,
+      name:file.name,
+      size:file.size,
+      type:file.type,
+      blob:file,
+      createdAt:new Date().toISOString()
+    };
+
+    await put(
+      "pdfs",
+      rec
+    );
+
+    state.pdfs.set(
+      pdfId,
+      rec
+    );
+
+    if(existing?.pdfId)
+      await del(
+        "pdfs",
+        existing.pdfId
+      );
+  }
+
+  const p={
+    id:
+      oldId||
+      uid(),
+
+    clientId,
+
+    insurer:
+      $("#policyInsurer").value,
+
+    type:
+      $("#policyType").value,
+
+    number:
+      $("#policyNumber")
+        .value
+        .trim(),
+
+    startDate:
+      $("#policyStart").value,
+
+    endDate:
+      $("#policyEnd").value,
+
+    status:
+      $("#policyStatus").value,
+
+    notes:
+      $("#policyNotes")
+        .value
+        .trim(),
+
+    alerts:{
+      30:
+        $("#alert30").checked,
+
+      15:
+        $("#alert15").checked,
+
+      7:
+        $("#alert7").checked,
+
+      1:
+        $("#alert1").checked,
+
+      expired:
+        $("#alertExpired").checked
+    },
+
+    pdfId,
+
+    renewedFrom:
+      $("#policyRenewedFrom").value||
+      existing?.renewedFrom||
+      null,
+
+    createdAt:
+      existing?.createdAt||
+      new Date().toISOString(),
+
+    updatedAt:
+      new Date().toISOString()
+  };
+
+  await put(
+    "policies",
+    p
+  );
+
+  const i=
+    state.policies.findIndex(
+      x=>x.id===p.id
+    );
+
+  if(i>=0)
+    state.policies[i]=p;
+  else
+    state.policies.push(p);
+
+  await put(
+    "events",
+    {
+      id:uid(),
+      policyId:p.id,
+      type:
+        oldId
+          ?"edit"
+          :"created",
+      message:
+        oldId
+          ?"Apólice atualizada"
+          :"Apólice cadastrada",
+      date:new Date().toISOString()
+    }
+  );
+
+  closeModal("policyModal");
+
+  renderAll();
+
+  toast(
+    "Apólice salva com sucesso."
+  );
 }
 
+function changeStatus(id,status){
 
-/* =========================================================
-   WHATSAPP
-========================================================= */
+  const p=policyById(id);
 
-function abrirWhatsAppAtual() {
+  if(!p)
+    return;
 
-    const apolice =
-        apolices.find(
-            function (item) {
+  p.status=status;
 
-                return String(item.id) ===
-                    String(apoliceAtualId);
+  p.updatedAt=
+    new Date().toISOString();
 
-            }
-        );
+  put(
+    "policies",
+    p
+  ).then(()=>{
 
+    state.events.push({
+      id:uid(),
+      policyId:id,
+      type:"status",
+      message:
+        "Status alterado para "+
+        status,
+      date:
+        new Date().toISOString()
+    });
 
-    if (!apolice) {
-        return;
-    }
+    put(
+      "events",
+      state.events.at(-1)
+    );
 
+    renderAll();
 
-    let telefone =
-        String(apolice.telefone || "")
-            .replace(/\D/g, "");
+    toast(
+      "Status atualizado."
+    );
 
+  });
+}
 
-    if (
-        telefone.length === 10 ||
-        telefone.length === 11
-    ) {
+function openDetails(id){
 
-        telefone =
-            "55" +
-            telefone;
-    }
+  const p=policyById(id);
 
+  const c=
+    clientById(
+      p?.clientId
+    );
 
-    const dias =
-        calcularDias(
-            apolice.dataVencimento
-        );
+  if(!p)
+    return;
 
+  const e=
+    expiryLabel(p);
 
-    const mensagem =
+  const history=
+    state.events
+      .filter(
+        x=>x.policyId===id
+      )
+      .sort(
+        (a,b)=>
+          new Date(b.date)-
+          new Date(a.date)
+      );
 
-`Olá! 👋
+  $("#detailsTitle").textContent=
+    c?.name||
+    "Cliente";
+
+  $("#detailsSubtitle").textContent=
+    `${p.type} · ${p.insurer}`;
+
+  $("#detailsBody").innerHTML=`
+
+    <div class="details-grid">
+
+      <div class="detail-box">
+        <small>Segurado</small>
+        <strong>
+          ${esc(c?.name)}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Nascimento</small>
+        <strong>
+          ${fmtDate(c?.birthDate)}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Telefone</small>
+        <strong>
+          ${esc(
+            formatPhone(c?.phone)||
+            "—"
+          )}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Seguradora</small>
+        <strong>
+          ${esc(p.insurer)}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Tipo</small>
+        <strong>
+          ${esc(p.type)}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Nº apólice</small>
+        <strong>
+          ${esc(p.number)}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Início da vigência</small>
+        <strong>
+          ${fmtDate(p.startDate)}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Fim da vigência</small>
+        <strong>
+          ${fmtDate(p.endDate)}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Situação</small>
+        <strong>
+          <span class="pill ${e.cls}">
+            ${e.text}
+          </span>
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Renovação</small>
+        <strong>
+          <span
+            class="pill ${processClass(p.status)}"
+          >
+            ${p.status}
+          </span>
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>PDF</small>
+        <strong>
+          ${
+            p.pdfId
+              ?`
+                <button
+                  class="link-btn"
+                  onclick="openPdf('${p.id}')"
+                >
+                  Abrir documento
+                </button>
+              `
+              :"Sem anexo"
+          }
+        </strong>
+      </div>
+
+      <div class="detail-box detail-wide">
+        <small>Observações</small>
+        <strong>
+          ${esc(
+            p.notes||
+            "Sem observações"
+          )}
+        </strong>
+      </div>
+
+    </div>
+
+    <div
+      class="modal-actions"
+      style="margin-top:15px"
+    >
+
+      <button
+        class="btn btn-secondary"
+        onclick="sendEmail('${p.id}')"
+      >
+        ✉ Lembrete por e-mail
+      </button>
+
+      <button
+        class="btn btn-secondary"
+        onclick="manualWhatsApp('${p.id}')"
+      >
+        WhatsApp
+      </button>
+
+      <button
+        class="btn btn-secondary"
+        onclick="
+          editPolicy('${p.id}');
+          closeModal('detailsModal')
+        "
+      >
+        Editar
+      </button>
+
+      <button
+        class="btn btn-primary"
+        onclick="
+          renewPolicy('${p.id}');
+          closeModal('detailsModal')
+        "
+      >
+        ↻ Renovar apólice
+      </button>
+
+    </div>
+
+    <div class="timeline">
+
+      <h4>Histórico</h4>
+
+      ${
+        history.length
+          ?history
+            .map(h=>
+              `
+                <div class="timeline-item">
+
+                  <b>
+                    ${esc(h.message)}
+                  </b>
+
+                  <small>
+                    ${new Date(
+                      h.date
+                    ).toLocaleString("pt-BR")}
+                  </small>
+
+                </div>
+              `
+            )
+            .join("")
+          :`
+            <p class="mini-note">
+              Sem eventos registrados.
+            </p>
+          `
+      }
+
+    </div>
+  `;
+
+  openModal("detailsModal");
+}
+
+function renewPolicy(id){
+
+  const old=
+    policyById(id);
+
+  if(!old)
+    return;
+
+  resetPolicyForm(
+    old.clientId
+  );
+
+  $("#policyRenewedFrom").value=
+    old.id;
+
+  $("#policyInsurer").value=
+    old.insurer;
+
+  $("#policyType").value=
+    old.type;
+
+  $("#policyStatus").value=
+    "Em andamento";
+
+  $("#policyNotes").value=
+    `Renovação da apólice ${old.number}. Histórico da apólice anterior mantido no CRM.`;
+
+  $("#renewInfo").textContent=
+    `Esta nova apólice ficará vinculada à anterior (${old.number}). A apólice antiga não será apagada.`;
+
+  $("#renewInfo").classList.remove(
+    "hidden"
+  );
+
+  $("#policyModalTitle").textContent=
+    "Nova apólice de renovação";
+
+  openModal("policyModal");
+}
+
+async function finalizeRenewal(
+  oldId,
+  newId
+){
+
+  const old=
+    policyById(oldId);
+
+  if(!old)
+    return;
+
+  old.status="Ganho";
+
+  old.updatedAt=
+    new Date().toISOString();
+
+  await put(
+    "policies",
+    old
+  );
+
+  state.events.push({
+    id:uid(),
+    policyId:oldId,
+    type:"renewal",
+    message:
+      "Apólice renovada; novo ciclo criado",
+    date:
+      new Date().toISOString()
+  });
+
+  await put(
+    "events",
+    state.events.at(-1)
+  );
+}
+
+function openPdf(id){
+
+  const p=
+    policyById(id);
+
+  if(!p?.pdfId)
+    return;
+
+  const rec=
+    state.pdfs.get(
+      p.pdfId
+    );
+
+  if(!rec)
+    return;
+
+  const url=
+    URL.createObjectURL(
+      rec.blob
+    );
+
+  $("#pdfTitle").textContent=
+    rec.name;
+
+  $("#pdfFrame").src=
+    url;
+
+  openModal("pdfModal");
+}
+
+function formatPhone(n){
+
+  n=cleanPhone(n);
+
+  if(n.length===11)
+    return`
+      (${n.slice(0,2)})
+      ${n.slice(2,7)}
+      -${n.slice(7)}
+    `.replace(/\s+/g," ");
+
+  if(n.length===10)
+    return`
+      (${n.slice(0,2)})
+      ${n.slice(2,6)}
+      -${n.slice(6)}
+    `.replace(/\s+/g," ");
+
+  return n;
+}
+
+function manualWhatsApp(id){
+
+  const p=
+    policyById(id);
+
+  const c=
+    clientById(
+      p.clientId
+    );
+
+  const d=
+    daysUntil(
+      p.endDate
+    );
+
+  const msg=
+    `Olá, ${c?.name||""}! Aqui é da SAVA Seguros. Estamos entrando em contato sobre sua apólice ${p.number}, do seguro ${p.type}, que vence em ${d<0?"":" "+d+" dias"} (${fmtDate(p.endDate)}). Podemos conversar sobre a renovação?`;
+
+  window.open(
+    "https://wa.me/55"+
+    cleanPhone(c?.phone)+
+    "?text="+
+    encodeURIComponent(msg),
+    "_blank"
+  );
+}
+
+function emailBody(p){
+
+  const c=
+    clientById(
+      p.clientId
+    );
+
+  const d=
+    daysUntil(
+      p.endDate
+    );
+
+  let prazo=
+    d<0
+      ?`venceu há ${Math.abs(d)} dia(s)`
+      :d===0
+        ?"vence hoje"
+        :`vence em ${d} dia(s)`;
+
+  return`
+Olá, ${c?.name||"cliente"}!
 
 Aqui é da SAVA Seguros.
 
-Gostaríamos de entrar em contato sobre a apólice do cliente ${apolice.cliente}.
+Estamos entrando em contato para lembrar que sua apólice ${p.number}, referente ao seguro ${p.type}, possui vigência de ${fmtDate(p.startDate)} a ${fmtDate(p.endDate)} e ${prazo}.
 
-📄 Apólice: ${apolice.numeroApolice}
-🏢 Seguradora: ${apolice.seguradora}
-🛡️ Seguro: ${apolice.tipoSeguro}
-📅 Vencimento: ${formatarData(apolice.dataVencimento)}
+Nossa equipe pode cuidar da renovação e apresentar as melhores opções para você.
 
-⏳ Prazo: ${
-        dias === 0
-            ? "vence hoje"
-            : dias > 0
-                ? `faltam ${dias} dias`
-                : "apólice vencida"
-    }
-
-Podemos conversar sobre a renovação?
-
-SAVA Seguros`;
-
-
-    const url =
-        `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
-
-
-    window.open(
-        url,
-        "_blank"
-    );
+Atenciosamente,
+SAVA Seguros
+`;
 }
 
+async function sendEmail(id){
 
-/* =========================================================
-   PAINEL DE ATENÇÃO
-========================================================= */
+  const p=
+    policyById(id);
 
-function renderizarAtencao() {
+  const c=
+    clientById(
+      p.clientId
+    );
 
-    const container =
-        document.getElementById(
-            "listaAtencao"
-        );
+  if(!c?.email){
 
+    toast(
+      "Este cliente não possui e-mail cadastrado."
+    );
 
-    const lista =
-        [...apolices]
-            .filter(
-                function (apolice) {
+    return;
+  }
 
-                    return calcularDias(
-                        apolice.dataVencimento
-                    ) <= 30;
+  if(!state.settings.endpoint){
 
-                }
+    window.location.href=
+      `mailto:${encodeURIComponent(c.email)}`+
+      `?subject=${encodeURIComponent(
+        "Lembrete de renovação - SAVA Seguros"
+      )}`+
+      `&body=${encodeURIComponent(
+        emailBody(p)
+      )}`;
+
+    return;
+  }
+
+  try{
+
+    const r=
+      await fetch(
+        state.settings.endpoint,
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":
+              "text/plain;charset=utf-8"
+          },
+          body:
+            JSON.stringify({
+              action:"sendEmail",
+              to:c.email,
+              name:c.name,
+              subject:
+                "Lembrete de renovação - SAVA Seguros",
+              body:
+                emailBody(p),
+              policyId:p.id
+            })
+        }
+      );
+
+    const j=
+      await r.json();
+
+    toast(
+      j.ok
+        ?"E-mail enviado."
+        :"Não foi possível enviar o e-mail."
+    );
+
+    if(j.ok)
+      recordEmail(p);
+
+  }catch(e){
+
+    toast(
+      "Falha no endpoint de e-mail."
+    );
+
+  }
+}
+
+function recordEmail(p){
+
+  state.events.push({
+    id:uid(),
+    policyId:p.id,
+    type:"email",
+    message:
+      "Lembrete de e-mail enviado",
+    date:
+      new Date().toISOString()
+  });
+
+  put(
+    "events",
+    state.events.at(-1)
+  );
+}
+
+function checkAutomation(){
+
+  const configured=
+    !!state.settings.endpoint;
+
+  $("#emailAutomationBadge").textContent=
+    `● E-mail automático: ${
+      configured
+        ?"ativo"
+        :"não configurado"
+    }`;
+
+  $("#emailAutomationBadge").style.color=
+    configured
+      ?" #087443"
+      :"#b54708";
+
+  autoEmailScan();
+}
+
+async function autoEmailScan(){
+
+  if(!state.settings.endpoint)
+    return;
+
+  const sentToday=
+    state.events
+      .filter(
+        e=>
+          e.type==="email"&&
+          e.date.slice(0,10)===
+          iso(new Date())
+      )
+      .map(
+        e=>e.policyId
+      );
+
+  for(
+    const p of state.policies
+  ){
+
+    const d=
+      daysUntil(p.endDate);
+
+    const mark=
+      [30,15,7,1].includes(d)
+        ?d
+        :(d<0&&d>=-1
+          ?"expired"
+          :null);
+
+    if(
+      mark===null||
+      sentToday.includes(p.id)
+    )
+      continue;
+
+    const enabled=
+      p.alerts?.[mark]!==false;
+
+    if(
+      enabled&&
+      clientById(p.clientId)?.email
+    )
+      await sendEmail(p.id);
+  }
+}
+
+function generateReport(){
+
+  const total=
+    state.policies.length;
+
+  const expired=
+    state.policies.filter(
+      p=>daysUntil(p.endDate)<0
+    ).length;
+
+  const d7=
+    state.policies.filter(
+      p=>
+        daysUntil(p.endDate)>=0&&
+        daysUntil(p.endDate)<=7
+    ).length;
+
+  const pending=
+    state.policies.filter(
+      p=>p.status==="Pendente"
+    ).length;
+
+  const and=
+    state.policies.filter(
+      p=>p.status==="Em andamento"
+    ).length;
+
+  const won=
+    state.policies.filter(
+      p=>p.status==="Ganho"
+    ).length;
+
+  const risk=
+    [...state.policies]
+      .filter(
+        p=>
+          daysUntil(p.endDate)<=30&&
+          p.status!=="Ganho"
+      )
+      .sort(
+        (a,b)=>
+          daysUntil(a.endDate)-
+          daysUntil(b.endDate)
+      )
+      .slice(0,5);
+
+  return`
+    <h3>
+      Relatório inteligente da carteira
+    </h3>
+
+    <p>
+      Gerado em
+      ${new Date().toLocaleString("pt-BR")}.
+    </p>
+
+    <div class="report-grid">
+
+      <div class="report-box">
+        <strong>${total}</strong>
+        <small>apólices</small>
+      </div>
+
+      <div class="report-box">
+        <strong>${d7}</strong>
+        <small>
+          vencem em até 7 dias
+        </small>
+      </div>
+
+      <div class="report-box">
+        <strong>${expired}</strong>
+        <small>vencidas</small>
+      </div>
+
+      <div class="report-box">
+        <strong>${pending}</strong>
+        <small>pendentes</small>
+      </div>
+
+      <div class="report-box">
+        <strong>${and}</strong>
+        <small>em andamento</small>
+      </div>
+
+      <div class="report-box">
+        <strong>${won}</strong>
+        <small>ganhas</small>
+      </div>
+
+    </div>
+
+    <h4>Prioridades</h4>
+
+    <ul>
+
+      ${
+        risk.length
+          ?risk
+            .map(p=>
+              `
+                <li>
+
+                  <b>
+                    ${esc(
+                      clientById(
+                        p.clientId
+                      )?.name||
+                      "Cliente"
+                    )}
+                  </b>
+
+                  —
+                  ${esc(p.type)},
+                  ${esc(p.insurer)}
+                  —
+                  ${expiryLabel(p).text}
+                  —
+                  processo:
+                  ${esc(p.status)}
+
+                </li>
+              `
             )
-            .sort(
-                function (a, b) {
+            .join("")
+          :`
+            <li>
+              Nenhum risco crítico identificado.
+            </li>
+          `
+      }
 
-                    return calcularDias(
-                        a.dataVencimento
-                    ) -
-                    calcularDias(
-                        b.dataVencimento
-                    );
+    </ul>
 
-                }
-            )
-            .slice(0, 5);
+    <br>
 
+    <h4>
+      Leitura da carteira
+    </h4>
 
-    if (lista.length === 0) {
+    <p>
 
-        container.innerHTML = `
+      ${
+        expired
+          ?"Existem apólices vencidas que devem ser tratadas imediatamente. "
+          :""
+      }
 
-            <div class="atencao-vazio">
+      ${
+        d7
+          ?"Há apólices nos próximos 7 dias e elas devem ficar no topo da rotina comercial. "
+          :""
+      }
 
-                <i class="fa-solid fa-check"></i>
+      ${
+        pending
+          ?"Há renovações ainda pendentes de cotação. "
+          :""
+      }
 
-                <strong>
-                    Tudo sob controle!
-                </strong>
+      ${
+        and
+          ?"Existem negociações em andamento que podem virar ganhos. "
+          :""
+      }
 
-                <span>
-                    Nenhuma renovação próxima.
-                </span>
+      ${
+        !expired&&!d7&&!pending
+          ?"A carteira está sem sinais críticos pelos indicadores atuais."
+          :""
+      }
 
-            </div>
+    </p>
+  `;
+}
 
-        `;
+function showReport(){
 
-        return;
-    }
+  const html=
+    generateReport();
 
+  $("#reportArea").innerHTML=
+    html;
 
-    container.innerHTML = "";
+  go("relatorios");
+}
 
+function setupEvents(){
 
-    lista.forEach(
-        function (apolice) {
+  $$("[data-view]")
+    .forEach(
+      b=>
+        b.addEventListener(
+          "click",
+          ()=>go(b.dataset.view)
+        )
+    );
 
-            const dias =
-                calcularDias(
-                    apolice.dataVencimento
-                );
+  $$("[data-close]")
+    .forEach(
+      b=>
+        b.addEventListener(
+          "click",
+          ()=>closeModal(
+            b.dataset.close
+          )
+        )
+    );
 
+  $$(".modal")
+    .forEach(
+      m=>
+        m.addEventListener(
+          "click",
+          e=>{
+            if(e.target===m)
+              m.classList.remove("open")
+          }
+        )
+    );
 
-            let textoPrazo = "";
+  $("#loginForm")
+    .addEventListener(
+      "submit",
+      e=>{
+        e.preventDefault();
 
-            let classePrazo = "";
+        if(
+          $("#loginUser").value===
+          state.settings.user&&
+          $("#loginPass").value===
+          state.settings.pass
+        ){
 
+          sessionStorage.setItem(
+            "savaLogged",
+            "1"
+          );
 
-            if (dias < 0) {
+          $("#loginScreen")
+            .classList.add("hidden");
 
-                textoPrazo =
-                    "Vencida";
+          $("#app")
+            .classList.remove("hidden");
 
-                classePrazo =
-                    "prazo-urgente";
+          renderAll();
 
-            } else if (dias === 0) {
+        }else{
 
-                textoPrazo =
-                    "Hoje";
-
-                classePrazo =
-                    "prazo-urgente";
-
-            } else {
-
-                textoPrazo =
-                    `${dias} dia${dias === 1 ? "" : "s"}`;
-
-                classePrazo =
-                    dias <= 7
-                        ? "prazo-urgente"
-                        : "prazo-atencao";
-
-            }
-
-
-            const iniciais =
-                gerarIniciais(
-                    apolice.cliente
-                );
-
-
-            const item =
-                document.createElement("div");
-
-
-            item.className =
-                "atencao-item";
-
-
-            item.innerHTML = `
-
-                <div class="atencao-avatar">
-                    ${iniciais}
-                </div>
-
-                <div class="atencao-info">
-
-                    <strong>
-                        ${escaparHTML(
-                            apolice.cliente
-                        )}
-                    </strong>
-
-                    <span>
-                        ${escaparHTML(
-                            apolice.seguradora
-                        )}
-                        •
-                        ${escaparHTML(
-                            apolice.tipoSeguro
-                        )}
-                    </span>
-
-                </div>
-
-                <div class="atencao-prazo">
-
-                    <strong class="${classePrazo}">
-                        ${textoPrazo}
-                    </strong>
-
-                    <span>
-                        ${formatarData(
-                            apolice.dataVencimento
-                        )}
-                    </span>
-
-                </div>
-
-            `;
-
-
-            item.addEventListener(
-                "click",
-                function () {
-
-                    abrirDetalhes(
-                        apolice.id
-                    );
-
-                }
-            );
-
-
-            item.style.cursor =
-                "pointer";
-
-
-            container.appendChild(
-                item
-            );
+          $("#loginError")
+            .textContent=
+            "Usuário ou senha incorretos.";
 
         }
+      }
     );
-}
 
-
-/* =========================================================
-   TIPOS DE SEGURO
-========================================================= */
-
-function renderizarTiposSeguro() {
-
-    const container =
-        document.getElementById(
-            "tiposSeguro"
+  $("#logoutBtn")
+    .addEventListener(
+      "click",
+      ()=>{
+        sessionStorage.removeItem(
+          "savaLogged"
         );
 
-
-    container.innerHTML = "";
-
-
-    if (apolices.length === 0) {
-
-        container.innerHTML = `
-
-            <div class="atencao-vazio">
-
-                <i class="fa-solid fa-chart-simple"></i>
-
-                <strong>
-                    Nenhum dado ainda
-                </strong>
-
-                <span>
-                    Cadastre apólices para visualizar.
-                </span>
-
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    const contagem = {};
-
-
-    apolices.forEach(
-        function (apolice) {
-
-            const tipo =
-                apolice.tipoSeguro ||
-                "Outro";
-
-
-            contagem[tipo] =
-                (contagem[tipo] || 0) + 1;
-
-        }
+        location.reload();
+      }
     );
 
+  $("#newPolicyBtn")
+    .addEventListener(
+      "click",
+      ()=>newPolicyFor()
+    );
 
-    const tipos =
-        Object.entries(
-            contagem
-        )
-        .sort(
-            function (a, b) {
-                return b[1] - a[1];
-            }
-        )
-        .slice(0, 5);
+  $("#newPolicyBtn2")
+    .addEventListener(
+      "click",
+      ()=>newPolicyFor()
+    );
 
+  $("#newClientBtn")
+    .addEventListener(
+      "click",
+      newClient
+    );
 
-    const maior =
-        tipos.length
-            ? tipos[0][1]
-            : 1;
+  $("#dashboardRefresh")
+    .addEventListener(
+      "click",
+      renderAll
+    );
 
+  $("#clientForm")
+    .addEventListener(
+      "submit",
+      saveClient
+    );
 
-    tipos.forEach(
-        function ([tipo, quantidade]) {
+  $("#policyForm")
+    .addEventListener(
+      "submit",
+      async e=>{
 
-            const percentual =
-                Math.round(
-                    (quantidade / maior) * 100
-                );
+        const old=
+          $("#policyRenewedFrom").value;
 
+        await savePolicy(e);
 
-            const item =
-                document.createElement("div");
+        if(old){
 
+          const newest=
+            [...state.policies]
+              .filter(
+                p=>p.renewedFrom===old
+              )
+              .sort(
+                (a,b)=>
+                  new Date(b.createdAt)-
+                  new Date(a.createdAt)
+              )[0];
 
-            item.className =
-                "tipo-item";
-
-
-            item.innerHTML = `
-
-                <div class="tipo-cor"></div>
-
-                <div class="tipo-info">
-
-                    <span>
-                        ${escaparHTML(tipo)}
-                    </span>
-
-                    <div class="tipo-barra">
-
-                        <div
-                            style="width: ${percentual}%"
-                        ></div>
-
-                    </div>
-
-                </div>
-
-                <strong>
-                    ${quantidade}
-                </strong>
-
-            `;
-
-
-            container.appendChild(
-                item
+          if(newest)
+            await finalizeRenewal(
+              old,
+              newest.id
             );
 
+          renderAll();
         }
+
+      }
     );
-}
 
+  ["clientSearch","policySearch"]
+    .forEach(
+      id=>
+        $("#"+id)
+          .addEventListener(
+            "input",
+            id==="clientSearch"
+              ?renderClients
+              :renderPolicies
+          )
+    );
 
-/* =========================================================
-   GRÁFICO
-========================================================= */
+  ["clientFilter"]
+    .forEach(
+      id=>
+        $("#"+id)
+          .addEventListener(
+            "change",
+            renderClients
+          )
+    );
 
-function renderizarGrafico() {
+  [
+    "statusFilter",
+    "expiryFilter",
+    "typeFilter",
+    "insurerFilter"
+  ]
+  .forEach(
+    id=>
+      $("#"+id)
+        .addEventListener(
+          "change",
+          renderPolicies
+        )
+  );
 
-    const container =
-        document.getElementById(
-            "graficoRenovacoes"
-        );
+  $("#saveAccount")
+    .addEventListener(
+      "click",
+      async()=>{
 
+        const u=
+          $("#cfgUser")
+            .value
+            .trim();
 
-    container.innerHTML = "";
+        const pw=
+          $("#cfgPass").value;
 
+        if(!u){
 
-    const hoje =
-        new Date();
+          toast(
+            "Informe um usuário."
+          );
 
-
-    const meses = [];
-
-
-    for (let i = -5; i <= 6; i++) {
-
-        const data =
-            new Date(
-                hoje.getFullYear(),
-                hoje.getMonth() + i,
-                1
-            );
-
-
-        meses.push({
-
-            numero:
-                data.getMonth(),
-
-            ano:
-                data.getFullYear(),
-
-            nome:
-                data.toLocaleDateString(
-                    "pt-BR",
-                    {
-                        month: "short"
-                    }
-                )
-                .replace(".", "")
-
-        });
-
-    }
-
-
-    const valores =
-        meses.map(
-            function (mes) {
-
-                return apolices.filter(
-                    function (apolice) {
-
-                        if (!apolice.dataVencimento) {
-                            return false;
-                        }
-
-                        const data =
-                            new Date(
-                                apolice.dataVencimento +
-                                "T00:00:00"
-                            );
-
-
-                        return (
-                            data.getMonth() ===
-                                mes.numero
-                            &&
-                            data.getFullYear() ===
-                                mes.ano
-                        );
-
-                    }
-                ).length;
-
-            }
-        );
-
-
-    const maior =
-        Math.max(
-            ...valores,
-            1
-        );
-
-
-    meses.forEach(
-        function (mes, index) {
-
-            const coluna =
-                document.createElement("div");
-
-
-            coluna.className =
-                "coluna-grafico";
-
-
-            const altura =
-                valores[index] === 0
-                    ? 3
-                    : Math.max(
-                        8,
-                        (valores[index] / maior) *
-                        190
-                    );
-
-
-            coluna.innerHTML = `
-
-                <div
-                    class="barra-grafico"
-                    style="height: ${altura}px"
-                >
-
-                    <span class="valor-barra">
-                        ${valores[index]}
-                    </span>
-
-                </div>
-
-                <span class="mes-grafico">
-                    ${mes.nome}
-                </span>
-
-            `;
-
-
-            container.appendChild(
-                coluna
-            );
-
+          return;
         }
+
+        state.settings.user=u;
+
+        if(pw)
+          state.settings.pass=pw;
+
+        await saveSettings();
+
+        $("#cfgPass").value="";
+
+        toast(
+          "Conta atualizada."
+        );
+      }
+    );
+
+  $("#saveEmail")
+    .addEventListener(
+      "click",
+      async()=>{
+
+        state.settings.endpoint=
+          $("#emailEndpoint")
+            .value
+            .trim();
+
+        state.settings.managerEmail=
+          $("#managerEmail")
+            .value
+            .trim();
+
+        await saveSettings();
+
+        checkAutomation();
+
+        toast(
+          "Configuração de e-mail salva."
+        );
+      }
+    );
+
+  $("#saveLanguage")
+    .addEventListener(
+      "click",
+      ()=>toast(
+        "Português (Brasil) já é o idioma ativo nesta versão."
+      )
+    );
+
+  $("#generateReportBtn")
+    .addEventListener(
+      "click",
+      showReport
+    );
+
+  $("#settingsReport")
+    .addEventListener(
+      "click",
+      ()=>{
+        $("#settingsReportOutput")
+          .innerHTML=
+          generateReport();
+      }
+    );
+
+  $("#exportData")
+    .addEventListener(
+      "click",
+      exportBackup
+    );
+
+  $("#importData")
+    .addEventListener(
+      "change",
+      importBackup
+    );
+
+  $("#clearData")
+    .addEventListener(
+      "click",
+      clearAll
     );
 }
 
+async function exportBackup(){
 
-/* =========================================================
-   ATUALIZAR SISTEMA
-========================================================= */
+  const pdfs=[];
 
-function atualizarSistema() {
+  for(
+    const p of state.pdfs.values()
+  ){
 
-    atualizarContadores();
+    const buf=
+      await p.blob.arrayBuffer();
 
-    renderizarApolices();
+    let binary="";
 
-    renderizarAtencao();
+    const bytes=
+      new Uint8Array(buf);
 
-    renderizarTiposSeguro();
+    const chunk=0x8000;
 
-    renderizarGrafico();
-}
+    for(
+      let i=0;
+      i<bytes.length;
+      i+=chunk
+    ){
 
-
-/* =========================================================
-   NOTIFICAÇÃO
-========================================================= */
-
-function mostrarNotificacao(
-    titulo,
-    mensagem
-) {
-
-    const notificacao =
-        document.getElementById(
-            "notificacao"
-        );
-
-
-    document.getElementById(
-        "notificacaoTitulo"
-    ).textContent =
-        titulo;
-
-
-    document.getElementById(
-        "notificacaoMensagem"
-    ).textContent =
-        mensagem;
-
-
-    notificacao.classList.add(
-        "ativo"
-    );
-
-
-    clearTimeout(
-        temporizadorNotificacao
-    );
-
-
-    temporizadorNotificacao =
-        setTimeout(
-            function () {
-
-                fecharNotificacao();
-
-            },
-            4500
-        );
-}
-
-
-/* =========================================================
-   FECHAR NOTIFICAÇÃO
-========================================================= */
-
-function fecharNotificacao() {
-
-    document
-        .getElementById(
-            "notificacao"
+      binary+=String.fromCharCode(
+        ...bytes.subarray(
+          i,
+          i+chunk
         )
-        .classList.remove(
-            "ativo"
-        );
-}
+      );
 
-
-/* =========================================================
-   SEGURANÇA HTML
-========================================================= */
-
-function escaparHTML(texto) {
-
-    return String(texto ?? "")
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-}
-
-
-/* =========================================================
-   INICIAIS
-========================================================= */
-
-function gerarIniciais(nome) {
-
-    const partes =
-        String(nome || "")
-            .trim()
-            .split(/\s+/)
-            .filter(Boolean);
-
-
-    if (partes.length === 0) {
-        return "?";
     }
 
-
-    if (partes.length === 1) {
-
-        return partes[0]
-            .substring(0, 2)
-            .toUpperCase();
-    }
-
-
-    return (
-        partes[0][0] +
-        partes[partes.length - 1][0]
-    ).toUpperCase();
-}
-
-
-/* =========================================================
-   NAVEGAÇÃO
-========================================================= */
-
-function limparMenuAtivo() {
-
-    document
-        .querySelectorAll(".menu-item")
-        .forEach(
-            function (item) {
-
-                item.classList.remove(
-                    "ativo"
-                );
-
-            }
-        );
-}
-
-
-function ativarMenu(indice) {
-
-    const itens =
-        document.querySelectorAll(
-            ".menu-item"
-        );
-
-
-    if (itens[indice]) {
-
-        itens[indice].classList.add(
-            "ativo"
-        );
-
-    }
-}
-
-
-function mostrarDashboard() {
-
-    limparMenuAtivo();
-
-    ativarMenu(0);
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+    pdfs.push({
+      ...p,
+      blobBase64:btoa(binary),
+      blob:undefined
     });
+  }
+
+  const data={
+    version:2,
+    exportedAt:
+      new Date().toISOString(),
+    clients:
+      state.clients,
+    policies:
+      state.policies,
+    events:
+      state.events,
+    settings:
+      state.settings,
+    pdfs
+  };
+
+  const blob=
+    new Blob(
+      [JSON.stringify(data)],
+      {
+        type:
+          "application/json"
+      }
+    );
+
+  const a=
+    document.createElement("a");
+
+  a.href=
+    URL.createObjectURL(blob);
+
+  a.download=
+    `backup-sava-${iso(new Date())}.json`;
+
+  a.click();
+
+  URL.revokeObjectURL(
+    a.href
+  );
+
+  toast(
+    "Backup exportado."
+  );
 }
 
+async function importBackup(e){
 
-function focarApolices() {
+  const file=
+    e.target.files[0];
 
-    limparMenuAtivo();
+  if(!file)
+    return;
 
-    ativarMenu(1);
+  try{
 
+    const data=
+      JSON.parse(
+        await file.text()
+      );
 
-    const painel =
-        document.getElementById(
-            "painelApolices"
-        );
+    if(!data.version)
+      throw new Error("backup");
 
+    for(
+      const c of data.clients||[]
+    )
+      await put(
+        "clients",
+        c
+      );
 
-    painel.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-}
+    for(
+      const p of data.policies||[]
+    )
+      await put(
+        "policies",
+        p
+      );
 
+    for(
+      const ev of data.events||[]
+    )
+      await put(
+        "events",
+        ev
+      );
 
-function mostrarAtencao() {
+    if(data.settings){
 
-    limparMenuAtivo();
+      state.settings={
+        ...state.settings,
+        ...data.settings
+      };
 
-    ativarMenu(2);
-
-
-    const painel =
-        document.querySelector(
-            ".painel-atencao"
-        );
-
-
-    painel.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
-}
-
-
-function mostrarClientes() {
-
-    limparMenuAtivo();
-
-    ativarMenu(3);
-
-
-    const painel =
-        document.getElementById(
-            "painelApolices"
-        );
-
-
-    painel.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-
-
-    campoBusca.focus();
-}
-
-
-/* =========================================================
-   SIDEBAR MOBILE
-========================================================= */
-
-function alternarSidebar() {
-
-    document
-        .querySelector(".sidebar")
-        .classList.toggle(
-            "aberta"
-        );
-}
-
-
-/* =========================================================
-   FECHAR SIDEBAR AO CLICAR FORA
-========================================================= */
-
-document.addEventListener(
-    "click",
-    function (event) {
-
-        const sidebar =
-            document.querySelector(
-                ".sidebar"
-            );
-
-
-        const botao =
-            document.querySelector(
-                ".btn-menu-mobile"
-            );
-
-
-        if (
-            window.innerWidth <= 850 &&
-            sidebar.classList.contains("aberta") &&
-            !sidebar.contains(event.target) &&
-            !botao.contains(event.target)
-        ) {
-
-            sidebar.classList.remove(
-                "aberta"
-            );
-
-        }
-
+      await saveSettings();
     }
-);
 
+    for(
+      const x of data.pdfs||[]
+    ){
 
-/* =========================================================
-   INICIALIZAÇÃO
-========================================================= */
+      const bin=
+        atob(
+          x.blobBase64||""
+        );
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+      const arr=
+        new Uint8Array(
+          bin.length
+        );
 
-        atualizarSistema();
+      for(
+        let i=0;
+        i<bin.length;
+        i++
+      )
+        arr[i]=
+          bin.charCodeAt(i);
 
+      const rec={
+        ...x,
+        blob:
+          new Blob(
+            [arr],
+            {
+              type:
+                x.type||
+                "application/pdf"
+            }
+          )
+      };
+
+      await put(
+        "pdfs",
+        rec
+      );
     }
-);
+
+    state.clients=
+      await getAll("clients");
+
+    state.policies=
+      await getAll("policies");
+
+    state.events=
+      await getAll("events");
+
+    const ps=
+      await getAll("pdfs");
+
+    state.pdfs=
+      new Map(
+        ps.map(
+          x=>[x.id,x]
+        )
+      );
+
+    renderAll();
+
+    toast(
+      "Backup restaurado."
+    );
+
+  }catch(err){
+
+    toast(
+      "Backup inválido ou corrompido."
+    );
+  }
+
+  e.target.value="";
+}
+
+async function clearAll(){
+
+  if(
+    !confirm(
+      "Apagar todos os clientes, apólices, histórico e PDFs? Essa ação não pode ser desfeita."
+    )
+  )
+    return;
+
+  for(
+    const s of [
+      "clients",
+      "policies",
+      "events",
+      "pdfs"
+    ]
+  ){
+
+    for(
+      const x of await getAll(s)
+    )
+      await del(
+        s,
+        x.id
+      );
+  }
+
+  state.clients=[];
+
+  state.policies=[];
+
+  state.events=[];
+
+  state.pdfs.clear();
+
+  renderAll();
+
+  toast(
+    "Dados apagados."
+  );
+}
+
+(async()=>{
+
+  await load();
+
+  setupEvents();
+
+  if(
+    sessionStorage.getItem(
+      "savaLogged"
+    )==="1"
+  ){
+
+    $("#loginScreen")
+      .classList.add("hidden");
+
+    $("#app")
+      .classList.remove("hidden");
+
+    renderAll();
+  }
+
+})();
+
+window.openDetails=
+  openDetails;
+
+window.editPolicy=
+  editPolicy;
+
+window.renewPolicy=
+  renewPolicy;
+
+window.openPdf=
+  openPdf;
+
+window.newPolicyFor=
+  newPolicyFor;
+
+window.openClient=
+  openClient;
+
+window.changeStatus=
+  changeStatus;
+
+window.manualWhatsApp=
+  manualWhatsApp;
+
+window.sendEmail=
+  sendEmail;

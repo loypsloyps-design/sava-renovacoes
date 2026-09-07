@@ -1360,20 +1360,20 @@ async function editPolicy(id){
   $("#policyNotes").value=
     p.notes||"";
 
-  $("#alert30").checked=
-    p.alerts?.30!==false;
+ $("#alert30").checked=
+  p.alerts?.[30]!==false;
 
-  $("#alert15").checked=
-    p.alerts?.15!==false;
+$("#alert15").checked=
+  p.alerts?.[15]!==false;
 
-  $("#alert7").checked=
-    p.alerts?.7!==false;
+$("#alert7").checked=
+  p.alerts?.[7]!==false;
 
-  $("#alert1").checked=
-    p.alerts?.1!==false;
+$("#alert1").checked=
+  p.alerts?.[1]!==false;
 
-  $("#alertExpired").checked=
-    p.alerts?.expired!==false;
+$("#alertExpired").checked=
+  p.alerts?.expired!==false;
 
   if(p.pdfId)
     $("#currentPdfName").textContent=

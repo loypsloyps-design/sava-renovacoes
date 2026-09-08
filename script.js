@@ -1956,6 +1956,373 @@ function openDetails(id){
   openModal("detailsModal");
 }
 
+/* ==========================================
+   MODAL PROFISSIONAL DE EXCLUSÃO
+========================================== */
+
+function createDeleteModal(){
+
+  if(document.getElementById("deleteSystemModal"))
+    return;
+
+  const style=document.createElement("style");
+
+  style.textContent=`
+    .delete-system-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,.58);
+      backdrop-filter:blur(3px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:99999;
+      padding:20px;
+      animation:deleteFadeIn .18s ease;
+    }
+
+    .delete-system-overlay.open{
+      display:flex;
+    }
+
+    .delete-system-card{
+      width:100%;
+      max-width:460px;
+      background:#ffffff;
+      border-radius:18px;
+      box-shadow:
+        0 24px 70px rgba(15,23,42,.28);
+      overflow:hidden;
+      animation:deleteCardIn .22s ease;
+    }
+
+    .delete-system-content{
+      padding:30px 30px 22px;
+      text-align:center;
+    }
+
+    .delete-system-icon{
+      width:62px;
+      height:62px;
+      margin:0 auto 18px;
+      border-radius:50%;
+      background:#fff1f0;
+      color:#d92d20;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:27px;
+      border:1px solid #fecdca;
+    }
+
+    .delete-system-icon.warning{
+      background:#fffaeb;
+      color:#dc6803;
+      border-color:#fedf89;
+    }
+
+    .delete-system-title{
+      margin:0 0 10px;
+      color:#101828;
+      font-size:20px;
+      font-weight:700;
+    }
+
+    .delete-system-message{
+      margin:0;
+      color:#667085;
+      font-size:14px;
+      line-height:1.6;
+      white-space:pre-line;
+    }
+
+    .delete-system-message strong{
+      color:#344054;
+    }
+
+    .delete-system-actions{
+      display:flex;
+      gap:10px;
+      padding:18px 24px 24px;
+    }
+
+    .delete-system-btn{
+      flex:1;
+      min-height:44px;
+      border-radius:10px;
+      border:1px solid #d0d5dd;
+      background:#ffffff;
+      color:#344054;
+      font-size:14px;
+      font-weight:600;
+      cursor:pointer;
+      transition:.15s ease;
+    }
+
+    .delete-system-btn:hover{
+      background:#f9fafb;
+    }
+
+    .delete-system-btn-danger{
+      border-color:#d92d20;
+      background:#d92d20;
+      color:#ffffff;
+    }
+
+    .delete-system-btn-danger:hover{
+      background:#b42318;
+    }
+
+    .delete-system-btn-primary{
+      border-color:#155eef;
+      background:#155eef;
+      color:#ffffff;
+    }
+
+    .delete-system-btn-primary:hover{
+      background:#004eeb;
+    }
+
+    @keyframes deleteFadeIn{
+      from{opacity:0}
+      to{opacity:1}
+    }
+
+    @keyframes deleteCardIn{
+      from{
+        opacity:0;
+        transform:translateY(12px) scale(.97);
+      }
+
+      to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+      }
+    }
+
+    @media(max-width:520px){
+
+      .delete-system-card{
+        max-width:100%;
+      }
+
+      .delete-system-content{
+        padding:26px 20px 18px;
+      }
+
+      .delete-system-actions{
+        padding:16px 20px 20px;
+        flex-direction:column-reverse;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+
+  const modal=document.createElement("div");
+
+  modal.id="deleteSystemModal";
+  modal.className="delete-system-overlay";
+
+  modal.innerHTML=`
+    <div class="delete-system-card">
+
+      <div class="delete-system-content">
+
+        <div
+          id="deleteSystemIcon"
+          class="delete-system-icon"
+        >
+          🗑
+        </div>
+
+        <h3
+          id="deleteSystemTitle"
+          class="delete-system-title"
+        >
+          Confirmar exclusão
+        </h3>
+
+        <p
+          id="deleteSystemMessage"
+          class="delete-system-message"
+        ></p>
+
+      </div>
+
+      <div
+        id="deleteSystemActions"
+        class="delete-system-actions"
+      ></div>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+
+/* ==========================================
+   AVISO DE EXCLUSÃO
+========================================== */
+
+function deleteAlert(title,message){
+
+  createDeleteModal();
+
+  return new Promise(resolve=>{
+
+    const modal=
+      document.getElementById(
+        "deleteSystemModal"
+      );
+
+    const icon=
+      document.getElementById(
+        "deleteSystemIcon"
+      );
+
+    const titleEl=
+      document.getElementById(
+        "deleteSystemTitle"
+      );
+
+    const messageEl=
+      document.getElementById(
+        "deleteSystemMessage"
+      );
+
+    const actions=
+      document.getElementById(
+        "deleteSystemActions"
+      );
+
+    icon.className=
+      "delete-system-icon warning";
+
+    icon.textContent="!";
+
+    titleEl.textContent=title;
+
+    messageEl.textContent=message;
+
+    actions.innerHTML=`
+      <button
+        id="deleteAlertOk"
+        class="
+          delete-system-btn
+          delete-system-btn-primary
+        "
+      >
+        Entendi
+      </button>
+    `;
+
+    modal.classList.add("open");
+
+    document
+      .getElementById("deleteAlertOk")
+      .onclick=()=>{
+
+        modal.classList.remove("open");
+
+        resolve();
+      };
+  });
+}
+
+
+/* ==========================================
+   CONFIRMAÇÃO DE EXCLUSÃO
+========================================== */
+
+function deleteConfirm(title,message){
+
+  createDeleteModal();
+
+  return new Promise(resolve=>{
+
+    const modal=
+      document.getElementById(
+        "deleteSystemModal"
+      );
+
+    const icon=
+      document.getElementById(
+        "deleteSystemIcon"
+      );
+
+    const titleEl=
+      document.getElementById(
+        "deleteSystemTitle"
+      );
+
+    const messageEl=
+      document.getElementById(
+        "deleteSystemMessage"
+      );
+
+    const actions=
+      document.getElementById(
+        "deleteSystemActions"
+      );
+
+    icon.className=
+      "delete-system-icon";
+
+    icon.textContent="🗑";
+
+    titleEl.textContent=title;
+
+    messageEl.textContent=message;
+
+    actions.innerHTML=`
+
+      <button
+        id="deleteCancelBtn"
+        class="delete-system-btn"
+      >
+        Cancelar
+      </button>
+
+      <button
+        id="deleteConfirmBtn"
+        class="
+          delete-system-btn
+          delete-system-btn-danger
+        "
+      >
+        Sim, excluir
+      </button>
+    `;
+
+    modal.classList.add("open");
+
+    document
+      .getElementById("deleteCancelBtn")
+      .onclick=()=>{
+
+        modal.classList.remove("open");
+
+        resolve(false);
+      };
+
+    document
+      .getElementById("deleteConfirmBtn")
+      .onclick=()=>{
+
+        modal.classList.remove("open");
+
+        resolve(true);
+      };
+  });
+}
+
+
+/* ==========================================
+   EXCLUIR APÓLICE
+========================================== */
+
 async function deletePolicy(id){
 
   const p=policyById(id);
@@ -1965,23 +2332,34 @@ async function deletePolicy(id){
     return;
   }
 
-  const c=clientById(p.clientId);
+  const c=
+    clientById(
+      p.clientId
+    );
 
-  const confirmar=confirm(
-    `Tem certeza que deseja excluir esta apólice?\n\n`+
-    `Cliente: ${c?.name||"Cliente"}\n`+
-    `Apólice: ${p.number||"Sem número"}\n`+
-    `Seguro: ${p.type}\n\n`+
-    `O histórico e o PDF desta apólice também serão excluídos.\n`+
-    `Essa ação não pode ser desfeita.`
-  );
+  const confirmar=
+    await deleteConfirm(
+      "Excluir apólice?",
+      `Você está prestes a excluir a apólice ${p.number||"sem número"} do cliente ${c?.name||"Cliente"}.
+
+O PDF e todo o histórico desta apólice também serão excluídos.
+
+Essa ação não poderá ser desfeita.`
+    );
 
   if(!confirmar)
     return;
 
   if(p.pdfId){
-    await del("pdfs",p.pdfId);
-    state.pdfs.delete(p.pdfId);
+
+    await del(
+      "pdfs",
+      p.pdfId
+    );
+
+    state.pdfs.delete(
+      p.pdfId
+    );
   }
 
   const eventos=
@@ -1990,7 +2368,11 @@ async function deletePolicy(id){
     );
 
   for(const evento of eventos){
-    await del("events",evento.id);
+
+    await del(
+      "events",
+      evento.id
+    );
   }
 
   state.events=
@@ -2004,18 +2386,28 @@ async function deletePolicy(id){
     );
 
   for(const apolice of vinculadas){
+
     apolice.renewedFrom=null;
-    await put("policies",apolice);
+
+    await put(
+      "policies",
+      apolice
+    );
   }
 
-  await del("policies",id);
+  await del(
+    "policies",
+    id
+  );
 
   state.policies=
     state.policies.filter(
       x=>x.id!==id
     );
 
-  closeModal("detailsModal");
+  closeModal(
+    "detailsModal"
+  );
 
   renderAll();
 
@@ -2024,12 +2416,22 @@ async function deletePolicy(id){
   );
 }
 
+
+/* ==========================================
+   EXCLUIR CLIENTE
+========================================== */
+
 async function deleteClient(id){
 
-  const c=clientById(id);
+  const c=
+    clientById(id);
 
   if(!c){
-    toast("Cliente não encontrado.");
+
+    toast(
+      "Cliente não encontrado."
+    );
+
     return;
   }
 
@@ -2040,20 +2442,23 @@ async function deleteClient(id){
 
   if(apolices.length>0){
 
-    alert(
-      `Não é possível excluir este cliente.\n\n`+
-      `${c.name} possui ${apolices.length} `+
-      `apólice${apolices.length===1?"":"s"} cadastrada${apolices.length===1?"":"s"}.\n\n`+
-      `Exclua primeiro as apólices desse cliente.`
+    await deleteAlert(
+      "Não foi possível excluir",
+      `${c.name} possui ${apolices.length} apólice${apolices.length===1?"":"s"} cadastrada${apolices.length===1?"":"s"}.
+
+Para excluir este cliente, remova primeiro todas as apólices vinculadas a ele.`
     );
 
     return;
   }
 
-  const confirmar=confirm(
-    `Tem certeza que deseja excluir o cliente "${c.name}"?\n\n`+
-    `Essa ação não pode ser desfeita.`
-  );
+  const confirmar=
+    await deleteConfirm(
+      "Excluir cliente?",
+      `Você está prestes a excluir o cliente ${c.name}.
+
+Essa ação não poderá ser desfeita.`
+    );
 
   if(!confirmar)
     return;
@@ -2078,8 +2483,6 @@ async function deleteClient(id){
     "Cliente excluído com sucesso."
   );
 }
-
-function renewPolicy(id){
 
   const old=
     policyById(id);

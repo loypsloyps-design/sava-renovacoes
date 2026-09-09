@@ -860,6 +860,7 @@ function renderClients(){
         </div>
       `;
 }
+
 function renderPolicies(){
 
   const q=
@@ -917,8 +918,7 @@ function renderPolicies(){
           p.insurer!==inf
         )
           return false;
-
-        const d=daysUntil(p.endDate);
+                 const d=daysUntil(p.endDate);
 
         if(
           ef==="expired"&&
@@ -1719,6 +1719,7 @@ function changeStatus(id,status){
 
   });
 }
+
 function openDetails(id){
 
   const p=policyById(id);
@@ -1838,7 +1839,7 @@ function openDetails(id){
       <div class="detail-box">
         <small>PDF</small>
         <strong>
-          ${
+                  ${
             p.pdfId
               ?`
                 <button
@@ -1956,6 +1957,7 @@ function openDetails(id){
   openModal("detailsModal");
 }
 
+
 /* ==========================================
    MODAL PROFISSIONAL DE EXCLUSÃO
 ========================================== */
@@ -2034,10 +2036,6 @@ function createDeleteModal(){
       font-size:14px;
       line-height:1.6;
       white-space:pre-line;
-    }
-
-    .delete-system-message strong{
-      color:#344054;
     }
 
     .delete-system-actions{
@@ -2484,6 +2482,13 @@ Essa ação não poderá ser desfeita.`
   );
 }
 
+
+/* ==========================================
+   RENOVAR APÓLICE
+========================================== */
+
+function renewPolicy(id){
+
   const old=
     policyById(id);
 
@@ -2755,8 +2760,7 @@ function recordEmail(p){
     id:uid(),
     policyId:p.id,
     type:"email",
-    message:
-      "Lembrete de e-mail enviado",
+    message:      "Lembrete de e-mail enviado",
     date:
       new Date().toISOString()
   });
@@ -3021,6 +3025,7 @@ function showReport(){
 
   go("relatorios");
 }
+
 function setupEvents(){
 
   $$("[data-view]")

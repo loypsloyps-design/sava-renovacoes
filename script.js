@@ -89,29 +89,20 @@ const INSURERS = [
 
 
 /* =========================================================
-   ESTADO DO SISTEMA
+   ESTADO
 ========================================================= */
 
 const state = {
-
   user: null,
-
   clients: [],
-
   policies: [],
-
   events: [],
 
   settings: {
-
     endpoint: "",
-
     managerEmail: "",
-
     language: "pt-BR"
-
   }
-
 };
 
 
@@ -119,11 +110,11 @@ const state = {
    ATALHOS
 ========================================================= */
 
-const $ = s =>
-  document.querySelector(s);
+const $ = selector =>
+  document.querySelector(selector);
 
-const $$ = s =>
-  [...document.querySelectorAll(s)];
+const $$ = selector =>
+  [...document.querySelectorAll(selector)];
 
 
 /* =========================================================
@@ -134,45 +125,50 @@ const uid = () =>
   crypto.randomUUID();
 
 
-const cleanPhone = v =>
-  String(v || "")
+const cleanPhone = value =>
+  String(value || "")
     .replace(/\D/g, "");
 
 
-const esc = s =>
-  String(s ?? "")
+const esc = value =>
+  String(value ?? "")
     .replace(
       /[&<>"']/g,
-      m => ({
+      character => ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
         "'": "&#39;"
-      }[m])
+      }[character])
     );
 
 
-const fmtDate = d =>
-  d
-    ? new Intl.DateTimeFormat(
-        "pt-BR"
-      ).format(
-        new Date(
-          d + "T12:00:00"
-        )
-      )
-    : "—";
+const fmtDate = date => {
+
+  if (!date) {
+    return "—";
+  }
+
+  return new Intl.DateTimeFormat(
+    "pt-BR"
+  ).format(
+    new Date(
+      date + "T12:00:00"
+    )
+  );
+
+};
 
 
-const iso = d => {
+const iso = date => {
 
-  const x =
-    new Date(d);
+  const value =
+    new Date(date);
 
   return new Date(
-    x.getTime() -
-    x.getTimezoneOffset() * 60000
+    value.getTime() -
+    value.getTimezoneOffset() * 60000
   )
     .toISOString()
     .slice(0, 10);
@@ -181,20 +177,35 @@ const iso = d => {
 
 
 /* =========================================================
-   CÁLCULO DE VENCIMENTO
+   UUID
 ========================================================= */
 
-const daysUntil = d => {
+function validUuid(value) {
 
-  if (!d)
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    .test(
+      String(value || "")
+    );
+
+}
+
+
+/* =========================================================
+   VENCIMENTO
+========================================================= */
+
+const daysUntil = date => {
+
+  if (!date) {
     return 0;
+  }
 
   const [
     year,
     month,
     day
   ] =
-    d
+    date
       .split("-")
       .map(Number);
 
@@ -216,10 +227,7 @@ const daysUntil = d => {
     );
 
   return Math.round(
-    (
-      target -
-      current
-    ) /
+    (target - current) /
     86400000
   );
 
@@ -230,11 +238,14 @@ const daysUntil = d => {
    INICIAIS
 ========================================================= */
 
-const initials = n =>
-  (n || "?")
+const initials = name =>
+  (name || "?")
     .split(" ")
     .slice(0, 2)
-    .map(x => x[0])
+    .map(
+      item =>
+        item[0]
+    )
     .join("")
     .toUpperCase();
 
@@ -243,64 +254,67 @@ const initials = n =>
    TELEFONE
 ========================================================= */
 
-function validBrazilPhone(v) {
+function validBrazilPhone(value) {
 
-  const n =
-    cleanPhone(v);
-
-  if (
-    n.length !== 10 &&
-    n.length !== 11
-  )
-    return false;
+  const phone =
+    cleanPhone(value);
 
   if (
-    /^(\d)\1+$/.test(n)
-  )
+    phone.length !== 10 &&
+    phone.length !== 11
+  ) {
     return false;
+  }
 
   if (
-    /^0/.test(n) ||
-    /^1/.test(n)
-  )
+    /^(\d)\1+$/.test(phone)
+  ) {
     return false;
+  }
+
+  if (
+    /^0/.test(phone) ||
+    /^1/.test(phone)
+  ) {
+    return false;
+  }
 
   return /^[1-9]{2}9?[2-9]\d{7}$/
-    .test(n);
+    .test(phone);
 
 }
 
 
-function formatPhone(n) {
+function formatPhone(value) {
 
-  n =
-    cleanPhone(n);
+  const phone =
+    cleanPhone(value);
 
   if (
-    n.length === 11
+    phone.length === 11
   ) {
 
     return (
-      `(${n.slice(0, 2)}) ` +
-      `${n.slice(2, 7)}-` +
-      `${n.slice(7)}`
+      `(${phone.slice(0, 2)}) ` +
+      `${phone.slice(2, 7)}-` +
+      `${phone.slice(7)}`
     );
 
   }
 
   if (
-    n.length === 10
+    phone.length === 10
   ) {
 
     return (
-      `(${n.slice(0, 2)}) ` +
-      `${n.slice(2, 6)}-` +
-      `${n.slice(6)}`
+      `(${phone.slice(0, 2)}) ` +
+      `${phone.slice(2, 6)}-` +
+      `${phone.slice(6)}`
     );
 
   }
 
-  return n;
+  return phone;
 
 }
 
@@ -312,8 +326,8 @@ function formatPhone(n) {
 function clientById(id) {
 
   return state.clients.find(
-    c =>
-      c.id === id
+    client =>
+      client.id === id
   );
 
 }
@@ -322,8 +336,8 @@ function clientById(id) {
 function policyById(id) {
 
   return state.policies.find(
-    p =>
-      p.id === id
+    policy =>
+      policy.id === id
   );
 
 }
@@ -333,31 +347,40 @@ function policyById(id) {
    STATUS
 ========================================================= */
 
-function processClass(s) {
+function processClass(status) {
 
-  return s === "Ganho"
-    ? "green"
-    : s === "Em andamento"
-      ? "orange"
-      : "gray";
+  if (
+    status === "Ganho"
+  ) {
+    return "green";
+  }
+
+  if (
+    status === "Em andamento"
+  ) {
+    return "orange";
+  }
+
+  return "gray";
 
 }
 
 
-function expiryLabel(p) {
+function expiryLabel(policy) {
 
-  const d =
+  const days =
     daysUntil(
-      p.endDate
+      policy.endDate
     );
 
   if (
-    d < 0
+    days < 0
   ) {
 
     return {
       text:
-        `Vencida há ${Math.abs(d)} dias`,
+        `Vencida há ${Math.abs(days)} dias`,
+
       cls:
         "red"
     };
@@ -365,12 +388,13 @@ function expiryLabel(p) {
   }
 
   if (
-    d === 0
+    days === 0
   ) {
 
     return {
       text:
         "Vence hoje",
+
       cls:
         "red"
     };
@@ -378,12 +402,13 @@ function expiryLabel(p) {
   }
 
   if (
-    d <= 30
+    days <= 30
   ) {
 
     return {
       text:
-        `Vence em ${d} dias`,
+        `Vence em ${days} dias`,
+
       cls:
         "orange"
     };
@@ -393,6 +418,7 @@ function expiryLabel(p) {
   return {
     text:
       "Vigente",
+
     cls:
       "green"
   };
@@ -404,31 +430,33 @@ function expiryLabel(p) {
    TOAST
 ========================================================= */
 
-function toast(msg) {
+function toast(message) {
 
-  const el =
+  const element =
     $("#toast");
 
-  if (!el)
+  if (!element) {
     return;
+  }
 
-  el.textContent =
-    msg;
+  element.textContent =
+    message;
 
-  el.classList.add(
+  element.classList.add(
     "show"
   );
 
   clearTimeout(
-    toast._t
+    toast._timer
   );
 
-  toast._t =
+  toast._timer =
     setTimeout(
-      () =>
-        el.classList.remove(
+      () => {
+        element.classList.remove(
           "show"
-        ),
+        );
+      },
       3200
     );
 
@@ -436,18 +464,32 @@ function toast(msg) {
 
 
 /* =========================================================
-   LOGIN / APP
+   LOGIN / TELAS
 ========================================================= */
 
 function showLogin() {
 
   $("#loginScreen")
     .classList
-    .remove("hidden");
+    .remove(
+      "hidden"
+    );
 
   $("#app")
     .classList
-    .add("hidden");
+    .add(
+      "hidden"
+    );
+
+  if (
+    $("#recoveryScreen")
+  ) {
+    $("#recoveryScreen")
+      .classList
+      .add(
+        "hidden"
+      );
+  }
 
 }
 
@@ -456,273 +498,331 @@ function showApp() {
 
   $("#loginScreen")
     .classList
-    .add("hidden");
+    .add(
+      "hidden"
+    );
 
   $("#app")
     .classList
-    .remove("hidden");
+    .remove(
+      "hidden"
+    );
+
+  if (
+    $("#recoveryScreen")
+  ) {
+    $("#recoveryScreen")
+      .classList
+      .add(
+        "hidden"
+      );
+  }
+
+}
+
+
+function showRecovery() {
+
+  $("#loginScreen")
+    .classList
+    .add(
+      "hidden"
+    );
+
+  $("#app")
+    .classList
+    .add(
+      "hidden"
+    );
+
+  if (
+    $("#recoveryScreen")
+  ) {
+    $("#recoveryScreen")
+      .classList
+      .remove(
+        "hidden"
+      );
+  }
 
 }
 
 
 /* =========================================================
-   CONVERSÃO:
-   SUPABASE → FORMATO DO CRM
+   CLIENTE — BANCO → CRM
 ========================================================= */
 
-function clientFromDb(r) {
+function clientFromDb(row) {
 
   return {
-
     id:
-      r.id,
+      row.id,
 
     name:
-      r.name,
+      row.name,
 
     birthDate:
-      r.birth_date || "",
+      row.birth_date || "",
 
     phone:
-      r.phone || "",
+      row.phone || "",
 
     document:
-      r.document || "",
+      row.document || "",
 
     email:
-      r.email || "",
+      row.email || "",
 
     notes:
-      r.notes || "",
+      row.notes || "",
 
     createdAt:
-      r.created_at,
+      row.created_at,
 
     updatedAt:
-      r.updated_at
-
+      row.updated_at
   };
 
 }
 
 
-function clientToDb(c) {
+/* =========================================================
+   CLIENTE — CRM → BANCO
+========================================================= */
+
+function clientToDb(client) {
 
   return {
-
     id:
-      c.id,
+      client.id,
 
     user_id:
       state.user.id,
 
     name:
-      c.name,
+      client.name,
 
     birth_date:
-      c.birthDate || null,
+      client.birthDate || null,
 
     phone:
-      c.phone,
+      client.phone,
 
     document:
-      c.document || null,
+      client.document || null,
 
     email:
-      c.email || null,
+      client.email || null,
 
     notes:
-      c.notes || null,
+      client.notes || null,
 
     created_at:
-      c.createdAt ||
+      client.createdAt ||
       new Date().toISOString(),
 
     updated_at:
       new Date().toISOString()
-
   };
 
 }
 
 
 /* =========================================================
-   APÓLICE DO BANCO → CRM
+   APÓLICE — BANCO → CRM
 ========================================================= */
 
-function policyFromDb(r) {
+function policyFromDb(row) {
 
   return {
-
     id:
-      r.id,
+      row.id,
 
     clientId:
-      r.client_id,
+      row.client_id,
 
     insurer:
-      r.insurer,
+      row.insurer,
 
     type:
-      r.type,
+      row.type,
 
     number:
-      r.number || "",
+      row.number || "",
 
     startDate:
-      r.start_date || "",
+      row.start_date || "",
 
     endDate:
-      r.end_date || "",
+      row.end_date || "",
 
     status:
-      r.status ||
+      row.status ||
       "Pendente",
 
     notes:
-      r.notes || "",
+      row.notes || "",
 
     alerts: {
-
       30:
-        r.alert_30 !== false,
+        row.alert_30 !== false,
 
       15:
-        r.alert_15 !== false,
+        row.alert_15 !== false,
 
       7:
-        r.alert_7 !== false,
+        row.alert_7 !== false,
 
       1:
-        r.alert_1 !== false,
+        row.alert_1 !== false,
 
       expired:
-        r.alert_expired !== false
-
+        row.alert_expired !== false
     },
 
     pdfPath:
-      r.pdf_path || null,
+      row.pdf_path || null,
 
     pdfId:
-      r.pdf_path || null,
+      row.pdf_path || null,
 
     renewedFrom:
-      r.renewed_from || null,
+      row.renewed_from || null,
 
     createdAt:
-      r.created_at,
+      row.created_at,
 
     updatedAt:
-      r.updated_at
-
+      row.updated_at
   };
 
 }
 
 
 /* =========================================================
-   APÓLICE CRM → BANCO
+   APÓLICE — CRM → BANCO
 ========================================================= */
 
-function policyToDb(p) {
+function policyToDb(policy) {
 
   return {
-
     id:
-      p.id,
+      policy.id,
 
     user_id:
       state.user.id,
 
     client_id:
-      p.clientId,
+      policy.clientId,
 
     insurer:
-      p.insurer,
+      policy.insurer,
 
     type:
-      p.type,
+      policy.type,
 
     number:
-      p.number || null,
+      policy.number || null,
 
     start_date:
-      p.startDate || null,
+      policy.startDate || null,
 
     end_date:
-      p.endDate || null,
+      policy.endDate || null,
 
     status:
-      p.status ||
+      policy.status ||
       "Pendente",
 
     notes:
-      p.notes || null,
+      policy.notes || null,
 
     alert_30:
-      p.alerts?.[30] !== false,
+      policy.alerts?.[30] !== false,
 
     alert_15:
-      p.alerts?.[15] !== false,
+      policy.alerts?.[15] !== false,
 
     alert_7:
-      p.alerts?.[7] !== false,
+      policy.alerts?.[7] !== false,
 
     alert_1:
-      p.alerts?.[1] !== false,
+      policy.alerts?.[1] !== false,
 
     alert_expired:
-      p.alerts?.expired !== false,
+      policy.alerts?.expired !== false,
 
     pdf_path:
-      p.pdfPath || null,
+      policy.pdfPath || null,
 
     renewed_from:
-      p.renewedFrom || null,
+      policy.renewedFrom || null,
 
     created_at:
-      p.createdAt ||
+      policy.createdAt ||
       new Date().toISOString(),
 
     updated_at:
       new Date().toISOString()
-
   };
 
 }
 
 
 /* =========================================================
-   EVENTO DO BANCO → CRM
+   EVENTOS
 ========================================================= */
 
-function eventFromDb(r) {
+function eventFromDb(row) {
 
   return {
-
     id:
-      r.id,
+      row.id,
 
     policyId:
-      r.policy_id,
+      row.policy_id,
 
     type:
-      r.type || "",
+      row.type || "",
 
     message:
-      r.message,
+      row.message,
 
     date:
-      r.created_at
+      row.created_at
+  };
 
+}
+
+
+function eventToDb(event) {
+
+  return {
+    id:
+      event.id,
+
+    user_id:
+      state.user.id,
+
+    policy_id:
+      event.policyId,
+
+    type:
+      event.type || "history",
+
+    message:
+      event.message,
+
+    created_at:
+      event.date ||
+      new Date().toISOString()
   };
 
 }
 
 
 /* =========================================================
-   CRIAR EVENTO NO SUPABASE
+   CRIAR EVENTO
 ========================================================= */
 
 async function addEvent(
@@ -732,7 +832,6 @@ async function addEvent(
 ) {
 
   const row = {
-
     id:
       uid(),
 
@@ -742,14 +841,15 @@ async function addEvent(
     policy_id:
       policyId,
 
-    type,
+    type:
+      type,
 
-    message,
+    message:
+      message,
 
     created_at:
       new Date()
         .toISOString()
-
   };
 
 
@@ -758,40 +858,48 @@ async function addEvent(
     error
   } =
     await sb
-      .from("events")
-      .insert(row)
+      .from(
+        "events"
+      )
+      .insert(
+        row
+      )
       .select()
       .single();
 
 
-  if (error)
+  if (error) {
     throw error;
+  }
 
 
-  const ev =
-    eventFromDb(data);
+  const event =
+    eventFromDb(
+      data
+    );
 
 
   state.events.push(
-    ev
+    event
   );
 
 
-  return ev;
+  return event;
 
 }
 
 
 /* =========================================================
-   CARREGAR DADOS DA NUVEM
+   CARREGAR DADOS DO SUPABASE
 ========================================================= */
 
 async function loadCloudData() {
 
   if (
     !state.user
-  )
+  ) {
     return;
+  }
 
 
   try {
@@ -805,49 +913,61 @@ async function loadCloudData() {
       await Promise.all([
 
         sb
-          .from("clients")
+          .from(
+            "clients"
+          )
           .select("*")
-          .order("name"),
+          .order(
+            "name"
+          ),
 
         sb
-          .from("policies")
+          .from(
+            "policies"
+          )
           .select("*")
-          .order("end_date"),
+          .order(
+            "end_date"
+          ),
 
         sb
-          .from("events")
+          .from(
+            "events"
+          )
           .select("*")
           .order(
             "created_at",
             {
-              ascending: false
+              ascending:
+                false
             }
           ),
 
         sb
-          .from("settings")
+          .from(
+            "settings"
+          )
           .select("*")
           .maybeSingle()
 
       ]);
 
 
-    const results = [
-      clientsResult,
-      policiesResult,
-      eventsResult,
-      settingsResult
-    ];
-
-
     for (
-      const result of results
+      const result
+      of [
+        clientsResult,
+        policiesResult,
+        eventsResult,
+        settingsResult
+      ]
     ) {
 
       if (
         result.error
-      )
+      ) {
         throw result.error;
+      }
 
     }
 
@@ -882,50 +1002,51 @@ async function loadCloudData() {
         );
 
 
-    state.settings =
+    if (
       settingsResult.data
-        ? {
+    ) {
 
-            endpoint:
-              settingsResult
-                .data
-                .email_endpoint ||
-              "",
+      state.settings = {
+        endpoint:
+          settingsResult
+            .data
+            .email_endpoint ||
+          "",
 
-            managerEmail:
-              settingsResult
-                .data
-                .manager_email ||
-              "",
+        managerEmail:
+          settingsResult
+            .data
+            .manager_email ||
+          "",
 
-            language:
-              settingsResult
-                .data
-                .language ||
-              "pt-BR"
+        language:
+          settingsResult
+            .data
+            .language ||
+          "pt-BR"
+      };
 
-          }
-        : {
+    }
+    else {
 
-            endpoint:
-              "",
+      state.settings = {
+        endpoint: "",
+        managerEmail: "",
+        language:
+          "pt-BR"
+      };
 
-            managerEmail:
-              "",
-
-            language:
-              "pt-BR"
-
-          };
+    }
 
 
     renderAll();
 
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
-      err
+      "Erro ao carregar dados:",
+      error
     );
 
     toast(
@@ -938,13 +1059,19 @@ async function loadCloudData() {
 
 
 /* =========================================================
-   SALVAR CONFIGURAÇÕES NA NUVEM
+   SALVAR CONFIGURAÇÕES
 ========================================================= */
 
 async function saveSettings() {
 
-  const payload = {
+  if (
+    !state.user
+  ) {
+    return;
+  }
 
+
+  const payload = {
     user_id:
       state.user.id,
 
@@ -966,7 +1093,6 @@ async function saveSettings() {
     updated_at:
       new Date()
         .toISOString()
-
   };
 
 
@@ -974,7 +1100,9 @@ async function saveSettings() {
     error
   } =
     await sb
-      .from("settings")
+      .from(
+        "settings"
+      )
       .upsert(
         payload,
         {
@@ -984,10 +1112,9 @@ async function saveSettings() {
       );
 
 
-  if (
-    error
-  )
+  if (error) {
     throw error;
+  }
 
 }
 
@@ -998,71 +1125,72 @@ async function saveSettings() {
 
 function populateSelects() {
 
-  const type =
+  const typeFilter =
     $("#typeFilter");
 
-  const ins =
+  const insurerFilter =
     $("#insurerFilter");
 
-  const pType =
+  const policyType =
     $("#policyType");
 
-  const pIns =
+  const policyInsurer =
     $("#policyInsurer");
 
-  const pClient =
+  const policyClient =
     $("#policyClient");
 
 
   if (
-    !type ||
-    !ins ||
-    !pType ||
-    !pIns ||
-    !pClient
-  )
+    !typeFilter ||
+    !insurerFilter ||
+    !policyType ||
+    !policyInsurer ||
+    !policyClient
+  ) {
     return;
+  }
 
 
-  pType.innerHTML =
+  policyType.innerHTML =
     TYPES
       .map(
-        x =>
-          `<option>${esc(x)}</option>`
+        type =>
+          `<option>${esc(type)}</option>`
       )
       .join("");
 
 
-  pIns.innerHTML =
+  policyInsurer.innerHTML =
     INSURERS
       .map(
-        x =>
-          `<option>${esc(x)}</option>`
+        insurer =>
+          `<option>${esc(insurer)}</option>`
       )
       .join("");
 
 
-  type.innerHTML =
+  typeFilter.innerHTML =
     `<option value="all">Todos os tipos</option>` +
     TYPES
       .map(
-        x =>
-          `<option>${esc(x)}</option>`
+        type =>
+          `<option>${esc(type)}</option>`
       )
       .join("");
 
 
-  ins.innerHTML =
+  insurerFilter.innerHTML =
     `<option value="all">Todas as seguradoras</option>` +
     INSURERS
       .map(
-        x =>
-          `<option>${esc(x)}</option>`
+        insurer =>
+          `<option>${esc(insurer)}</option>`
       )
       .join("");
 
 
-  pClient.innerHTML =
+  policyClient.innerHTML =
     `<option value="">Selecione...</option>` +
     [...state.clients]
       .sort(
@@ -1072,8 +1200,8 @@ function populateSelects() {
           )
       )
       .map(
-        c =>
-          `<option value="${c.id}">${esc(c.name)}</option>`
+        client =>
+          `<option value="${client.id}">${esc(client.name)}</option>`
       )
       .join("");
 
@@ -1081,32 +1209,26 @@ function populateSelects() {
 
 
 /* =========================================================
-   RENDERIZAR TUDO
+   RENDERIZAR SISTEMA
 ========================================================= */
 
 function renderAll() {
 
   if (
     !state.user
-  )
+  ) {
     return;
+  }
 
   populateSelects();
-
   renderDashboard();
-
   renderClients();
-
   renderPolicies();
-
   renderKanban();
-
   renderConfig();
-
   checkAutomation();
 
-}
-/* =========================================================
+}/* =========================================================
    DASHBOARD
 ========================================================= */
 
@@ -1116,18 +1238,18 @@ function renderDashboard() {
     state.policies.length;
 
 
-  const e7 =
+  const next7 =
     state.policies.filter(
-      p => {
+      policy => {
 
-        const d =
+        const days =
           daysUntil(
-            p.endDate
+            policy.endDate
           );
 
         return (
-          d >= 0 &&
-          d <= 7
+          days >= 0 &&
+          days <= 7
         );
 
       }
@@ -1136,45 +1258,57 @@ function renderDashboard() {
 
   const expired =
     state.policies.filter(
-      p =>
+      policy =>
         daysUntil(
-          p.endDate
+          policy.endDate
         ) < 0
     ).length;
 
 
   const won =
     state.policies.filter(
-      p =>
-        p.status === "Ganho"
+      policy =>
+        policy.status ===
+        "Ganho"
     ).length;
 
 
-  $("#statTotal").textContent =
-    total;
+  if ($("#statTotal")) {
+    $("#statTotal").textContent =
+      total;
+  }
 
-  $("#stat7").textContent =
-    e7;
 
-  $("#statExpired").textContent =
-    expired;
+  if ($("#stat7")) {
+    $("#stat7").textContent =
+      next7;
+  }
 
-  $("#statWon").textContent =
-    won;
+
+  if ($("#statExpired")) {
+    $("#statExpired").textContent =
+      expired;
+  }
+
+
+  if ($("#statWon")) {
+    $("#statWon").textContent =
+      won;
+  }
 
 
   const upcoming =
     [...state.policies]
       .filter(
-        p => {
+        policy => {
 
-          const d =
+          const days =
             daysUntil(
-              p.endDate
+              policy.endDate
             );
 
           return (
-            d <= 30
+            days <= 30
           );
 
         }
@@ -1194,109 +1328,120 @@ function renderDashboard() {
       );
 
 
-  $("#upcomingList").innerHTML =
-    upcoming.length
-      ? upcoming
-          .map(
-            p => {
+  if ($("#upcomingList")) {
 
-              const c =
-                clientById(
-                  p.clientId
-                );
+    $("#upcomingList").innerHTML =
+      upcoming.length
+        ? upcoming
+            .map(
+              policy => {
 
-              const e =
-                expiryLabel(p);
+                const client =
+                  clientById(
+                    policy.clientId
+                  );
 
-              return `
-                <div class="upcoming-item">
+                const expiry =
+                  expiryLabel(
+                    policy
+                  );
 
-                  <div>
 
-                    <div class="name">
-                      ${esc(
-                        c?.name ||
-                        "Cliente"
-                      )}
+                return `
+                  <div class="upcoming-item">
+
+                    <div>
+
+                      <div class="name">
+                        ${esc(
+                          client?.name ||
+                          "Cliente"
+                        )}
+                      </div>
+
+                      <small>
+                        ${esc(
+                          policy.type
+                        )}
+                        ·
+                        ${esc(
+                          policy.insurer
+                        )}
+                      </small>
+
                     </div>
 
-                    <small>
-                      ${esc(p.type)}
-                      ·
-                      ${esc(p.insurer)}
-                    </small>
+
+                    <div>
+
+                      <small>
+                        Vigência
+                      </small>
+
+                      <b>
+                        ${fmtDate(
+                          policy.startDate
+                        )}
+                        →
+                        ${fmtDate(
+                          policy.endDate
+                        )}
+                      </b>
+
+                    </div>
+
+
+                    <div>
+
+                      <span
+                        class="pill ${expiry.cls}"
+                      >
+                        ${expiry.text}
+                      </span>
+
+                    </div>
+
+
+                    <div class="actions">
+
+                      <button
+                        class="action-btn"
+                        onclick="openDetails('${policy.id}')"
+                      >
+                        Abrir
+                      </button>
+
+                    </div>
 
                   </div>
+                `;
 
+              }
+            )
+            .join("")
+        : `
+            <div class="empty">
+              Nenhuma apólice vencendo
+              nos próximos 30 dias.
+            </div>
+          `;
 
-                  <div>
-
-                    <small>
-                      Vigência
-                    </small>
-
-                    <b>
-                      ${fmtDate(
-                        p.startDate
-                      )}
-                      →
-                      ${fmtDate(
-                        p.endDate
-                      )}
-                    </b>
-
-                  </div>
-
-
-                  <div>
-
-                    <span
-                      class="pill ${e.cls}"
-                    >
-                      ${e.text}
-                    </span>
-
-                  </div>
-
-
-                  <div class="actions">
-
-                    <button
-                      class="action-btn"
-                      onclick="openDetails('${p.id}')"
-                    >
-                      Abrir
-                    </button>
-
-                  </div>
-
-                </div>
-              `;
-
-            }
-          )
-          .join("")
-      : `
-          <div class="empty">
-            Nenhuma apólice vencendo
-            nos próximos 30 dias.
-          </div>
-        `;
+  }
 
 
   const counts = {
 
     Pendente:
       state.policies.filter(
-        p =>
-          p.status ===
+        policy =>
+          policy.status ===
           "Pendente"
       ).length,
 
     "Em andamento":
       state.policies.filter(
-        p =>
-          p.status ===
+        policy =>
+          policy.status ===
           "Em andamento"
       ).length,
 
@@ -1313,57 +1458,68 @@ function renderDashboard() {
     );
 
 
-  $("#processSummary").innerHTML =
-    Object
-      .entries(counts)
-      .map(
-        ([k, v]) => `
+  if ($("#processSummary")) {
 
-          <div class="process-line">
+    $("#processSummary").innerHTML =
+      Object
+        .entries(
+          counts
+        )
+        .map(
+          ([status, value]) => `
 
-            <div class="line-top">
+            <div class="process-line">
 
-              <span>
-                ${k}
-              </span>
+              <div class="line-top">
 
-              <b>
-                ${v}
-              </b>
+                <span>
+                  ${status}
+                </span>
+
+                <b>
+                  ${value}
+                </b>
+
+              </div>
+
+
+              <div
+                class="bar ${
+                  status === "Pendente"
+                    ? "pendente"
+                    : status === "Ganho"
+                      ? "ganho"
+                      : "andamento"
+                }"
+              >
+
+                <i
+                  style="width:${value / max * 100}%"
+                ></i>
+
+              </div>
 
             </div>
+          `
+        )
+        .join("");
 
-            <div
-              class="bar ${
-                k === "Pendente"
-                  ? "pendente"
-                  : k === "Ganho"
-                    ? "ganho"
-                    : "andamento"
-              }"
-            >
-
-              <i
-                style="width:${v / max * 100}%"
-              ></i>
-
-            </div>
-
-          </div>
-        `
-      )
-      .join("");
+  }
 
 
-  const ic = {};
+  const insurerCounts = {};
 
 
   state.policies.forEach(
-    p => {
+    policy => {
 
-      ic[p.insurer] =
+      insurerCounts[
+        policy.insurer
+      ] =
         (
-          ic[p.insurer] ||
+          insurerCounts[
+            policy.insurer
+          ] ||
           0
         ) + 1;
 
@@ -1371,9 +1527,11 @@ function renderDashboard() {
   );
 
 
-  const top =
+  const topInsurers =
     Object
-      .entries(ic)
+      .entries(
+        insurerCounts
+      )
       .sort(
         (a, b) =>
           b[1] - a[1]
@@ -1384,32 +1542,38 @@ function renderDashboard() {
       );
 
 
-  $("#insurerSummary").innerHTML =
-    top.length
-      ? top
-          .map(
-            ([k, v]) => `
+  if ($("#insurerSummary")) {
 
-              <div class="insurer-chip">
+    $("#insurerSummary").innerHTML =
+      topInsurers.length
+        ? topInsurers
+            .map(
+              ([insurer, value]) => `
 
-                <strong>
-                  ${v}
-                </strong>
+                <div class="insurer-chip">
 
-                <span>
-                  ${esc(k)}
-                </span>
+                  <strong>
+                    ${value}
+                  </strong>
 
-              </div>
-            `
-          )
-          .join("")
-      : `
-          <div class="empty">
-            Cadastre uma apólice
-            para começar.
-          </div>
-        `;
+                  <span>
+                    ${esc(
+                      insurer
+                    )}
+                  </span>
+
+                </div>
+              `
+            )
+            .join("")
+        : `
+            <div class="empty">
+              Cadastre uma apólice
+              para começar.
+            </div>
+          `;
+
+  }
 
 }
 
@@ -1420,7 +1584,7 @@ function renderDashboard() {
 
 function renderClients() {
 
-  const q =
+  const search =
     (
       $("#clientSearch")
         ?.value ||
@@ -1429,63 +1593,74 @@ function renderClients() {
       .toLowerCase();
 
 
-  const f =
+  const filter =
     $("#clientFilter")
       ?.value ||
     "all";
 
 
-  const arr =
+  const clients =
     state.clients.filter(
-      c => {
+      client => {
 
-        const ps =
+        const policies =
           state.policies.filter(
-            p =>
-              p.clientId ===
-              c.id
+            policy =>
+              policy.clientId ===
+              client.id
           );
 
 
         if (
-          f === "withPolicies" &&
-          !ps.length
-        )
+          filter ===
+            "withPolicies" &&
+          !policies.length
+        ) {
           return false;
+        }
 
 
         if (
-          f === "withoutPolicies" &&
-          ps.length
-        )
+          filter ===
+            "withoutPolicies" &&
+          policies.length
+        ) {
           return false;
+        }
 
 
         return [
-          c.name,
-          c.document,
-          c.phone,
-          c.email
+          client.name,
+          client.document,
+          client.phone,
+          client.email
         ]
           .join(" ")
           .toLowerCase()
-          .includes(q);
+          .includes(
+            search
+          );
 
       }
     );
 
 
-  $("#clientsGrid").innerHTML =
-    arr.length
-      ? arr
-          .map(
-            c => {
+  if (!$("#clientsGrid")) {
+    return;
+  }
 
-              const ps =
+
+  $("#clientsGrid").innerHTML =
+    clients.length
+      ? clients
+          .map(
+            client => {
+
+              const policies =
                 state.policies.filter(
-                  p =>
-                    p.clientId ===
-                    c.id
+                  policy =>
+                    policy.clientId ===
+                    client.id
                 );
 
 
@@ -1498,7 +1673,7 @@ function renderClients() {
 
                       <div class="avatar">
                         ${initials(
-                          c.name
+                          client.name
                         )}
                       </div>
 
@@ -1506,13 +1681,13 @@ function renderClients() {
 
                         <h4>
                           ${esc(
-                            c.name
+                            client.name
                           )}
                         </h4>
 
                         <small>
                           ${fmtDate(
-                            c.birthDate
+                            client.birthDate
                           )}
                         </small>
 
@@ -1523,10 +1698,10 @@ function renderClients() {
 
                     <span class="policy-count">
 
-                      ${ps.length}
+                      ${policies.length}
 
                       apólice${
-                        ps.length === 1
+                        policies.length === 1
                           ? ""
                           : "s"
                       }
@@ -1542,7 +1717,7 @@ function renderClients() {
                       ☎
                       ${esc(
                         formatPhone(
-                          c.phone
+                          client.phone
                         ) ||
                         "Sem telefone"
                       )}
@@ -1552,7 +1727,7 @@ function renderClients() {
                     <span>
                       ✉
                       ${esc(
-                        c.email ||
+                        client.email ||
                         "Sem e-mail"
                       )}
                     </span>
@@ -1561,7 +1736,7 @@ function renderClients() {
                     <span>
                       ▣
                       ${esc(
-                        c.document ||
+                        client.document ||
                         "Documento não informado"
                       )}
                     </span>
@@ -1572,24 +1747,28 @@ function renderClients() {
                   <div class="client-policies">
 
                     ${
-                      ps
+                      policies
                         .slice(
                           0,
                           5
                         )
                         .map(
-                          p => `
+                          policy => `
                             <div class="mini-policy">
 
                               <span>
-                                ${esc(p.type)}
+                                ${esc(
+                                  policy.type
+                                )}
                                 ·
-                                ${esc(p.insurer)}
+                                ${esc(
+                                  policy.insurer
+                                )}
                               </span>
 
                               <b>
                                 ${fmtDate(
-                                  p.endDate
+                                  policy.endDate
                                 )}
                               </b>
 
@@ -1601,10 +1780,10 @@ function renderClients() {
 
 
                     ${
-                      ps.length > 5
+                      policies.length > 5
                         ? `
                             <small>
-                              + ${ps.length - 5}
+                              + ${policies.length - 5}
                               apólice(s)
                             </small>
                           `
@@ -1621,7 +1800,7 @@ function renderClients() {
 
                     <button
                       class="action-btn"
-                      onclick="openClient('${c.id}')"
+                      onclick="openClient('${client.id}')"
                     >
                       Editar
                     </button>
@@ -1629,7 +1808,7 @@ function renderClients() {
 
                     <button
                       class="action-btn"
-                      onclick="newPolicyFor('${c.id}')"
+                      onclick="newPolicyFor('${client.id}')"
                     >
                       ＋ Apólice
                     </button>
@@ -1642,7 +1821,7 @@ function renderClients() {
                         border-color:#fecdca;
                         background:#fff5f5;
                       "
-                      onclick="deleteClient('${c.id}')"
+                      onclick="deleteClient('${client.id}')"
                     >
                       🗑 Excluir
                     </button>
@@ -1670,7 +1849,7 @@ function renderClients() {
 
 function renderPolicies() {
 
-  const q =
+  const search =
     (
       $("#policySearch")
         ?.value ||
@@ -1679,102 +1858,112 @@ function renderPolicies() {
       .toLowerCase();
 
 
-  const sf =
+  const statusFilter =
     $("#statusFilter")
       ?.value ||
     "all";
 
 
-  const ef =
+  const expiryFilter =
     $("#expiryFilter")
       ?.value ||
     "all";
 
 
-  const tf =
+  const typeFilter =
     $("#typeFilter")
       ?.value ||
     "all";
 
 
-  const inf =
+  const insurerFilter =
     $("#insurerFilter")
       ?.value ||
     "all";
 
 
-  const arr =
+  const policies =
     [...state.policies]
       .filter(
-        p => {
+        policy => {
 
-          const c =
+          const client =
             clientById(
-              p.clientId
+              policy.clientId
             );
 
 
-          const hay =
+          const searchable =
             [
-              c?.name,
-              p.number,
-              p.insurer,
-              p.type
+              client?.name,
+              policy.number,
+              policy.insurer,
+              policy.type
             ]
               .join(" ")
               .toLowerCase();
 
 
           if (
-            q &&
-            !hay.includes(q)
-          )
+            search &&
+            !searchable.includes(
+              search
+            )
+          ) {
             return false;
+          }
 
 
           if (
-            sf !== "all" &&
-            p.status !== sf
-          )
+            statusFilter !== "all" &&
+            policy.status !== statusFilter
+          ) {
             return false;
+          }
 
 
           if (
-            tf !== "all" &&
-            p.type !== tf
-          )
+            typeFilter !== "all" &&
+            policy.type !== typeFilter
+          ) {
             return false;
+          }
 
 
           if (
-            inf !== "all" &&
-            p.insurer !== inf
-          )
+            insurerFilter !== "all" &&
+            policy.insurer !== insurerFilter
+          ) {
             return false;
+          }
 
 
-          const d =
+          const days =
             daysUntil(
-              p.endDate
+              policy.endDate
             );
 
 
           if (
-            ef === "expired" &&
-            d >= 0
-          )
+            expiryFilter === "expired" &&
+            days >= 0
+          ) {
             return false;
+          }
 
 
           if (
-            ef !== "all" &&
-            ef !== "expired" &&
+            expiryFilter !== "all" &&
+            expiryFilter !== "expired" &&
             !(
-              d >= 0 &&
-              d <= Number(ef)
+              days >= 0 &&
+              days <= Number(
+                expiryFilter
+              )
             )
-          )
+          ) {
             return false;
+          }
 
 
           return true;
@@ -1792,19 +1981,26 @@ function renderPolicies() {
       );
 
 
-  $("#policiesTable").innerHTML =
-    arr.length
-      ? arr
-          .map(
-            p => {
+  if (!$("#policiesTable")) {
+    return;
+  }
 
-              const c =
+
+  $("#policiesTable").innerHTML =
+    policies.length
+      ? policies
+          .map(
+            policy => {
+
+              const client =
                 clientById(
-                  p.clientId
+                  policy.clientId
                 );
 
-              const e =
-                expiryLabel(p);
+              const expiry =
+                expiryLabel(
+                  policy
+                );
 
 
               return `
@@ -1816,7 +2012,7 @@ function renderPolicies() {
 
                       <div class="avatar">
                         ${initials(
-                          c?.name
+                          client?.name
                         )}
                       </div>
 
@@ -1824,7 +2020,7 @@ function renderPolicies() {
 
                         <strong>
                           ${esc(
-                            c?.name ||
+                            client?.name ||
                             "Cliente"
                           )}
                         </strong>
@@ -1837,7 +2033,7 @@ function renderPolicies() {
                         >
                           ${esc(
                             formatPhone(
-                              c?.phone
+                              client?.phone
                             ) ||
                             ""
                           )}
@@ -1854,7 +2050,7 @@ function renderPolicies() {
 
                     <b>
                       ${esc(
-                        p.type
+                        policy.type
                       )}
                     </b>
 
@@ -1865,7 +2061,7 @@ function renderPolicies() {
                       "
                     >
                       ${esc(
-                        p.number
+                        policy.number
                       )}
                     </small>
 
@@ -1874,7 +2070,7 @@ function renderPolicies() {
 
                   <td>
                     ${esc(
-                      p.insurer
+                      policy.insurer
                     )}
                   </td>
 
@@ -1882,13 +2078,13 @@ function renderPolicies() {
                   <td>
 
                     ${fmtDate(
-                      p.startDate
+                      policy.startDate
                     )}
 
                     →
 
                     ${fmtDate(
-                      p.endDate
+                      policy.endDate
                     )}
 
                   </td>
@@ -1898,11 +2094,11 @@ function renderPolicies() {
 
                     <span
                       class="pill ${processClass(
-                        p.status
+                        policy.status
                       )}"
                     >
                       ${esc(
-                        p.status
+                        policy.status
                       )}
                     </span>
 
@@ -1912,9 +2108,9 @@ function renderPolicies() {
                   <td>
 
                     <span
-                      class="pill ${e.cls}"
+                      class="pill ${expiry.cls}"
                     >
-                      ${e.text}
+                      ${expiry.text}
                     </span>
 
                   </td>
@@ -1926,8 +2122,7 @@ function renderPolicies() {
 
                       <button
                         class="action-btn"
-                        title="Detalhes"
-                        onclick="openDetails('${p.id}')"
+                        onclick="openDetails('${policy.id}')"
                       >
                         Ver
                       </button>
@@ -1935,8 +2130,7 @@ function renderPolicies() {
 
                       <button
                         class="action-btn"
-                        title="Editar"
-                        onclick="editPolicy('${p.id}')"
+                        onclick="editPolicy('${policy.id}')"
                       >
                         Editar
                       </button>
@@ -1944,19 +2138,18 @@ function renderPolicies() {
 
                       <button
                         class="action-btn"
-                        title="Renovar"
-                        onclick="renewPolicy('${p.id}')"
+                        onclick="renewPolicy('${policy.id}')"
                       >
                         ↻
                       </button>
 
 
                       ${
-                        p.pdfPath
+                        policy.pdfPath
                           ? `
                               <button
                                 class="action-btn"
-                                onclick="openPdf('${p.id}')"
+                                onclick="openPdf('${policy.id}')"
                               >
                                 PDF
                               </button>
@@ -1997,7 +2190,12 @@ function renderPolicies() {
 
 function renderKanban() {
 
-  const cols = [
+  if (!$("#kanban")) {
+    return;
+  }
+
+
+  const columns = [
     "Pendente",
     "Em andamento",
     "Ganho"
@@ -2005,14 +2203,15 @@ function renderKanban() {
 
 
   $("#kanban").innerHTML =
-    cols
+    columns
       .map(
-        s => {
+        status => {
 
-          const ps =
+          const policies =
             state.policies.filter(
-              p =>
-                p.status === s
+              policy =>
+                policy.status ===
+                status
             );
 
 
@@ -2021,9 +2220,9 @@ function renderKanban() {
               class="
                 kanban-col
                 ${
-                  s === "Pendente"
+                  status === "Pendente"
                     ? "pendente"
-                    : s === "Ganho"
+                    : status === "Ganho"
                       ? "ganho"
                       : "andamento"
                 }
@@ -2033,25 +2232,25 @@ function renderKanban() {
               <h4>
 
                 <span>
-                  ${s}
+                  ${status}
                 </span>
 
                 <span>
-                  ${ps.length}
+                  ${policies.length}
                 </span>
 
               </h4>
 
 
               ${
-                ps.length
-                  ? ps
+                policies.length
+                  ? policies
                       .map(
-                        p => {
+                        policy => {
 
-                          const c =
+                          const client =
                             clientById(
-                              p.clientId
+                              policy.clientId
                             );
 
 
@@ -2060,7 +2259,7 @@ function renderKanban() {
 
                               <strong>
                                 ${esc(
-                                  c?.name ||
+                                  client?.name ||
                                   "Cliente"
                                 )}
                               </strong>
@@ -2068,13 +2267,13 @@ function renderKanban() {
                               <small>
 
                                 ${esc(
-                                  p.type
+                                  policy.type
                                 )}
 
                                 ·
 
                                 ${esc(
-                                  p.insurer
+                                  policy.insurer
                                 )}
 
                                 <br>
@@ -2082,24 +2281,19 @@ function renderKanban() {
                                 Vence:
 
                                 ${fmtDate(
-                                  p.endDate
+                                  policy.endDate
                                 )}
 
                               </small>
 
 
                               <select
-                                onchange="
-                                  changeStatus(
-                                    '${p.id}',
-                                    this.value
-                                  )
-                                "
+                                onchange="changeStatus('${policy.id}', this.value)"
                               >
 
                                 <option
                                   ${
-                                    p.status === "Pendente"
+                                    policy.status === "Pendente"
                                       ? "selected"
                                       : ""
                                   }
@@ -2109,7 +2303,7 @@ function renderKanban() {
 
                                 <option
                                   ${
-                                    p.status === "Em andamento"
+                                    policy.status === "Em andamento"
                                       ? "selected"
                                       : ""
                                   }
@@ -2119,7 +2313,7 @@ function renderKanban() {
 
                                 <option
                                   ${
-                                    p.status === "Ganho"
+                                    policy.status === "Ganho"
                                       ? "selected"
                                       : ""
                                   }
@@ -2158,9 +2352,7 @@ function renderKanban() {
 
 function renderConfig() {
 
-  if (
-    $("#cfgUser")
-  ) {
+  if ($("#cfgUser")) {
 
     $("#cfgUser").value =
       state.user?.email ||
@@ -2169,9 +2361,7 @@ function renderConfig() {
   }
 
 
-  if (
-    $("#emailEndpoint")
-  ) {
+  if ($("#emailEndpoint")) {
 
     $("#emailEndpoint").value =
       state.settings.endpoint ||
@@ -2180,9 +2370,7 @@ function renderConfig() {
   }
 
 
-  if (
-    $("#managerEmail")
-  ) {
+  if ($("#managerEmail")) {
 
     $("#managerEmail").value =
       state.settings.managerEmail ||
@@ -2191,9 +2379,7 @@ function renderConfig() {
   }
 
 
-  if (
-    $("#languageSelect")
-  ) {
+  if ($("#languageSelect")) {
 
     $("#languageSelect").value =
       state.settings.language ||
@@ -2202,9 +2388,7 @@ function renderConfig() {
   }
 
 
-  if (
-    $("#cloudStatus")
-  ) {
+  if ($("#cloudStatus")) {
 
     $("#cloudStatus").textContent =
       state.user
@@ -2224,8 +2408,8 @@ function go(view) {
 
   $$(".view")
     .forEach(
-      v =>
-        v.classList.remove(
+      element =>
+        element.classList.remove(
           "active"
         )
     );
@@ -2235,10 +2419,9 @@ function go(view) {
     $("#" + view);
 
 
-  if (
-    !target
-  )
+  if (!target) {
     return;
+  }
 
 
   target.classList.add(
@@ -2248,16 +2431,16 @@ function go(view) {
 
   $$(".nav-item")
     .forEach(
-      b =>
-        b.classList.toggle(
+      button =>
+        button.classList.toggle(
           "active",
-          b.dataset.view === view
+          button.dataset.view ===
+            view
         )
     );
 
 
   const titles = {
-
     dashboard:
       "Dashboard",
 
@@ -2275,19 +2458,25 @@ function go(view) {
 
     config:
       "Configurações"
-
   };
 
 
-  $("#pageTitle").textContent =
-    titles[view] ||
-    "Dashboard";
+  if ($("#pageTitle")) {
+
+    $("#pageTitle").textContent =
+      titles[view] ||
+      "Dashboard";
+
+  }
 
 
   if (
     view === "dashboard"
-  )
+  ) {
+
     renderDashboard();
+
+  }
 
 }
 
@@ -2298,37 +2487,43 @@ function go(view) {
 
 function openModal(id) {
 
-  const el =
+  const element =
     $("#" + id);
 
-  if (
-    el
-  )
-    el.classList.add(
-      "open"
-    );
+  if (!element) {
+    return;
+  }
+
+  element.classList.add(
+    "open"
+  );
 
 }
 
 
 function closeModal(id) {
 
-  const el =
+  const element =
     $("#" + id);
 
-  if (
-    el
-  )
-    el.classList.remove(
+  if (element) {
+
+    element.classList.remove(
       "open"
     );
+
+  }
 
 
   if (
     id === "pdfModal" &&
     $("#pdfFrame")
-  )
-    $("#pdfFrame").src = "";
+  ) {
+
+    $("#pdfFrame").src =
+      "";
+
+  }
 
 }
 
@@ -2339,13 +2534,24 @@ function closeModal(id) {
 
 function newClient() {
 
-  $("#clientForm").reset();
+  if (
+    !$("#clientForm")
+  ) {
+    return;
+  }
+
+
+  $("#clientForm")
+    .reset();
+
 
   $("#clientId").value =
     "";
 
+
   $("#clientModalTitle").textContent =
     "Novo cliente";
+
 
   openModal(
     "clientModal"
@@ -2360,42 +2566,48 @@ function newClient() {
 
 function openClient(id) {
 
-  const c =
+  const client =
     clientById(id);
 
 
-  if (
-    !c
-  )
+  if (!client) {
     return;
+  }
 
 
   $("#clientId").value =
-    c.id;
+    client.id;
+
 
   $("#clientName").value =
-    c.name;
+    client.name;
+
 
   $("#clientBirth").value =
-    c.birthDate ||
+    client.birthDate ||
     "";
+
 
   $("#clientPhone").value =
     formatPhone(
-      c.phone
+      client.phone
     );
 
+
   $("#clientDoc").value =
-    c.document ||
+    client.document ||
     "";
+
 
   $("#clientEmail").value =
-    c.email ||
+    client.email ||
     "";
 
+
   $("#clientNotes").value =
-    c.notes ||
+    client.notes ||
     "";
+
 
   $("#clientModalTitle").textContent =
     "Editar cliente";
@@ -2409,17 +2621,15 @@ function openClient(id) {
 
 
 /* =========================================================
-   SALVAR CLIENTE NO SUPABASE
+   SALVAR CLIENTE
 ========================================================= */
 
-async function saveClient(e) {
+async function saveClient(event) {
 
-  e.preventDefault();
+  event.preventDefault();
 
 
-  if (
-    !state.user
-  ) {
+  if (!state.user) {
 
     toast(
       "Sua sessão expirou. Entre novamente."
@@ -2443,7 +2653,7 @@ async function saveClient(e) {
   ) {
 
     toast(
-      "Informe um telefone celular válido com DDD."
+      "Informe um telefone válido com DDD."
     );
 
     return;
@@ -2468,9 +2678,9 @@ async function saveClient(e) {
       : null;
 
 
-  const c = {
-
-    id,
+  const client = {
+    id:
+      id,
 
     name:
       $("#clientName")
@@ -2481,7 +2691,8 @@ async function saveClient(e) {
       $("#clientBirth")
         .value,
 
-    phone,
+    phone:
+      phone,
 
     document:
       $("#clientDoc")
@@ -2506,33 +2717,42 @@ async function saveClient(e) {
     updatedAt:
       new Date()
         .toISOString()
-
   };
 
 
+  if (!client.name) {
+
+    toast(
+      "Informe o nome do cliente."
+    );
+
+    return;
+
+  }
+
+
   try {
-
-    const payload =
-      clientToDb(c);
-
 
     const {
       data,
       error
     } =
       await sb
-        .from("clients")
+        .from(
+          "clients"
+        )
         .upsert(
-          payload
+          clientToDb(
+            client
+          )
         )
         .select()
         .single();
 
 
-    if (
-      error
-    )
+    if (error) {
       throw error;
+    }
 
 
     const saved =
@@ -2543,20 +2763,27 @@ async function saveClient(e) {
 
     const index =
       state.clients.findIndex(
-        x =>
-          x.id === id
+        item =>
+          item.id ===
+          saved.id
       );
 
 
     if (
       index >= 0
-    )
+    ) {
+
       state.clients[index] =
         saved;
-    else
+
+    }
+    else {
+
       state.clients.push(
         saved
       );
+
+    }
 
 
     closeModal(
@@ -2572,10 +2799,11 @@ async function saveClient(e) {
     );
 
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
-      err
+      "Erro ao salvar cliente:",
+      error
     );
 
 
@@ -2589,12 +2817,19 @@ async function saveClient(e) {
 
 
 /* =========================================================
-   RESET DO FORMULÁRIO DA APÓLICE
+   RESET DO FORMULÁRIO DE APÓLICE
 ========================================================= */
 
 function resetPolicyForm(
   clientId = ""
 ) {
+
+  if (
+    !$("#policyForm")
+  ) {
+    return;
+  }
+
 
   $("#policyForm")
     .reset();
@@ -2603,21 +2838,40 @@ function resetPolicyForm(
   $("#policyId").value =
     "";
 
-  $("#policyParentId").value =
-    "";
 
-  $("#policyRenewedFrom").value =
-    "";
+  if ($("#policyParentId")) {
 
-  $("#currentPdfName").textContent =
-    "";
+    $("#policyParentId").value =
+      "";
+
+  }
 
 
-  $("#renewInfo")
-    .classList
-    .add(
-      "hidden"
-    );
+  if ($("#policyRenewedFrom")) {
+
+    $("#policyRenewedFrom").value =
+      "";
+
+  }
+
+
+  if ($("#currentPdfName")) {
+
+    $("#currentPdfName").textContent =
+      "";
+
+  }
+
+
+  if ($("#renewInfo")) {
+
+    $("#renewInfo")
+      .classList
+      .add(
+        "hidden"
+      );
+
+  }
 
 
   populateSelects();
@@ -2661,71 +2915,82 @@ function newPolicyFor(
    EDITAR APÓLICE
 ========================================================= */
 
-async function editPolicy(id) {
+function editPolicy(id) {
 
-  const p =
+  const policy =
     policyById(id);
 
 
-  if (
-    !p
-  )
+  if (!policy) {
     return;
+  }
 
 
   resetPolicyForm(
-    p.clientId
+    policy.clientId
   );
 
 
   $("#policyId").value =
-    p.id;
+    policy.id;
+
 
   $("#policyInsurer").value =
-    p.insurer;
+    policy.insurer;
+
 
   $("#policyType").value =
-    p.type;
+    policy.type;
+
 
   $("#policyNumber").value =
-    p.number;
+    policy.number;
+
 
   $("#policyStart").value =
-    p.startDate;
+    policy.startDate;
+
 
   $("#policyEnd").value =
-    p.endDate;
+    policy.endDate;
+
 
   $("#policyStatus").value =
-    p.status;
+    policy.status;
+
 
   $("#policyNotes").value =
-    p.notes ||
+    policy.notes ||
     "";
 
 
   $("#alert30").checked =
-    p.alerts?.[30] !== false;
+    policy.alerts?.[30] !== false;
+
 
   $("#alert15").checked =
-    p.alerts?.[15] !== false;
+    policy.alerts?.[15] !== false;
+
 
   $("#alert7").checked =
-    p.alerts?.[7] !== false;
+    policy.alerts?.[7] !== false;
+
 
   $("#alert1").checked =
-    p.alerts?.[1] !== false;
+    policy.alerts?.[1] !== false;
+
 
   $("#alertExpired").checked =
-    p.alerts?.expired !== false;
+    policy.alerts?.expired !== false;
 
 
   if (
-    p.pdfPath
+    policy.pdfPath &&
+    $("#currentPdfName")
   ) {
 
     const fileName =
-      p.pdfPath
+      policy.pdfPath
         .split("/")
         .pop();
 
@@ -2752,7 +3017,7 @@ async function editPolicy(id) {
 
 
 /* =========================================================
-   CAMINHO SEGURO DO PDF
+   NOME SEGURO PARA PDF
 ========================================================= */
 
 function safeFileName(name) {
@@ -2761,7 +3026,9 @@ function safeFileName(name) {
     name ||
     "apolice.pdf"
   )
-    .normalize("NFD")
+    .normalize(
+      "NFD"
+    )
     .replace(
       /[\u0300-\u036f]/g,
       ""
@@ -2783,12 +3050,13 @@ async function uploadPolicyPdf(
   file
 ) {
 
-  if (
-    !state.user
-  )
+  if (!state.user) {
+
     throw new Error(
       "Usuário não autenticado."
     );
+
+  }
 
 
   const name =
@@ -2822,10 +3090,9 @@ async function uploadPolicyPdf(
       );
 
 
-  if (
-    error
-  )
+  if (error) {
     throw error;
+  }
 
 
   return path;
@@ -2834,17 +3101,16 @@ async function uploadPolicyPdf(
 
 
 /* =========================================================
-   REMOVER PDF DO STORAGE
+   REMOVER PDF
 ========================================================= */
 
 async function removePolicyPdf(
   path
 ) {
 
-  if (
-    !path
-  )
+  if (!path) {
     return;
+  }
 
 
   const {
@@ -2860,10 +3126,9 @@ async function removePolicyPdf(
       );
 
 
-  if (
-    error
-  )
+  if (error) {
     throw error;
+  }
 
 }
 
@@ -2872,14 +3137,12 @@ async function removePolicyPdf(
    SALVAR APÓLICE
 ========================================================= */
 
-async function savePolicy(e) {
+async function savePolicy(event) {
 
-  e.preventDefault();
+  event.preventDefault();
 
 
-  if (
-    !state.user
-  ) {
+  if (!state.user) {
 
     toast(
       "Sua sessão expirou. Entre novamente."
@@ -2891,12 +3154,11 @@ async function savePolicy(e) {
 
 
   const clientId =
-    $("#policyClient").value;
+    $("#policyClient")
+      .value;
 
 
-  if (
-    !clientId
-  ) {
+  if (!clientId) {
 
     toast(
       "Selecione o cliente."
@@ -2907,9 +3169,20 @@ async function savePolicy(e) {
   }
 
 
+  const startDate =
+    $("#policyStart")
+      .value;
+
+
+  const endDate =
+    $("#policyEnd")
+      .value;
+
+
   if (
-    $("#policyStart").value >
-    $("#policyEnd").value
+    startDate &&
+    endDate &&
+    startDate > endDate
   ) {
 
     toast(
@@ -2922,7 +3195,8 @@ async function savePolicy(e) {
 
 
   const oldId =
-    $("#policyId").value;
+    $("#policyId")
+      .value;
 
 
   const existing =
@@ -2945,7 +3219,7 @@ async function savePolicy(e) {
 
   const file =
     $("#policyPdf")
-      .files[0];
+      ?.files?.[0];
 
 
   let newPdfPath =
@@ -2954,9 +3228,7 @@ async function savePolicy(e) {
 
   try {
 
-    if (
-      file
-    ) {
+    if (file) {
 
       if (
         file.type !==
@@ -2985,12 +3257,12 @@ async function savePolicy(e) {
     }
 
 
-    const p = {
-
+    const policy = {
       id:
         policyId,
 
-      clientId,
+      clientId:
+        clientId,
 
       insurer:
         $("#policyInsurer")
@@ -3006,12 +3278,10 @@ async function savePolicy(e) {
           .trim(),
 
       startDate:
-        $("#policyStart")
-          .value,
+        startDate,
 
       endDate:
-        $("#policyEnd")
-          .value,
+        endDate,
 
       status:
         $("#policyStatus")
@@ -3023,7 +3293,6 @@ async function savePolicy(e) {
           .trim(),
 
       alerts: {
-
         30:
           $("#alert30")
             .checked,
@@ -3043,14 +3312,14 @@ async function savePolicy(e) {
         expired:
           $("#alertExpired")
             .checked
-
       },
 
-      pdfPath,
+      pdfPath:
+        pdfPath,
 
       renewedFrom:
         $("#policyRenewedFrom")
-          .value ||
+          ?.value ||
         existing?.renewedFrom ||
         null,
 
@@ -3062,7 +3331,6 @@ async function savePolicy(e) {
       updatedAt:
         new Date()
           .toISOString()
-
     };
 
 
@@ -3075,16 +3343,17 @@ async function savePolicy(e) {
           "policies"
         )
         .upsert(
-          policyToDb(p)
+          policyToDb(
+            policy
+          )
         )
         .select()
         .single();
 
 
-    if (
-      error
-    )
+    if (error) {
       throw error;
+    }
 
 
     const saved =
@@ -3093,30 +3362,36 @@ async function savePolicy(e) {
       );
 
 
-    const i =
+    const index =
       state.policies.findIndex(
-        x =>
-          x.id ===
+        item =>
+          item.id ===
           saved.id
       );
 
 
     if (
-      i >= 0
-    )
-      state.policies[i] =
+      index >= 0
+    ) {
+
+      state.policies[index] =
         saved;
-    else
+
+    }
+    else {
+
       state.policies.push(
         saved
       );
+
+    }
 
 
     if (
       newPdfPath &&
       existing?.pdfPath &&
       existing.pdfPath !==
-      newPdfPath
+        newPdfPath
     ) {
 
       try {
@@ -3126,11 +3401,11 @@ async function savePolicy(e) {
         );
 
       }
-      catch (pdfErr) {
+      catch (error) {
 
         console.warn(
           "PDF antigo não pôde ser removido:",
-          pdfErr
+          error
         );
 
       }
@@ -3165,16 +3440,15 @@ async function savePolicy(e) {
     return saved;
 
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
-      err
+      "Erro ao salvar apólice:",
+      error
     );
 
 
-    if (
-      newPdfPath
-    ) {
+    if (newPdfPath) {
 
       try {
 
@@ -3198,9 +3472,85 @@ async function savePolicy(e) {
   }
 
 }
-q    console.error(
-      err
+
+
+/* =========================================================
+   ALTERAR STATUS
+========================================================= */
+
+async function changeStatus(
+  id,
+  status
+) {
+
+  const policy =
+    policyById(id);
+
+
+  if (!policy) {
+    return;
+  }
+
+
+  try {
+
+    const {
+      error
+    } =
+      await sb
+        .from(
+          "policies"
+        )
+        .update({
+          status:
+            status,
+
+          updated_at:
+            new Date()
+              .toISOString()
+        })
+        .eq(
+          "id",
+          id
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    policy.status =
+      status;
+
+
+    policy.updatedAt =
+      new Date()
+        .toISOString();
+
+
+    await addEvent(
+      id,
+      "status",
+      `Status alterado para ${status}`
     );
+
+
+    renderAll();
+
+
+    toast(
+      "Status atualizado."
+    );
+
+  }
+  catch (error) {
+
+    console.error(
+      "Erro ao atualizar status:",
+      error
+    );
+
 
     toast(
       "Não foi possível atualizar o status."
@@ -3208,386 +3558,251 @@ q    console.error(
 
   }
 
-}
-
-
-/* =========================================================
+} /* =========================================================
    DETALHES DA APÓLICE
 ========================================================= */
 
 function openDetails(id) {
 
-  const p =
+  const policy =
     policyById(id);
 
-
-  if (!p)
+  if (!policy) {
     return;
+  }
 
-
-  const c =
+  const client =
     clientById(
-      p.clientId
+      policy.clientId
     );
 
-
-  const e =
-    expiryLabel(p);
-
+  const expiry =
+    expiryLabel(policy);
 
   const history =
     state.events
       .filter(
-        x =>
-          x.policyId === id
+        event =>
+          event.policyId === id
       )
       .sort(
         (a, b) =>
-          new Date(
-            b.date
-          ) -
-          new Date(
-            a.date
-          )
+          new Date(b.date) -
+          new Date(a.date)
       );
 
+  if ($("#detailsContent")) {
 
-  $("#detailsTitle")
-    .textContent =
-    c?.name ||
-    "Cliente";
-
-
-  $("#detailsSubtitle")
-    .textContent =
-    `${p.type} · ${p.insurer}`;
-
-
-  $("#detailsBody")
-    .innerHTML = `
+    $("#detailsContent").innerHTML = `
 
       <div class="details-grid">
 
-        <div class="detail-box">
-
-          <small>
-            Segurado
-          </small>
-
+        <div>
+          <small>Cliente</small>
           <strong>
-            ${esc(
-              c?.name ||
-              "—"
-            )}
+            ${esc(client?.name || "Cliente")}
           </strong>
-
         </div>
 
-
-        <div class="detail-box">
-
-          <small>
-            Nascimento
-          </small>
-
+        <div>
+          <small>Telefone / WhatsApp</small>
           <strong>
-            ${fmtDate(
-              c?.birthDate
-            )}
+            ${esc(formatPhone(client?.phone) || "—")}
           </strong>
-
         </div>
 
-
-        <div class="detail-box">
-
-          <small>
-            Telefone
-          </small>
-
+        <div>
+          <small>CPF / CNPJ</small>
           <strong>
-            ${esc(
-              formatPhone(
-                c?.phone
-              ) ||
-              "—"
-            )}
+            ${esc(client?.document || "—")}
           </strong>
-
         </div>
 
-
-        <div class="detail-box">
-
-          <small>
-            Seguradora
-          </small>
-
+        <div>
+          <small>E-mail</small>
           <strong>
-            ${esc(
-              p.insurer
-            )}
+            ${esc(client?.email || "—")}
           </strong>
-
         </div>
 
-
-        <div class="detail-box">
-
-          <small>
-            Tipo
-          </small>
-
+        <div>
+          <small>Tipo de seguro</small>
           <strong>
-            ${esc(
-              p.type
-            )}
+            ${esc(policy.type)}
           </strong>
-
         </div>
 
-
-        <div class="detail-box">
-
-          <small>
-            Nº apólice
-          </small>
-
+        <div>
+          <small>Seguradora</small>
           <strong>
-            ${esc(
-              p.number ||
-              "—"
-            )}
+            ${esc(policy.insurer)}
           </strong>
-
         </div>
 
-
-        <div class="detail-box">
-
-          <small>
-            Início da vigência
-          </small>
-
+        <div>
+          <small>Número da apólice</small>
           <strong>
-            ${fmtDate(
-              p.startDate
-            )}
+            ${esc(policy.number || "—")}
           </strong>
-
         </div>
 
-
-        <div class="detail-box">
-
-          <small>
-            Fim da vigência
-          </small>
-
+        <div>
+          <small>Vigência</small>
           <strong>
-            ${fmtDate(
-              p.endDate
-            )}
+            ${fmtDate(policy.startDate)}
+            →
+            ${fmtDate(policy.endDate)}
           </strong>
-
         </div>
 
-
-        <div class="detail-box">
-
-          <small>
-            Situação
-          </small>
-
+        <div>
+          <small>Status do processo</small>
           <strong>
-
-            <span
-              class="pill ${e.cls}"
-            >
-              ${e.text}
+            <span class="pill ${processClass(policy.status)}">
+              ${esc(policy.status)}
             </span>
-
           </strong>
-
         </div>
 
-
-        <div class="detail-box">
-
-          <small>
-            Renovação
-          </small>
-
+        <div>
+          <small>Situação</small>
           <strong>
-
-            <span
-              class="pill ${processClass(
-                p.status
-              )}"
-            >
-              ${esc(
-                p.status
-              )}
+            <span class="pill ${expiry.cls}">
+              ${expiry.text}
             </span>
-
           </strong>
-
-        </div>
-
-
-        <div class="detail-box">
-
-          <small>
-            PDF
-          </small>
-
-          <strong>
-
-            ${
-              p.pdfPath
-                ? `
-                    <button
-                      class="link-btn"
-                      onclick="openPdf('${p.id}')"
-                    >
-                      Abrir documento
-                    </button>
-                  `
-                : "Sem anexo"
-            }
-
-          </strong>
-
-        </div>
-
-
-        <div
-          class="
-            detail-box
-            detail-wide
-          "
-        >
-
-          <small>
-            Observações
-          </small>
-
-          <strong>
-            ${esc(
-              p.notes ||
-              "Sem observações"
-            )}
-          </strong>
-
         </div>
 
       </div>
 
+      ${
+        policy.notes
+          ? `
+            <div style="margin-top:20px">
+              <small>Observações da apólice</small>
+              <p>${esc(policy.notes)}</p>
+            </div>
+          `
+          : ""
+      }
+
+      ${
+        client?.notes
+          ? `
+            <div style="margin-top:20px">
+              <small>Observações do cliente</small>
+              <p>${esc(client.notes)}</p>
+            </div>
+          `
+          : ""
+      }
 
       <div
-        class="modal-actions"
-        style="margin-top:15px"
+        class="actions"
+        style="
+          margin-top:20px;
+          flex-wrap:wrap;
+        "
       >
 
         <button
-          class="btn btn-secondary"
-          onclick="sendEmail('${p.id}')"
-        >
-          ✉ Alerta por e-mail
-        </button>
-
-
-        <button
-          class="btn btn-secondary"
-          onclick="manualWhatsApp('${p.id}')"
-        >
-          WhatsApp
-        </button>
-
-
-        <button
-          class="btn btn-secondary"
-          onclick="
-            editPolicy('${p.id}');
-            closeModal('detailsModal');
-          "
+          class="action-btn"
+          onclick="editPolicy('${policy.id}'); closeModal('detailsModal')"
         >
           Editar
         </button>
 
+        <button
+          class="action-btn"
+          onclick="renewPolicy('${policy.id}'); closeModal('detailsModal')"
+        >
+          ↻ Renovar
+        </button>
+
+        ${
+          policy.pdfPath
+            ? `
+                <button
+                  class="action-btn"
+                  onclick="openPdf('${policy.id}')"
+                >
+                  Ver PDF
+                </button>
+              `
+            : ""
+        }
+
+        ${
+          client?.phone
+            ? `
+                <button
+                  class="action-btn"
+                  onclick="openWhatsApp('${client.id}', '${policy.id}')"
+                >
+                  WhatsApp
+                </button>
+              `
+            : ""
+        }
 
         <button
-          class="btn btn-secondary"
+          class="action-btn"
           style="
             color:#b42318;
             border-color:#fecdca;
             background:#fff5f5;
           "
-          onclick="deletePolicy('${p.id}')"
+          onclick="askDeletePolicy('${policy.id}')"
         >
-          🗑 Excluir
-        </button>
-
-
-        <button
-          class="btn btn-primary"
-          onclick="
-            renewPolicy('${p.id}');
-            closeModal('detailsModal');
-          "
-        >
-          ↻ Renovar apólice
+          🗑 Excluir apólice
         </button>
 
       </div>
 
+      <div style="margin-top:25px">
 
-      <div class="timeline">
+        <h4>Histórico</h4>
 
-        <h4>
-          Histórico
-        </h4>
+        <div class="history-list">
 
-        ${
-          history.length
-            ? history
-                .map(
-                  h => `
+          ${
+            history.length
+              ? history
+                  .map(
+                    event => `
 
-                    <div class="timeline-item">
+                      <div class="history-item">
 
-                      <b>
-                        ${esc(
-                          h.message
-                        )}
-                      </b>
+                        <div>
 
-                      <small>
-                        ${
-                          new Date(
-                            h.date
-                          )
-                            .toLocaleString(
-                              "pt-BR"
-                            )
-                        }
-                      </small>
+                          <strong>
+                            ${esc(event.message)}
+                          </strong>
 
-                    </div>
+                          <small>
+                            ${new Date(event.date)
+                              .toLocaleString("pt-BR")}
+                          </small>
 
-                  `
-                )
-                .join("")
-            : `
-                <p class="mini-note">
-                  Sem eventos registrados.
-                </p>
-              `
-        }
+                        </div>
+
+                      </div>
+                    `
+                  )
+                  .join("")
+              : `
+                  <div class="empty">
+                    Nenhum evento registrado.
+                  </div>
+                `
+          }
+
+        </div>
 
       </div>
     `;
 
+  }
 
   openModal(
     "detailsModal"
@@ -3597,796 +3812,82 @@ function openDetails(id) {
 
 
 /* =========================================================
-   MODAL PROFISSIONAL DE EXCLUSÃO
+   ABRIR PDF
 ========================================================= */
 
-function createDeleteModal() {
+async function openPdf(id) {
 
-  if (
-    document.getElementById(
-      "deleteSystemModal"
-    )
-  )
-    return;
-
-
-  const style =
-    document.createElement(
-      "style"
-    );
-
-
-  style.textContent = `
-
-    .delete-system-overlay{
-
-      position:fixed;
-      inset:0;
-
-      background:
-        rgba(15,23,42,.58);
-
-      backdrop-filter:
-        blur(3px);
-
-      display:none;
-
-      align-items:center;
-      justify-content:center;
-
-      z-index:99999;
-
-      padding:20px;
-
-      animation:
-        deleteFadeIn .18s ease;
-
-    }
-
-
-    .delete-system-overlay.open{
-
-      display:flex;
-
-    }
-
-
-    .delete-system-card{
-
-      width:100%;
-
-      max-width:460px;
-
-      background:#ffffff;
-
-      border-radius:18px;
-
-      box-shadow:
-        0 24px 70px
-        rgba(15,23,42,.28);
-
-      overflow:hidden;
-
-      animation:
-        deleteCardIn .22s ease;
-
-    }
-
-
-    .delete-system-content{
-
-      padding:
-        30px 30px 22px;
-
-      text-align:center;
-
-    }
-
-
-    .delete-system-icon{
-
-      width:62px;
-      height:62px;
-
-      margin:
-        0 auto 18px;
-
-      border-radius:50%;
-
-      background:#fff1f0;
-
-      color:#d92d20;
-
-      display:flex;
-
-      align-items:center;
-      justify-content:center;
-
-      font-size:27px;
-
-      border:
-        1px solid #fecdca;
-
-    }
-
-
-    .delete-system-icon.warning{
-
-      background:#fffaeb;
-
-      color:#dc6803;
-
-      border-color:#fedf89;
-
-    }
-
-
-    .delete-system-title{
-
-      margin:
-        0 0 10px;
-
-      color:#101828;
-
-      font-size:20px;
-
-      font-weight:700;
-
-    }
-
-
-    .delete-system-message{
-
-      margin:0;
-
-      color:#667085;
-
-      font-size:14px;
-
-      line-height:1.6;
-
-      white-space:pre-line;
-
-    }
-
-
-    .delete-system-actions{
-
-      display:flex;
-
-      gap:10px;
-
-      padding:
-        18px 24px 24px;
-
-    }
-
-
-    .delete-system-btn{
-
-      flex:1;
-
-      min-height:44px;
-
-      border-radius:10px;
-
-      border:
-        1px solid #d0d5dd;
-
-      background:#ffffff;
-
-      color:#344054;
-
-      font-size:14px;
-
-      font-weight:600;
-
-      cursor:pointer;
-
-      transition:
-        .15s ease;
-
-    }
-
-
-    .delete-system-btn:hover{
-
-      background:#f9fafb;
-
-    }
-
-
-    .delete-system-btn-danger{
-
-      border-color:#d92d20;
-
-      background:#d92d20;
-
-      color:#ffffff;
-
-    }
-
-
-    .delete-system-btn-danger:hover{
-
-      background:#b42318;
-
-    }
-
-
-    .delete-system-btn-primary{
-
-      border-color:#155eef;
-
-      background:#155eef;
-
-      color:#ffffff;
-
-    }
-
-
-    .delete-system-btn-primary:hover{
-
-      background:#004eeb;
-
-    }
-
-
-    @keyframes deleteFadeIn{
-
-      from{
-        opacity:0;
-      }
-
-      to{
-        opacity:1;
-      }
-
-    }
-
-
-    @keyframes deleteCardIn{
-
-      from{
-
-        opacity:0;
-
-        transform:
-          translateY(12px)
-          scale(.97);
-
-      }
-
-      to{
-
-        opacity:1;
-
-        transform:
-          translateY(0)
-          scale(1);
-
-      }
-
-    }
-
-
-    @media(max-width:520px){
-
-      .delete-system-card{
-
-        max-width:100%;
-
-      }
-
-
-      .delete-system-content{
-
-        padding:
-          26px 20px 18px;
-
-      }
-
-
-      .delete-system-actions{
-
-        padding:
-          16px 20px 20px;
-
-        flex-direction:
-          column-reverse;
-
-      }
-
-    }
-
-  `;
-
-
-  document.head.appendChild(
-    style
-  );
-
-
-  const modal =
-    document.createElement(
-      "div"
-    );
-
-
-  modal.id =
-    "deleteSystemModal";
-
-
-  modal.className =
-    "delete-system-overlay";
-
-
-  modal.innerHTML = `
-
-    <div class="delete-system-card">
-
-      <div class="delete-system-content">
-
-        <div
-          id="deleteSystemIcon"
-          class="delete-system-icon"
-        >
-          🗑
-        </div>
-
-
-        <h3
-          id="deleteSystemTitle"
-          class="delete-system-title"
-        >
-          Confirmar exclusão
-        </h3>
-
-
-        <p
-          id="deleteSystemMessage"
-          class="delete-system-message"
-        ></p>
-
-      </div>
-
-
-      <div
-        id="deleteSystemActions"
-        class="delete-system-actions"
-      ></div>
-
-    </div>
-
-  `;
-
-
-  document.body.appendChild(
-    modal
-  );
-
-}
-
-
-/* =========================================================
-   AVISO DE EXCLUSÃO
-========================================================= */
-
-function deleteAlert(
-  title,
-  message
-) {
-
-  createDeleteModal();
-
-
-  return new Promise(
-    resolve => {
-
-      const modal =
-        document.getElementById(
-          "deleteSystemModal"
-        );
-
-
-      const icon =
-        document.getElementById(
-          "deleteSystemIcon"
-        );
-
-
-      const titleEl =
-        document.getElementById(
-          "deleteSystemTitle"
-        );
-
-
-      const messageEl =
-        document.getElementById(
-          "deleteSystemMessage"
-        );
-
-
-      const actions =
-        document.getElementById(
-          "deleteSystemActions"
-        );
-
-
-      icon.className =
-        "delete-system-icon warning";
-
-
-      icon.textContent =
-        "!";
-
-
-      titleEl.textContent =
-        title;
-
-
-      messageEl.textContent =
-        message;
-
-
-      actions.innerHTML = `
-
-        <button
-          id="deleteAlertOk"
-          class="
-            delete-system-btn
-            delete-system-btn-primary
-          "
-        >
-          Entendi
-        </button>
-
-      `;
-
-
-      modal.classList.add(
-        "open"
-      );
-
-
-      document
-        .getElementById(
-          "deleteAlertOk"
-        )
-        .onclick =
-        () => {
-
-          modal.classList.remove(
-            "open"
-          );
-
-          resolve();
-
-        };
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   CONFIRMAÇÃO DE EXCLUSÃO
-========================================================= */
-
-function deleteConfirm(
-  title,
-  message
-) {
-
-  createDeleteModal();
-
-
-  return new Promise(
-    resolve => {
-
-      const modal =
-        document.getElementById(
-          "deleteSystemModal"
-        );
-
-
-      const icon =
-        document.getElementById(
-          "deleteSystemIcon"
-        );
-
-
-      const titleEl =
-        document.getElementById(
-          "deleteSystemTitle"
-        );
-
-
-      const messageEl =
-        document.getElementById(
-          "deleteSystemMessage"
-        );
-
-
-      const actions =
-        document.getElementById(
-          "deleteSystemActions"
-        );
-
-
-      icon.className =
-        "delete-system-icon";
-
-
-      icon.textContent =
-        "🗑";
-
-
-      titleEl.textContent =
-        title;
-
-
-      messageEl.textContent =
-        message;
-
-
-      actions.innerHTML = `
-
-        <button
-          id="deleteCancelBtn"
-          class="delete-system-btn"
-        >
-          Cancelar
-        </button>
-
-
-        <button
-          id="deleteConfirmBtn"
-          class="
-            delete-system-btn
-            delete-system-btn-danger
-          "
-        >
-          Sim, excluir
-        </button>
-
-      `;
-
-
-      modal.classList.add(
-        "open"
-      );
-
-
-      document
-        .getElementById(
-          "deleteCancelBtn"
-        )
-        .onclick =
-        () => {
-
-          modal.classList.remove(
-            "open"
-          );
-
-          resolve(
-            false
-          );
-
-        };
-
-
-      document
-        .getElementById(
-          "deleteConfirmBtn"
-        )
-        .onclick =
-        () => {
-
-          modal.classList.remove(
-            "open"
-          );
-
-          resolve(
-            true
-          );
-
-        };
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   EXCLUIR APÓLICE DO SUPABASE
-========================================================= */
-
-async function deletePolicy(id) {
-
-  const p =
+  const policy =
     policyById(id);
 
-
-  if (!p) {
+  if (
+    !policy ||
+    !policy.pdfPath
+  ) {
 
     toast(
-      "Apólice não encontrada."
+      "Esta apólice não possui PDF."
     );
 
     return;
-
   }
-
-
-  const c =
-    clientById(
-      p.clientId
-    );
-
-
-  const confirmar =
-    await deleteConfirm(
-      "Excluir apólice?",
-      `Você está prestes a excluir a apólice ${p.number || "sem número"} do cliente ${c?.name || "Cliente"}.
-
-O PDF e todo o histórico desta apólice também serão excluídos.
-
-Essa ação não poderá ser desfeita.`
-    );
-
-
-  if (!confirmar)
-    return;
-
 
   try {
 
-    /*
-      Primeiro remove o PDF.
-    */
+    const {
+      data,
+      error
+    } =
+      await sb
+        .storage
+        .from("policy-pdfs")
+        .createSignedUrl(
+          policy.pdfPath,
+          600
+        );
+
+    if (error) {
+      throw error;
+    }
 
     if (
-      p.pdfPath
+      !data?.signedUrl
     ) {
+      throw new Error(
+        "URL do PDF não foi criada."
+      );
+    }
 
-      await removePolicyPdf(
-        p.pdfPath
+    if ($("#pdfFrame")) {
+
+      $("#pdfFrame").src =
+        data.signedUrl;
+
+      openModal(
+        "pdfModal"
+      );
+
+    }
+    else {
+
+      window.open(
+        data.signedUrl,
+        "_blank",
+        "noopener,noreferrer"
       );
 
     }
 
-
-    /*
-      Os eventos possuem vínculo
-      com a apólice.
-
-      Mesmo havendo ON DELETE CASCADE,
-      removemos explicitamente para
-      manter o comportamento claro.
-    */
-
-    const {
-      error:
-        eventsError
-    } =
-      await sb
-        .from("events")
-        .delete()
-        .eq(
-          "policy_id",
-          id
-        );
-
-
-    if (
-      eventsError
-    )
-      throw eventsError;
-
-
-    /*
-      Se alguma renovação aponta
-      para esta apólice, limpa
-      renewed_from antes da exclusão.
-    */
-
-    const {
-      error:
-        linksError
-    } =
-      await sb
-        .from("policies")
-        .update({
-          renewed_from:
-            null,
-
-          updated_at:
-            new Date()
-              .toISOString()
-        })
-        .eq(
-          "renewed_from",
-          id
-        );
-
-
-    if (
-      linksError
-    )
-      throw linksError;
-
-
-    const {
-      error:
-        policyError
-    } =
-      await sb
-        .from("policies")
-        .delete()
-        .eq(
-          "id",
-          id
-        );
-
-
-    if (
-      policyError
-    )
-      throw policyError;
-
-
-    state.events =
-      state.events.filter(
-        e =>
-          e.policyId !== id
-      );
-
-
-    state.policies.forEach(
-      item => {
-
-        if (
-          item.renewedFrom === id
-        )
-          item.renewedFrom =
-            null;
-
-      }
-    );
-
-
-    state.policies =
-      state.policies.filter(
-        item =>
-          item.id !== id
-      );
-
-
-    closeModal(
-      "detailsModal"
-    );
-
-
-    renderAll();
-
-
-    toast(
-      "Apólice excluída com sucesso."
-    );
-
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
-      err
+      "Erro ao abrir PDF:",
+      error
     );
 
-
     toast(
-      "Não foi possível excluir a apólice."
+      "Não foi possível abrir o PDF."
     );
 
   }
@@ -4395,115 +3896,67 @@ Essa ação não poderá ser desfeita.`
 
 
 /* =========================================================
-   EXCLUIR CLIENTE
+   WHATSAPP
 ========================================================= */
 
-async function deleteClient(id) {
+function openWhatsApp(
+  clientId,
+  policyId
+) {
 
-  const c =
-    clientById(id);
+  const client =
+    clientById(clientId);
 
-
-  if (!c) {
-
-    toast(
-      "Cliente não encontrado."
-    );
-
-    return;
-
-  }
-
-
-  const apolices =
-    state.policies.filter(
-      p =>
-        p.clientId === id
-    );
-
+  const policy =
+    policyById(policyId);
 
   if (
-    apolices.length > 0
+    !client ||
+    !policy
   ) {
-
-    await deleteAlert(
-      "Não foi possível excluir",
-      `${c.name} possui ${apolices.length} apólice${apolices.length === 1 ? "" : "s"} cadastrada${apolices.length === 1 ? "" : "s"}.
-
-Para excluir este cliente, remova primeiro todas as apólices vinculadas a ele.`
-    );
-
-
     return;
-
   }
 
-
-  const confirmar =
-    await deleteConfirm(
-      "Excluir cliente?",
-      `Você está prestes a excluir o cliente ${c.name}.
-
-Essa ação não poderá ser desfeita.`
+  let phone =
+    cleanPhone(
+      client.phone
     );
 
-
-  if (!confirmar)
-    return;
-
-
-  try {
-
-    const {
-      error
-    } =
-      await sb
-        .from("clients")
-        .delete()
-        .eq(
-          "id",
-          id
-        );
-
-
-    if (
-      error
-    )
-      throw error;
-
-
-    state.clients =
-      state.clients.filter(
-        x =>
-          x.id !== id
-      );
-
-
-    closeModal(
-      "clientModal"
-    );
-
-
-    renderAll();
-
+  if (!phone) {
 
     toast(
-      "Cliente excluído com sucesso."
+      "Cliente sem WhatsApp cadastrado."
     );
 
+    return;
   }
-  catch (err) {
 
-    console.error(
-      err
-    );
-
-
-    toast(
-      "Não foi possível excluir o cliente."
-    );
-
+  if (
+    !phone.startsWith("55")
+  ) {
+    phone =
+      "55" + phone;
   }
+
+  const message =
+    `Olá, ${client.name}! ` +
+    `Estamos entrando em contato pela SAVA Seguros ` +
+    `sobre sua apólice de ${policy.type}, ` +
+    `com vencimento em ${fmtDate(policy.endDate)}.`;
+
+  const url =
+    "https://wa.me/" +
+    phone +
+    "?text=" +
+    encodeURIComponent(
+      message
+    );
+
+  window.open(
+    url,
+    "_blank",
+    "noopener,noreferrer"
+  );
 
 }
 
@@ -4517,57 +3970,78 @@ function renewPolicy(id) {
   const old =
     policyById(id);
 
-
-  if (!old)
+  if (!old) {
     return;
-
+  }
 
   resetPolicyForm(
     old.clientId
   );
 
+  if ($("#policyParentId")) {
 
-  $("#policyRenewedFrom")
-    .value =
-    old.id;
+    $("#policyParentId").value =
+      old.id;
 
+  }
 
-  $("#policyInsurer")
-    .value =
+  if ($("#policyRenewedFrom")) {
+
+    $("#policyRenewedFrom").value =
+      old.id;
+
+  }
+
+  $("#policyInsurer").value =
     old.insurer;
 
-
-  $("#policyType")
-    .value =
+  $("#policyType").value =
     old.type;
 
+  $("#policyNumber").value =
+    "";
 
-  $("#policyStatus")
-    .value =
-    "Em andamento";
+  $("#policyStatus").value =
+    "Pendente";
 
+  $("#policyNotes").value =
+    old.notes || "";
 
-  $("#policyNotes")
-    .value =
-    `Renovação da apólice ${old.number}. Histórico da apólice anterior mantido no CRM.`;
+  $("#alert30").checked =
+    old.alerts?.[30] !== false;
 
+  $("#alert15").checked =
+    old.alerts?.[15] !== false;
 
-  $("#renewInfo")
-    .textContent =
-    `Esta nova apólice ficará vinculada à anterior (${old.number}). A apólice antiga não será apagada.`;
+  $("#alert7").checked =
+    old.alerts?.[7] !== false;
 
+  $("#alert1").checked =
+    old.alerts?.[1] !== false;
 
-  $("#renewInfo")
-    .classList
-    .remove(
-      "hidden"
-    );
+  $("#alertExpired").checked =
+    old.alerts?.expired !== false;
 
+  if ($("#renewInfo")) {
 
-  $("#policyModalTitle")
-    .textContent =
-    "Nova apólice de renovação";
+    $("#renewInfo")
+      .classList
+      .remove(
+        "hidden"
+      );
 
+    $("#renewInfo").innerHTML =
+      `Renovação da apólice <strong>${esc(old.number || old.type)}</strong>. ` +
+      `A apólice anterior será preservada no histórico.`;
+
+  }
+
+  if ($("#policyModalTitle")) {
+
+    $("#policyModalTitle").textContent =
+      "Renovar apólice";
+
+  }
 
   openModal(
     "policyModal"
@@ -4586,14 +4060,11 @@ async function finalizeRenewal(
 ) {
 
   const old =
-    policyById(
-      oldId
-    );
+    policyById(oldId);
 
-
-  if (!old)
+  if (!old) {
     return;
-
+  }
 
   try {
 
@@ -4601,44 +4072,36 @@ async function finalizeRenewal(
       error
     } =
       await sb
-        .from("policies
-          .update({
-
+        .from("policies")
+        .update({
           status:
             "Ganho",
 
           updated_at:
             new Date()
               .toISOString()
-
         })
         .eq(
           "id",
           oldId
         );
 
-
-    if (
-      error
-    )
+    if (error) {
       throw error;
-
+    }
 
     old.status =
       "Ganho";
 
-
     old.updatedAt =
       new Date()
         .toISOString();
-
 
     await addEvent(
       oldId,
       "renewal",
       "Apólice renovada; novo ciclo criado"
     );
-
 
     await addEvent(
       newId,
@@ -4647,13 +4110,12 @@ async function finalizeRenewal(
     );
 
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
       "Erro ao finalizar renovação:",
-      err
+      error
     );
-
 
     toast(
       "A nova apólice foi salva, mas houve erro ao atualizar o histórico da renovação."
@@ -4665,92 +4127,258 @@ async function finalizeRenewal(
 
 
 /* =========================================================
-   ABRIR PDF PRIVADO DO SUPABASE
+   EXCLUSÃO — MODAL PERSONALIZADO
 ========================================================= */
 
-async function openPdf(id) {
-
-  const p =
-    policyById(id);
+let deleteAction = null;
 
 
-  if (
-    !p?.pdfPath
-  ) {
+function openDeleteModal(
+  title,
+  message,
+  action
+) {
 
-    toast(
-      "Esta apólice não possui PDF."
-    );
+  deleteAction =
+    action;
 
-    return;
+  if ($("#deleteTitle")) {
+
+    $("#deleteTitle").textContent =
+      title;
 
   }
 
+  if ($("#deleteMessage")) {
+
+    $("#deleteMessage").textContent =
+      message;
+
+  }
+
+  openModal(
+    "deleteModal"
+  );
+
+}
+
+
+function closeDeleteModal() {
+
+  deleteAction =
+    null;
+
+  closeModal(
+    "deleteModal"
+  );
+
+}
+
+
+/* =========================================================
+   SOLICITAR EXCLUSÃO DA APÓLICE
+========================================================= */
+
+function askDeletePolicy(id) {
+
+  const policy =
+    policyById(id);
+
+  if (!policy) {
+    return;
+  }
+
+  const client =
+    clientById(
+      policy.clientId
+    );
+
+  openDeleteModal(
+    "Excluir apólice",
+    `Deseja realmente excluir a apólice de ${client?.name || "Cliente"}? O PDF e o histórico dessa apólice também serão excluídos.`,
+    async () => {
+
+      await deletePolicy(id);
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   EXCLUIR APÓLICE
+========================================================= */
+
+async function deletePolicy(id) {
+
+  const policy =
+    policyById(id);
+
+  if (!policy) {
+    return;
+  }
 
   try {
 
+    /*
+      Antes de apagar a apólice,
+      remove referências de renovação
+      de outras apólices.
+    */
+
     const {
-      data,
-      error
+      error: renewalError
     } =
       await sb
-        .storage
-        .from(
-          "policy-pdfs"
+        .from("policies")
+        .update({
+          renewed_from:
+            null,
+
+          updated_at:
+            new Date()
+              .toISOString()
+        })
+        .eq(
+          "renewed_from",
+          id
+        );
+
+    if (renewalError) {
+      throw renewalError;
+    }
+
+
+    /*
+      Exclui os eventos.
+    */
+
+    const {
+      error: eventsError
+    } =
+      await sb
+        .from("events")
+        .delete()
+        .eq(
+          "policy_id",
+          id
+        );
+
+    if (eventsError) {
+      throw eventsError;
+    }
+
+
+    /*
+      Exclui o PDF do Storage.
+    */
+
+    if (
+      policy.pdfPath
+    ) {
+
+      try {
+
+        await removePolicyPdf(
+          policy.pdfPath
+        );
+
+      }
+      catch (error) {
+
+        console.warn(
+          "Não foi possível remover o PDF:",
+          error
+        );
+
+      }
+
+    }
+
+
+    /*
+      Exclui a apólice.
+    */
+
+    const {
+      error: policyError
+    } =
+      await sb
+        .from("policies")
+        .delete()
+        .eq(
+          "id",
+          id
+        );
+
+    if (policyError) {
+      throw policyError;
+    }
+
+
+    /*
+      Atualiza os dados locais.
+    */
+
+    state.policies =
+      state.policies
+        .filter(
+          item =>
+            item.id !== id
         )
-        .createSignedUrl(
-          p.pdfPath,
-          300
+        .map(
+          item => {
+
+            if (
+              item.renewedFrom === id
+            ) {
+
+              return {
+                ...item,
+                renewedFrom:
+                  null
+              };
+
+            }
+
+            return item;
+
+          }
         );
 
 
-    if (
-      error
-    )
-      throw error;
-
-
-    if (
-      !data?.signedUrl
-    )
-      throw new Error(
-        "URL do PDF não recebida."
+    state.events =
+      state.events.filter(
+        event =>
+          event.policyId !== id
       );
 
 
-    const fileName =
-      p.pdfPath
-        .split("/")
-        .pop();
+    closeDeleteModal();
 
+    closeModal(
+      "detailsModal"
+    );
 
-    $("#pdfTitle")
-      .textContent =
-      decodeURIComponent(
-        fileName ||
-        "Documento da apólice"
-      );
+    renderAll();
 
-
-    $("#pdfFrame")
-      .src =
-      data.signedUrl;
-
-
-    openModal(
-      "pdfModal"
+    toast(
+      "Apólice excluída."
     );
 
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
-      err
+      "Erro ao excluir apólice:",
+      error
     );
 
+    closeDeleteModal();
 
     toast(
-      "Não foi possível abrir o PDF."
+      "Não foi possível excluir a apólice."
     );
 
   }
@@ -4759,271 +4387,146 @@ async function openPdf(id) {
 
 
 /* =========================================================
-   WHATSAPP
+   EXCLUIR CLIENTE
 ========================================================= */
 
-function manualWhatsApp(id) {
+function deleteClient(id) {
 
-  const p =
-    policyById(id);
+  const client =
+    clientById(id);
 
-
-  if (!p)
+  if (!client) {
     return;
+  }
 
-
-  const c =
-    clientById(
-      p.clientId
+  const policies =
+    state.policies.filter(
+      policy =>
+        policy.clientId === id
     );
 
+  /*
+    Cliente com apólice NÃO pode
+    ser excluído.
+  */
 
   if (
-    !c?.phone
+    policies.length
   ) {
 
-    toast(
-      "Este cliente não possui telefone cadastrado."
+    openDeleteModal(
+      "Cliente possui apólices",
+      `Não é possível excluir ${client.name}. Este cliente possui ${policies.length} apólice(s). Exclua primeiro as apólices vinculadas ao cliente.`,
+      () => {
+        closeDeleteModal();
+      }
     );
 
     return;
-
   }
 
+  openDeleteModal(
+    "Excluir cliente",
+    `Deseja realmente excluir ${client.name}?`,
+    async () => {
 
-  const d =
-    daysUntil(
-      p.endDate
-    );
+      try {
 
+        const {
+          error
+        } =
+          await sb
+            .from("clients")
+            .delete()
+            .eq(
+              "id",
+              id
+            );
 
-  let prazo;
+        if (error) {
+          throw error;
+        }
 
+        state.clients =
+          state.clients.filter(
+            item =>
+              item.id !== id
+          );
 
-  if (
-    d < 0
-  ) {
+        closeDeleteModal();
 
-    prazo =
-      `venceu há ${Math.abs(d)} dia(s)`;
+        renderAll();
 
-  }
-  else if (
-    d === 0
-  ) {
+        toast(
+          "Cliente excluído."
+        );
 
-    prazo =
-      "vence hoje";
+      }
+      catch (error) {
 
-  }
-  else {
+        console.error(
+          "Erro ao excluir cliente:",
+          error
+        );
 
-    prazo =
-      `vence em ${d} dia(s)`;
+        closeDeleteModal();
 
-  }
+        toast(
+          "Não foi possível excluir o cliente."
+        );
 
+      }
 
-  const msg =
-    `Olá, ${c.name}! Aqui é da SAVA Seguros. Estamos entrando em contato sobre sua apólice ${p.number}, do seguro ${p.type}, que ${prazo} (${fmtDate(p.endDate)}). Podemos conversar sobre a renovação?`;
-
-
-  window.open(
-    "https://wa.me/55" +
-    cleanPhone(
-      c.phone
-    ) +
-    "?text=" +
-    encodeURIComponent(
-      msg
-    ),
-    "_blank"
+    }
   );
 
-}    
-/* =========================================================
-   CORPO DO E-MAIL INTERNO PARA A SAVA
-========================================================= */
-
-function emailBody(p) {
-
-  const c =
-    clientById(
-      p.clientId
-    );
-
-  const d =
-    daysUntil(
-      p.endDate
-    );
-
-
-  let prazo =
-    d < 0
-      ? `venceu há ${Math.abs(d)} dia(s)`
-      : d === 0
-        ? "vence hoje"
-        : `vence em ${d} dia(s)`;
-
-
-  return `
-ALERTA DE RENOVAÇÃO — SAVA SEGUROS
-
-Cliente: ${c?.name || "Cliente"}
-Telefone: ${formatPhone(c?.phone) || "Não informado"}
-E-mail: ${c?.email || "Não informado"}
-
-Tipo de seguro: ${p.type}
-Seguradora: ${p.insurer}
-Número da apólice: ${p.number || "Não informado"}
-
-Início da vigência: ${fmtDate(p.startDate)}
-Fim da vigência: ${fmtDate(p.endDate)}
-
-Situação: ${prazo}
-Status comercial: ${p.status}
-
-Observações:
-${p.notes || "Sem observações."}
-
-Este é um alerta interno automático da Central de Renovações da SAVA Seguros.
-`;
-
 }
 
 
 /* =========================================================
-   ENVIAR E-MAIL PARA O GESTOR
+   CONFIRMAR EXCLUSÃO
 ========================================================= */
 
-async function sendEmail(id) {
+async function confirmDelete() {
 
-  const p =
-    policyById(id);
+  if (
+    typeof deleteAction !==
+    "function"
+  ) {
 
+    closeDeleteModal();
 
-  if (!p) {
-
-    toast(
-      "Apólice não encontrada."
-    );
-
-    return false;
-
+    return;
   }
 
+  const action =
+    deleteAction;
 
-  const c =
-    clientById(
-      p.clientId
-    );
+  /*
+    Limpa antes de executar para
+    evitar clique duplo.
+  */
 
-
-  const recipient =
-    state.settings.managerEmail;
-
-
-  if (!recipient) {
-
-    toast(
-      "Configure o e-mail do gestor em Configurações."
-    );
-
-    return false;
-
-  }
-
-
-  if (!state.settings.endpoint) {
-
-    toast(
-      "Configure o endpoint do Google Apps Script."
-    );
-
-    return false;
-
-  }
-
+  deleteAction =
+    null;
 
   try {
 
-    const r =
-      await fetch(
-        state.settings.endpoint,
-        {
-          method:
-            "POST",
-
-          headers: {
-            "Content-Type":
-              "text/plain;charset=utf-8"
-          },
-
-          body:
-            JSON.stringify({
-
-              action:
-                "sendEmail",
-
-              to:
-                recipient,
-
-              name:
-                c?.name ||
-                "Cliente",
-
-              subject:
-                `Renovação ${p.number || ""} - ${c?.name || "Cliente"} - SAVA Seguros`,
-
-              body:
-                emailBody(p),
-
-              policyId:
-                p.id
-
-            })
-        }
-      );
-
-
-    const j =
-      await r.json();
-
-
-    if (!j.ok)
-      throw new Error(
-        j.error ||
-        "Falha no envio."
-      );
-
-
-    await recordEmail(
-      p
-    );
-
-
-    toast(
-      "Alerta enviado para o e-mail da SAVA."
-    );
-
-
-    return true;
+    await action();
 
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
-      "Erro de e-mail:",
-      err
+      "Erro na confirmação:",
+      error
     );
 
+    closeDeleteModal();
 
     toast(
-      "Falha no endpoint de e-mail."
+      "Não foi possível concluir a operação."
     );
-
-
-    return false;
 
   }
 
@@ -5031,134 +4534,422 @@ async function sendEmail(id) {
 
 
 /* =========================================================
-   REGISTRAR E-MAIL NO HISTÓRICO
+   CONFIGURAÇÃO DE E-MAIL
 ========================================================= */
 
-async function recordEmail(p) {
+async function saveEmailSettings() {
+
+  const endpoint =
+    $("#emailEndpoint")
+      ?.value
+      .trim() ||
+    "";
+
+  const managerEmail =
+    $("#managerEmail")
+      ?.value
+      .trim() ||
+    "";
+
+  if (
+    managerEmail &&
+    !managerEmail.includes("@")
+  ) {
+
+    toast(
+      "Informe um e-mail válido."
+    );
+
+    return;
+  }
+
+  if (
+    endpoint &&
+    !endpoint.startsWith("https://")
+  ) {
+
+    toast(
+      "Informe uma URL HTTPS válida do Apps Script."
+    );
+
+    return;
+  }
+
+  state.settings.endpoint =
+    endpoint;
+
+  state.settings.managerEmail =
+    managerEmail;
+
+  try {
+
+    await saveSettings();
+
+    toast(
+      "Configurações de e-mail salvas."
+    );
+
+  }
+  catch (error) {
+
+    console.error(
+      "Erro ao salvar e-mail:",
+      error
+    );
+
+    toast(
+      "Não foi possível salvar as configurações."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   IDIOMA
+========================================================= */
+
+async function saveLanguage() {
+
+  state.settings.language =
+    $("#languageSelect")
+      ?.value ||
+    "pt-BR";
+
+  try {
+
+    await saveSettings();
+
+    toast(
+      "Idioma salvo."
+    );
+
+  }
+  catch (error) {
+
+    console.error(
+      "Erro ao salvar idioma:",
+      error
+    );
+
+    toast(
+      "Não foi possível salvar o idioma."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ENVIAR E-MAIL AO RESPONSÁVEL
+========================================================= */
+
+async function sendManagerEmail(
+  subject,
+  body
+) {
+
+  const endpoint =
+    state.settings.endpoint;
+
+  const to =
+    state.settings.managerEmail;
+
+  if (
+    !endpoint ||
+    !to
+  ) {
+
+    throw new Error(
+      "Configuração de e-mail incompleta."
+    );
+
+  }
+
+  const response =
+    await fetch(
+      endpoint,
+      {
+        method:
+          "POST",
+
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
+
+        body:
+          JSON.stringify({
+            action:
+              "sendEmail",
+
+            to:
+              to,
+
+            subject:
+              subject,
+
+            body:
+              body
+          })
+      }
+    );
+
+  if (!response.ok) {
+
+    throw new Error(
+      `Erro HTTP ${response.status}`
+    );
+
+  }
+
+  const text =
+    await response.text();
+
+  let result;
+
+  try {
+
+    result =
+      JSON.parse(text);
+
+  }
+  catch {
+
+    result = {
+      ok:
+        true
+    };
+
+  }
+
+  if (
+    result.ok === false
+  ) {
+
+    throw new Error(
+      result.error ||
+      "Falha no envio."
+    );
+
+  }
+
+  return true;
+
+}
+
+
+/* =========================================================
+   REGISTRAR E-MAIL
+========================================================= */
+
+async function recordEmail(
+  policyId,
+  message
+) {
 
   await addEvent(
-    p.id,
+    policyId,
     "email",
-    "Alerta de renovação enviado por e-mail"
+    message ||
+    "Lembrete enviado por e-mail"
   );
 
 }
 
 
 /* =========================================================
-   STATUS DA AUTOMAÇÃO
+   VERIFICAR SE JÁ ENVIOU HOJE
 ========================================================= */
 
-function checkAutomation() {
+function emailAlreadySentToday(
+  policyId,
+  key
+) {
 
-  const configured =
-    !!(
-      state.settings.endpoint &&
-      state.settings.managerEmail
-    );
+  const today =
+    new Date()
+      .toISOString()
+      .slice(0, 10);
 
+  return state.events.some(
+    event => {
 
-  const badge =
-    $("#emailAutomationBadge");
+      if (
+        event.policyId !==
+          policyId ||
+        event.type !==
+          "email"
+      ) {
+        return false;
+      }
 
+      const eventDay =
+        new Date(event.date)
+          .toISOString()
+          .slice(0, 10);
 
-  if (!badge)
-    return;
+      return (
+        eventDay === today &&
+        event.message.includes(
+          `[${key}]`
+        )
+      );
 
-
-  badge.textContent =
-    `● E-mail automático: ${
-      configured
-        ? "ativo"
-        : "não configurado"
-    }`;
-
-
-  badge.style.color =
-    configured
-      ? "#087443"
-      : "#b54708";
-
-
-  autoEmailScan();
+    }
+  );
 
 }
 
 
 /* =========================================================
-   VERIFICAR ALERTAS AUTOMÁTICOS
+   AUTOMAÇÃO DE E-MAIL
 ========================================================= */
 
 async function autoEmailScan() {
 
   if (
+    !state.user ||
     !state.settings.endpoint ||
     !state.settings.managerEmail
-  )
+  ) {
     return;
-
-
-  const hoje =
-    iso(
-      new Date()
-    );
-
-
-  const sentToday =
-    state.events
-      .filter(
-        e =>
-          e.type === "email" &&
-          e.date?.slice(
-            0,
-            10
-          ) === hoje
-      )
-      .map(
-        e =>
-          e.policyId
-      );
-
+  }
 
   for (
-    const p of state.policies
+    const policy
+    of state.policies
   ) {
 
-    const d =
-      daysUntil(
-        p.endDate
+    const client =
+      clientById(
+        policy.clientId
       );
 
+    if (!client) {
+      continue;
+    }
 
-    const mark =
-      [30, 15, 7, 1]
-        .includes(d)
-        ? d
-        : (
-            d < 0 &&
-            d >= -1
-              ? "expired"
-              : null
-          );
+    const days =
+      daysUntil(
+        policy.endDate
+      );
+
+    let key =
+      null;
+
+    let label =
+      null;
 
 
     if (
-      mark === null ||
-      sentToday.includes(
-        p.id
+      days === 30 &&
+      policy.alerts?.[30] !== false
+    ) {
+
+      key =
+        "30";
+
+      label =
+        "vence em 30 dias";
+
+    }
+    else if (
+      days === 15 &&
+      policy.alerts?.[15] !== false
+    ) {
+
+      key =
+        "15";
+
+      label =
+        "vence em 15 dias";
+
+    }
+    else if (
+      days === 7 &&
+      policy.alerts?.[7] !== false
+    ) {
+
+      key =
+        "7";
+
+      label =
+        "vence em 7 dias";
+
+    }
+    else if (
+      days === 1 &&
+      policy.alerts?.[1] !== false
+    ) {
+
+      key =
+        "1";
+
+      label =
+        "vence amanhã";
+
+    }
+    else if (
+      days < 0 &&
+      policy.alerts?.expired !== false
+    ) {
+
+      key =
+        `expired-${Math.abs(days)}`;
+
+      label =
+        `está vencida há ${Math.abs(days)} dia(s)`;
+
+    }
+
+
+    if (
+      !key ||
+      emailAlreadySentToday(
+        policy.id,
+        key
       )
-    )
+    ) {
       continue;
+    }
 
 
-    const enabled =
-      p.alerts?.[mark] !== false;
+    const subject =
+      `SAVA Seguros | Renovação - ${client.name}`;
 
 
-    if (enabled) {
+    const body =
+      `SAVA Seguros — Central de Renovações\n\n` +
+      `Cliente: ${client.name}\n` +
+      `Seguro: ${policy.type}\n` +
+      `Seguradora: ${policy.insurer}\n` +
+      `Apólice: ${policy.number || "Não informado"}\n` +
+      `Fim da vigência: ${fmtDate(policy.endDate)}\n` +
+      `Situação: ${label}\n\n` +
+      `Este aviso é destinado à equipe da SAVA Seguros.`;
 
-      await sendEmail(
-        p.id
+
+    try {
+
+      await sendManagerEmail(
+        subject,
+        body
+      );
+
+      await recordEmail(
+        policy.id,
+        `[${key}] Lembrete automático enviado ao responsável`
+      );
+
+    }
+    catch (error) {
+
+      console.error(
+        "Erro no lembrete automático:",
+        error
       );
 
     }
@@ -5169,400 +4960,390 @@ async function autoEmailScan() {
 
 
 /* =========================================================
-   RELATÓRIO
+   CHECAR AUTOMAÇÃO
 ========================================================= */
 
-function generateReport() {
+let automationTimer =
+  null;
 
-  const total =
-    state.policies.length;
 
+function checkAutomation() {
 
-  const expired =
-    state.policies.filter(
-      p =>
-        daysUntil(
-          p.endDate
-        ) < 0
-    ).length;
+  if (
+    automationTimer
+  ) {
+    return;
+  }
 
+  /*
+    Enquanto o CRM estiver aberto,
+    verifica periodicamente.
 
-  const d7 =
-    state.policies.filter(
-      p => {
+    O envio 24h com o site fechado
+    será feito depois pelo backend/cron.
+  */
 
-        const d =
-          daysUntil(
-            p.endDate
-          );
+  autoEmailScan();
 
-        return (
-          d >= 0 &&
-          d <= 7
-        );
-
-      }
-    ).length;
-
-
-  const pending =
-    state.policies.filter(
-      p =>
-        p.status ===
-        "Pendente"
-    ).length;
-
-
-  const andamento =
-    state.policies.filter(
-      p =>
-        p.status ===
-        "Em andamento"
-    ).length;
-
-
-  const won =
-    state.policies.filter(
-      p =>
-        p.status ===
-        "Ganho"
-    ).length;
-
-
-  const risk =
-    [...state.policies]
-      .filter(
-        p =>
-          daysUntil(
-            p.endDate
-          ) <= 30 &&
-          p.status !==
-          "Ganho"
-      )
-      .sort(
-        (a, b) =>
-          daysUntil(
-            a.endDate
-          ) -
-          daysUntil(
-            b.endDate
-          )
-      )
-      .slice(
-        0,
-        5
-      );
-
-
-  return `
-
-    <h3>
-      Relatório inteligente da carteira
-    </h3>
-
-    <p>
-      Gerado em
-      ${new Date().toLocaleString("pt-BR")}.
-    </p>
-
-
-    <div class="report-grid">
-
-      <div class="report-box">
-
-        <strong>
-          ${total}
-        </strong>
-
-        <small>
-          apólices
-        </small>
-
-      </div>
-
-
-      <div class="report-box">
-
-        <strong>
-          ${d7}
-        </strong>
-
-        <small>
-          vencem em até 7 dias
-        </small>
-
-      </div>
-
-
-      <div class="report-box">
-
-        <strong>
-          ${expired}
-        </strong>
-
-        <small>
-          vencidas
-        </small>
-
-      </div>
-
-
-      <div class="report-box">
-
-        <strong>
-          ${pending}
-        </strong>
-
-        <small>
-          pendentes
-        </small>
-
-      </div>
-
-
-      <div class="report-box">
-
-        <strong>
-          ${andamento}
-        </strong>
-
-        <small>
-          em andamento
-        </small>
-
-      </div>
-
-
-      <div class="report-box">
-
-        <strong>
-          ${won}
-        </strong>
-
-        <small>
-          ganhas
-        </small>
-
-      </div>
-
-    </div>
-
-
-    <h4>
-      Prioridades
-    </h4>
-
-
-    <ul>
-
-      ${
-        risk.length
-          ? risk
-              .map(
-                p => `
-
-                  <li>
-
-                    <b>
-                      ${esc(
-                        clientById(
-                          p.clientId
-                        )?.name ||
-                        "Cliente"
-                      )}
-                    </b>
-
-                    —
-
-                    ${esc(
-                      p.type
-                    )},
-
-                    ${esc(
-                      p.insurer
-                    )}
-
-                    —
-
-                    ${expiryLabel(p).text}
-
-                    —
-
-                    processo:
-
-                    ${esc(
-                      p.status
-                    )}
-
-                  </li>
-
-                `
-              )
-              .join("")
-          : `
-              <li>
-                Nenhum risco crítico identificado.
-              </li>
-            `
-      }
-
-    </ul>
-
-
-    <br>
-
-
-    <h4>
-      Leitura da carteira
-    </h4>
-
-
-    <p>
-
-      ${
-        expired
-          ? "Existem apólices vencidas que devem ser tratadas imediatamente. "
-          : ""
-      }
-
-      ${
-        d7
-          ? "Há apólices nos próximos 7 dias e elas devem ficar no topo da rotina comercial. "
-          : ""
-      }
-
-      ${
-        pending
-          ? "Há renovações ainda pendentes de cotação. "
-          : ""
-      }
-
-      ${
-        andamento
-          ? "Existem negociações em andamento que podem virar ganhos. "
-          : ""
-      }
-
-      ${
-        !expired &&
-        !d7 &&
-        !pending
-          ? "A carteira está sem sinais críticos pelos indicadores atuais."
-          : ""
-      }
-
-    </p>
-
-  `;
+  automationTimer =
+    setInterval(
+      autoEmailScan,
+      15 * 60 * 1000
+    );
 
 }
 
 
 /* =========================================================
-   MOSTRAR RELATÓRIO
+   ALTERAR SENHA
 ========================================================= */
 
-function showReport() {
+async function saveAccountSettings() {
 
-  const html =
-    generateReport();
+  const password =
+    $("#cfgPass")
+      ?.value ||
+    "";
 
+  if (!password) {
 
-  $("#reportArea")
-    .innerHTML =
-    html;
+    toast(
+      "Digite a nova senha."
+    );
 
+    return;
+  }
 
-  go(
-    "relatorios"
-  );
+  if (
+    password.length < 6
+  ) {
+
+    toast(
+      "A senha precisa ter pelo menos 6 caracteres."
+    );
+
+    return;
+  }
+
+  try {
+
+    const {
+      error
+    } =
+      await sb.auth.updateUser({
+        password:
+          password
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    $("#cfgPass").value =
+      "";
+
+    toast(
+      "Senha alterada com sucesso."
+    );
+
+  }
+  catch (error) {
+
+    console.error(
+      "Erro ao alterar senha:",
+      error
+    );
+
+    toast(
+      "Não foi possível alterar a senha."
+    );
+
+  }
 
 }
 
 
 /* =========================================================
-   LOGIN COM SUPABASE
+   ESQUECI MINHA SENHA
 ========================================================= */
 
-async function loginWithSupabase(e) {
-
-  e.preventDefault();
-
+async function forgotPassword() {
 
   const email =
     $("#loginUser")
-      .value
+      ?.value
       .trim();
 
+  if (
+    !email ||
+    !email.includes("@")
+  ) {
+
+    toast(
+      "Digite seu e-mail no campo de login primeiro."
+    );
+
+    return;
+  }
+
+  try {
+
+    const redirectTo =
+      window.location.origin +
+      window.location.pathname;
+
+    const {
+      error
+    } =
+      await sb.auth
+        .resetPasswordForEmail(
+          email,
+          {
+            redirectTo:
+              redirectTo
+          }
+        );
+
+    if (error) {
+      throw error;
+    }
+
+    toast(
+      "Enviamos o link para redefinir sua senha."
+    );
+
+  }
+  catch (error) {
+
+    console.error(
+      "Erro na recuperação:",
+      error
+    );
+
+    toast(
+      "Não foi possível enviar o link de recuperação."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SALVAR SENHA DA RECUPERAÇÃO
+========================================================= */
+
+async function saveRecoveryPassword() {
+
+  const password =
+    $("#recoveryPassword")
+      ?.value ||
+    "";
+
+  const confirmation =
+    $("#recoveryPassword2")
+      ?.value ||
+    "";
+
+  if (
+    password.length < 6
+  ) {
+
+    toast(
+      "A senha precisa ter pelo menos 6 caracteres."
+    );
+
+    return;
+  }
+
+  if (
+    password !==
+    confirmation
+  ) {
+
+    toast(
+      "As senhas não coincidem."
+    );
+
+    return;
+  }
+
+  try {
+
+    const {
+      error
+    } =
+      await sb.auth.updateUser({
+        password:
+          password
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    if ($("#recoveryPassword")) {
+      $("#recoveryPassword").value =
+        "";
+    }
+
+    if ($("#recoveryPassword2")) {
+      $("#recoveryPassword2").value =
+        "";
+    }
+
+    toast(
+      "Nova senha cadastrada."
+    );
+
+    showApp();
+
+    await loadCloudData();
+
+  }
+  catch (error) {
+
+    console.error(
+      "Erro ao redefinir senha:",
+      error
+    );
+
+    toast(
+      "Não foi possível redefinir a senha."
+    );
+
+  }
+
+} /* =========================================================
+   LOGIN
+========================================================= */
+
+async function login(event) {
+
+  event?.preventDefault();
+
+  const email =
+    $("#loginUser")
+      ?.value
+      .trim();
 
   const password =
     $("#loginPass")
-      .value;
-
-
-  const errorBox =
-    $("#loginError");
-
-
-  errorBox.textContent =
+      ?.value ||
     "";
-
 
   if (
     !email ||
     !password
   ) {
 
-    errorBox.textContent =
-      "Informe o e-mail e a senha.";
+    toast(
+      "Informe o e-mail e a senha."
+    );
 
     return;
-
   }
 
+  const button =
+    $("#loginForm button[type='submit']");
+
+  const oldText =
+    button?.textContent;
 
   try {
+
+    if (button) {
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        "Entrando...";
+
+    }
 
     const {
       data,
       error
     } =
-      await sb
-        .auth
+      await sb.auth
         .signInWithPassword({
-          email,
-          password
+          email:
+            email,
+
+          password:
+            password
         });
 
-
-    if (error)
+    if (error) {
       throw error;
+    }
 
+    if (
+      !data?.user
+    ) {
+
+      throw new Error(
+        "Usuário não encontrado."
+      );
+
+    }
 
     state.user =
       data.user;
 
-
     showApp();
 
-
     await loadCloudData();
-
 
     toast(
       "Login realizado com sucesso."
     );
 
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
-      err
+      "Erro no login:",
+      error
     );
 
+    let message =
+      "Não foi possível entrar.";
 
-    errorBox.textContent =
-      "E-mail ou senha incorretos.";
+    if (
+      String(
+        error?.message ||
+        ""
+      )
+        .toLowerCase()
+        .includes(
+          "invalid login credentials"
+        )
+    ) {
+
+      message =
+        "E-mail ou senha incorretos.";
+
+    }
+
+    toast(
+      message
+    );
+
+  }
+  finally {
+
+    if (button) {
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        oldText ||
+        "Entrar";
+
+    }
 
   }
 
@@ -5577,19 +5358,18 @@ async function logout() {
 
   try {
 
-    await sb
-      .auth
+    await sb.auth
       .signOut();
 
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
-      err
+      "Erro ao sair:",
+      error
     );
 
   }
-
 
   state.user =
     null;
@@ -5603,6 +5383,18 @@ async function logout() {
   state.events =
     [];
 
+  if (
+    automationTimer
+  ) {
+
+    clearInterval(
+      automationTimer
+    );
+
+    automationTimer =
+      null;
+
+  }
 
   showLogin();
 
@@ -5610,146 +5402,118 @@ async function logout() {
 
 
 /* =========================================================
-   ALTERAR SENHA
+   OUVIR AUTENTICAÇÃO
 ========================================================= */
 
-async function saveAccountSettings() {
+function setupAuthListener() {
 
-  if (
-    !state.user
-  )
-    return;
+  sb.auth
+    .onAuthStateChange(
+      async (
+        event,
+        session
+      ) => {
 
-
-  const password =
-    $("#cfgPass")
-      .value;
-
-
-  if (!password) {
-
-    toast(
-      "Digite a nova senha."
-    );
-
-    return;
-
-  }
-
-
-  if (
-    password.length < 6
-  ) {
-
-    toast(
-      "A nova senha precisa ter pelo menos 6 caracteres."
-    );
-
-    return;
-
-  }
-
-
-  try {
-
-    const {
-      error
-    } =
-      await sb
-        .auth
-        .updateUser({
-          password
-        });
-
-
-    if (error)
-      throw error;
-
-
-    $("#cfgPass").value =
-      "";
-
-
-    toast(
-      "Senha atualizada com sucesso."
-    );
-
-  }
-  catch (err) {
-
-    console.error(
-      err
-    );
-
-
-    toast(
-      "Não foi possível alterar a senha."
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   RECUPERAR SENHA
-========================================================= */
-
-async function forgotPassword() {
-
-  const email =
-    $("#loginUser")
-      .value
-      .trim();
-
-
-  if (!email) {
-
-    toast(
-      "Digite seu e-mail no campo de usuário primeiro."
-    );
-
-    return;
-
-  }
-
-
-  try {
-
-    const {
-      error
-    } =
-      await sb
-        .auth
-        .resetPasswordForEmail(
-          email,
-          {
-            redirectTo:
-              window.location.origin +
-              window.location.pathname
-          }
+        console.log(
+          "Supabase Auth:",
+          event
         );
 
+        if (
+          event ===
+          "PASSWORD_RECOVERY"
+        ) {
 
-    if (error)
+          state.user =
+            session?.user ||
+            null;
+
+          showRecovery();
+
+          return;
+
+        }
+
+        if (
+          event ===
+          "SIGNED_OUT"
+        ) {
+
+          state.user =
+            null;
+
+          showLogin();
+
+          return;
+
+        }
+
+        if (
+          event ===
+            "SIGNED_IN" &&
+          session?.user
+        ) {
+
+          state.user =
+            session.user;
+
+        }
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   VERIFICAR SESSÃO INICIAL
+========================================================= */
+
+async function restoreSession() {
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await sb.auth
+        .getSession();
+
+    if (error) {
       throw error;
+    }
 
+    const session =
+      data?.session;
 
-    toast(
-      "E-mail de recuperação enviado."
-    );
+    if (
+      session?.user
+    ) {
+
+      state.user =
+        session.user;
+
+      showApp();
+
+      await loadCloudData();
+
+    }
+    else {
+
+      showLogin();
+
+    }
 
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
-      err
+      "Erro ao restaurar sessão:",
+      error
     );
 
-
-    toast(
-      "Não foi possível enviar a recuperação de senha."
-    );
+    showLogin();
 
   }
 
@@ -5757,943 +5521,535 @@ async function forgotPassword() {
 
 
 /* =========================================================
-   SALVAR CONFIGURAÇÃO DE E-MAIL
-========================================================= */
-
-async function saveEmailSettings() {
-
-  state.settings.endpoint =
-    $("#emailEndpoint")
-      .value
-      .trim();
-
-
-  state.settings.managerEmail =
-    $("#managerEmail")
-      .value
-      .trim();
-
-
-  if (
-    state.settings.managerEmail &&
-    !state.settings.managerEmail.includes("@")
-  ) {
-
-    toast(
-      "Informe um e-mail válido."
-    );
-
-    return;
-
-  }
-
-
-  try {
-
-    await saveCloudSettings();
-
-
-    checkAutomation();
-
-
-    toast(
-      "Configuração de e-mail salva."
-    );
-
-  }
-  catch (err) {
-
-    console.error(
-      err
-    );
-
-
-    toast(
-      "Não foi possível salvar as configurações."
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   SALVAR IDIOMA
-========================================================= */
-
-async function saveLanguage() {
-
-  state.settings.language =
-    $("#languageSelect")
-      .value;
-
-
-  try {
-
-    await saveCloudSettings();
-
-
-    toast(
-      "Idioma salvo."
-    );
-
-  }
-  catch (err) {
-
-    console.error(
-      err
-    );
-
-
-    toast(
-      "Não foi possível salvar o idioma."
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   EXPORTAR BACKUP DA NUVEM
+   EXPORTAR BACKUP
 ========================================================= */
 
 async function exportBackup() {
 
-  const data = {
-
-    version:
-      3,
-
-    source:
-      "SAVA CRM Supabase",
-
-    exportedAt:
-      new Date()
-        .toISOString(),
-
-    clients:
-      state.clients,
-
-    policies:
-      state.policies,
-
-    events:
-      state.events,
-
-    settings:
-      state.settings
-
-  };
-
-
-  const blob =
-    new Blob(
-      [
-        JSON.stringify(
-          data,
-          null,
-          2
-        )
-      ],
-      {
-        type:
-          "application/json"
-      }
-    );
-
-
-  const a =
-    document.createElement(
-      "a"
-    );
-
-
-  a.href =
-    URL.createObjectURL(
-      blob
-    );
-
-
-  a.download =
-    `backup-sava-${iso(new Date())}.json`;
-
-
-  document.body.appendChild(
-    a
-  );
-
-
-  a.click();
-
-
-  a.remove();
-
-
-  URL.revokeObjectURL(
-    a.href
-  );
-
-
-  toast(
-    "Backup exportado."
-  );
-
-}
-
-
-/* =========================================================
-   IMPORTAR BACKUP PARA A NUVEM
-========================================================= */
-
-async function importBackup(e) {
-
-  const file =
-    e.target.files[0];
-
-
-  if (!file)
-    return;
-
-
   if (!state.user) {
 
     toast(
-      "Entre no sistema antes de importar."
+      "Faça login primeiro."
     );
 
-    e.target.value =
-      "";
-
     return;
-
   }
-
 
   try {
 
-    const data =
-      JSON.parse(
-        await file.text()
-      );
+    const backup = {
 
+      version:
+        2,
 
-    if (!data.version)
-      throw new Error(
-        "Backup inválido."
-      );
+      system:
+        "SAVA Seguros | Central de Renovações",
+
+      exportedAt:
+        new Date()
+          .toISOString(),
+
+      clients:
+        state.clients,
+
+      policies:
+        [],
+
+      events:
+        state.events,
+
+      settings:
+        state.settings
+
+    };
 
 
     /*
-      CLIENTES
+      Também tenta colocar os PDFs
+      dentro do backup em Base64.
     */
 
     for (
-      const c of data.clients || []
+      const policy
+      of state.policies
     ) {
 
-      const normalized = {
-
-        id:
-          validUuid(c.id)
-            ? c.id
-            : uid(),
-
-        name:
-          c.name ||
-          "Cliente",
-
-        birthDate:
-          c.birthDate ||
-          "",
-
-        phone:
-          cleanPhone(
-            c.phone
-          ),
-
-        document:
-          c.document ||
-          "",
-
-        email:
-          c.email ||
-          "",
-
-        notes:
-          c.notes ||
-          "",
-
-        createdAt:
-          c.createdAt ||
-          new Date()
-            .toISOString(),
-
-        updatedAt:
-          new Date()
-            .toISOString()
-
+      const copy = {
+        ...policy,
+        pdfBackup:
+          null
       };
 
-
-      const {
-        error
-      } =
-        await sb
-          .from("clients")
-          .upsert(
-            clientToDb(
-              normalized
-            )
-          );
-
-
-      if (error)
-        throw error;
-
-    }
-
-
-    /*
-      RECARREGA CLIENTES
-      ANTES DAS APÓLICES
-    */
-
-    await loadCloudData();
-
-
-    /*
-      APÓLICES
-    */
-
-    for (
-      const p of data.policies || []
-    ) {
-
-      let clientId =
-        p.clientId;
-
-
       if (
-        !state.clients.some(
-          c =>
-            c.id ===
-            clientId
-        )
+        policy.pdfPath
       ) {
 
-        const originalClient =
-          (data.clients || [])
-            .find(
-              c =>
-                c.id ===
-                p.clientId
+        try {
+
+          const {
+            data,
+            error
+          } =
+            await sb
+              .storage
+              .from(
+                "policy-pdfs"
+              )
+              .download(
+                policy.pdfPath
+              );
+
+          if (error) {
+            throw error;
+          }
+
+          copy.pdfBackup =
+            await blobToBase64(
+              data
             );
 
+          copy.pdfBackupName =
+            policy.pdfPath
+              .split("/")
+              .pop() ||
+            "apolice.pdf";
 
-        if (
-          originalClient
-        ) {
+        }
+        catch (error) {
 
-          const match =
-            state.clients.find(
-              c =>
-                c.name ===
-                originalClient.name &&
-                c.phone ===
-                cleanPhone(
-                  originalClient.phone
-                )
-            );
-
-
-          if (match)
-            clientId =
-              match.id;
+          console.warn(
+            "PDF não incluído no backup:",
+            policy.pdfPath,
+            error
+          );
 
         }
 
       }
 
+      backup.policies.push(
+        copy
+      );
 
-      if (
-        !state.clients.some(
-          c =>
-            c.id ===
-            clientId
-        )
-      )
-        continue;
+    }
 
 
-      const normalized = {
-
-        id:
-          validUuid(p.id)
-            ? p.id
-            : uid(),
-
-        clientId,
-
-        insurer:
-          p.insurer ||
-          "Outra",
-
-        type:
-          p.type ||
-          "Outro",
-
-        number:
-          p.number ||
-          "",
-
-        startDate:
-          p.startDate ||
-          "",
-
-        endDate:
-          p.endDate ||
-          "",
-
-        status:
-          p.status ||
-          "Pendente",
-
-        notes:
-          p.notes ||
-          "",
-
-        alerts:
-          p.alerts || {
-            30: true,
-            15: true,
-            7: true,
-            1: true,
-            expired: true
-          },
-
-        pdfPath:
-          p.pdfPath ||
-          null,
-
-        renewedFrom:
-          validUuid(
-            p.renewedFrom
+    const blob =
+      new Blob(
+        [
+          JSON.stringify(
+            backup,
+            null,
+            2
           )
-            ? p.renewedFrom
-            : null,
-
-        createdAt:
-          p.createdAt ||
-          new Date()
-            .toISOString(),
-
-        updatedAt:
-          new Date()
-            .toISOString()
-
-      };
+        ],
+        {
+          type:
+            "application/json"
+        }
+      );
 
 
-      const {
-        error
-      } =
-        await sb
-          .from("policies")
-          .upsert(
-            policyToDb(
-              normalized
-            )
-          );
+    const url =
+      URL.createObjectURL(
+        blob
+      );
 
 
-      if (error)
-        throw error;
-
-    }
-
-
-    /*
-      CONFIGURAÇÕES
-    */
-
-    if (
-      data.settings
-    ) {
-
-      state.settings.endpoint =
-        data.settings.endpoint ||
-        state.settings.endpoint;
+    const link =
+      document.createElement(
+        "a"
+      );
 
 
-      state.settings.managerEmail =
-        data.settings.managerEmail ||
-        state.settings.managerEmail;
+    link.href =
+      url;
+
+    link.download =
+      `sava-backup-${iso(new Date())}.json`;
 
 
-      state.settings.language =
-        data.settings.language ||
-        state.settings.language;
+    document.body.appendChild(
+      link
+    );
 
 
-      await saveCloudSettings();
-
-    }
+    link.click();
 
 
-    await loadCloudData();
+    link.remove();
+
+
+    URL.revokeObjectURL(
+      url
+    );
 
 
     toast(
-      "Backup importado para a nuvem."
+      "Backup exportado."
     );
 
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
-      err
+      "Erro ao exportar backup:",
+      error
     );
 
-
     toast(
-      "Backup inválido ou não foi possível importar."
+      "Não foi possível gerar o backup."
     );
 
   }
-
-
-  e.target.value =
-    "";
 
 }
 
 
 /* =========================================================
-   APAGAR DADOS DA NUVEM
+   BLOB → BASE64
 ========================================================= */
 
-async function clearAll() {
+function blobToBase64(blob) {
 
-  const confirmar =
-    await deleteConfirm(
-      "Apagar todos os dados?",
-      `Todos os clientes, apólices, históricos e PDFs desta conta serão excluídos.
+  return new Promise(
+    (
+      resolve,
+      reject
+    ) => {
 
-Essa ação não poderá ser desfeita.`
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        () =>
+          resolve(
+            reader.result
+          );
+
+      reader.onerror =
+        reject;
+
+      reader.readAsDataURL(
+        blob
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   BASE64 → BLOB
+========================================================= */
+
+function base64ToBlob(
+  dataUrl
+) {
+
+  const parts =
+    String(dataUrl)
+      .split(",");
+
+  if (
+    parts.length < 2
+  ) {
+
+    throw new Error(
+      "PDF do backup inválido."
+    );
+
+  }
+
+  const mimeMatch =
+    parts[0].match(
+      /data:(.*?);base64/
     );
 
 
-  if (!confirmar)
+  const mime =
+    mimeMatch?.[1] ||
+    "application/pdf";
+
+
+  const binary =
+    atob(
+      parts[1]
+    );
+
+
+  const bytes =
+    new Uint8Array(
+      binary.length
+    );
+
+
+  for (
+    let i = 0;
+    i < binary.length;
+    i++
+  ) {
+
+    bytes[i] =
+      binary.charCodeAt(i);
+
+  }
+
+
+  return new Blob(
+    [bytes],
+    {
+      type:
+        mime
+    }
+  );
+
+}
+
+
+/* =========================================================
+   IMPORTAR BACKUP
+========================================================= */
+
+async function importBackup(
+  event
+) {
+
+  const file =
+    event?.target
+      ?.files?.[0];
+
+  if (!file) {
     return;
-
-
-  try {
-
-    /*
-      PRIMEIRO REMOVE PDFs
-    */
-
-    const paths =
-      state.policies
-        .map(
-          p =>
-            p.pdfPath
-        )
-        .filter(
-          Boolean
-        );
-
-
-    if (
-      paths.length
-    ) {
-
-      const {
-        error
-      } =
-        await sb
-          .storage
-          .from(
-            "policy-pdfs"
-          )
-          .remove(
-            paths
-          );
-
-
-      if (error)
-        throw error;
-
-    }
-
-
-    /*
-      EVENTOS
-    */
-
-    const {
-      error:
-        eventsError
-    } =
-      await sb
-        .from("events")
-        .delete()
-        .eq(
-          "user_id",
-          state.user.id
-        );
-
-
-    if (eventsError)
-      throw eventsError;
-
-
-    /*
-      APÓLICES
-    */
-
-    const {
-      error:
-        policiesError
-    } =
-      await sb
-        .from("policies")
-        .delete()
-        .eq(
-          "user_id",
-          state.user.id
-        );
-
-
-    if (policiesError)
-      throw policiesError;
-
-
-    /*
-      CLIENTES
-    */
-
-    const {
-      error:
-        clientsError
-    } =
-      await sb
-        .from("clients")
-        .delete()
-        .eq(
-          "user_id",
-          state.user.id
-        );
-
-
-    if (clientsError)
-      throw clientsError;
-
-
-    state.clients =
-      [];
-
-    state.policies =
-      [];
-
-    state.events =
-      [];
-
-
-    renderAll();
-
-
-    toast(
-      "Dados apagados da nuvem."
-    );
-
-  }
-  catch (err) {
-
-    console.error(
-      err
-    );
-
-
-    toast(
-      "Não foi possível apagar todos os dados."
-    );
-
   }
 
-}
-
-
-/* =========================================================
-   MIGRAR DADOS ANTIGOS DO INDEXEDDB PARA SUPABASE
-========================================================= */
-
-async function migrateLocalDataToCloud() {
 
   if (!state.user) {
 
     toast(
-      "Faça login antes de migrar os dados."
+      "Faça login primeiro."
     );
 
     return;
-
-  }
-
-
-  const confirmar =
-    await deleteConfirm(
-      "Migrar dados deste dispositivo?",
-      `O sistema vai procurar clientes, apólices, históricos e PDFs salvos na versão antiga deste navegador e enviar os dados para a nuvem.
-
-Os dados locais não serão apagados automaticamente.`
-    );
-
-
-  if (!confirmar)
-    return;
-
-
-  let db;
-
-
-  try {
-
-    db =
-      await openLegacyDB();
-
-  }
-  catch (err) {
-
-    console.error(
-      err
-    );
-
-
-    toast(
-      "Não foi possível acessar os dados antigos."
-    );
-
-    return;
-
-  }
-
-
-  if (!db) {
-
-    toast(
-      "Nenhum banco local antigo foi encontrado."
-    );
-
-    return;
-
   }
 
 
   try {
 
-    const localClients =
-      await legacyGetAll(
-        db,
-        "clients"
-      );
+    const text =
+      await file.text();
 
 
-    const localPolicies =
-      await legacyGetAll(
-        db,
-        "policies"
-      );
-
-
-    const localEvents =
-      await legacyGetAll(
-        db,
-        "events"
-      );
-
-
-    const localPdfs =
-      await legacyGetAll(
-        db,
-        "pdfs"
+    const backup =
+      JSON.parse(
+        text
       );
 
 
     if (
-      !localClients.length &&
-      !localPolicies.length
+      !Array.isArray(
+        backup.clients
+      ) ||
+      !Array.isArray(
+        backup.policies
+      )
     ) {
 
-      toast(
-        "Não há clientes ou apólices locais para migrar."
+      throw new Error(
+        "Arquivo de backup inválido."
       );
-
-      db.close();
-
-      return;
 
     }
 
 
-    const clientMap =
-      new Map();
+    toast(
+      "Importando backup..."
+    );
 
 
     /*
-      MIGRA CLIENTES
+      MAPEAMENTO DE IDs
+
+      Isso evita conflitos caso
+      algum ID antigo não seja UUID
+      ou já exista na conta.
     */
 
-    for (
-      const old of localClients
-    ) {
-
-      const newId =
-        validUuid(
-          old.id
-        )
-          ? old.id
-          : uid();
-
-
-      clientMap.set(
-        old.id,
-        newId
-      );
-
-
-      const c = {
-
-        id:
-          newId,
-
-        name:
-          old.name ||
-          "Cliente",
-
-        birthDate:
-          old.birthDate ||
-          "",
-
-        phone:
-          cleanPhone(
-            old.phone
-          ),
-
-        document:
-          old.document ||
-          "",
-
-        email:
-          old.email ||
-          "",
-
-        notes:
-          old.notes ||
-          "",
-
-        createdAt:
-          old.createdAt ||
-          new Date()
-            .toISOString(),
-
-        updatedAt:
-          old.updatedAt ||
-          new Date()
-            .toISOString()
-
-      };
-
-
-      const {
-        error
-      } =
-        await sb
-          .from("clients")
-          .upsert(
-            clientToDb(c)
-          );
-
-
-      if (error)
-        throw error;
-
-    }
-
+    const clientMap =
+      new Map();
 
     const policyMap =
       new Map();
 
 
-    /*
-      MIGRA APÓLICES
-    */
-
     for (
-      const old of localPolicies
+      const oldClient
+      of backup.clients
     ) {
 
-      const newId =
+      const oldId =
+        oldClient.id;
+
+
+      let newId =
         validUuid(
-          old.id
+          oldId
         )
-          ? old.id
+          ? oldId
           : uid();
 
 
+      if (
+        state.clients.some(
+          client =>
+            client.id ===
+            newId
+        )
+      ) {
+
+        newId =
+          uid();
+
+      }
+
+
+      clientMap.set(
+        oldId,
+        newId
+      );
+
+
+      const client = {
+        ...oldClient,
+
+        id:
+          newId,
+
+        createdAt:
+          oldClient.createdAt ||
+          new Date()
+            .toISOString(),
+
+        updatedAt:
+          new Date()
+            .toISOString()
+      };
+
+
+      const {
+        error
+      } =
+        await sb
+          .from(
+            "clients"
+          )
+          .insert(
+            clientToDb(
+              client
+            )
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+    }
+
+
+    /*
+      PRIMEIRA PASSAGEM DAS APÓLICES
+
+      renewed_from fica NULL para
+      não quebrar a chave estrangeira.
+    */
+
+    for (
+      const oldPolicy
+      of backup.policies
+    ) {
+
+      const oldId =
+        oldPolicy.id;
+
+
+      let newId =
+        validUuid(
+          oldId
+        )
+          ? oldId
+          : uid();
+
+
+      if (
+        state.policies.some(
+          policy =>
+            policy.id ===
+            newId
+        )
+      ) {
+
+        newId =
+          uid();
+
+      }
+
+
       policyMap.set(
-        old.id,
+        oldId,
         newId
       );
 
 
       const newClientId =
         clientMap.get(
-          old.clientId
+          oldPolicy.clientId
         );
 
 
-      if (
-        !newClientId
-      )
+      if (!newClientId) {
+
+        console.warn(
+          "Apólice ignorada: cliente não encontrado.",
+          oldPolicy
+        );
+
         continue;
 
+      }
 
-      let pdfPath =
+
+      let newPdfPath =
         null;
 
 
       if (
-        old.pdfId
+        oldPolicy.pdfBackup
       ) {
 
-        const pdf =
-          localPdfs.find(
-            x =>
-              x.id ===
-              old.pdfId
-          );
+        try {
 
+          const blob =
+            base64ToBlob(
+              oldPolicy.pdfBackup
+            );
 
-        if (
-          pdf?.blob
-        ) {
 
           const name =
             safeFileName(
-              pdf.name ||
+              oldPolicy.pdfBackupName ||
               "apolice.pdf"
             );
 
 
-          pdfPath =
+          newPdfPath =
             `${state.user.id}/${newId}/${Date.now()}-${name}`;
 
 
           const {
             error:
-              uploadError
+              pdfError
           } =
             await sb
               .storage
@@ -6701,8 +6057,8 @@ Os dados locais não serão apagados automaticamente.`
                 "policy-pdfs"
               )
               .upload(
-                pdfPath,
-                pdf.blob,
+                newPdfPath,
+                blob,
                 {
                   contentType:
                     "application/pdf",
@@ -6713,17 +6069,29 @@ Os dados locais não serão apagados automaticamente.`
               );
 
 
-          if (
-            uploadError
-          )
-            throw uploadError;
+          if (pdfError) {
+            throw pdfError;
+          }
+
+        }
+        catch (error) {
+
+          console.warn(
+            "PDF do backup não pôde ser restaurado:",
+            error
+          );
+
+
+          newPdfPath =
+            null;
 
         }
 
       }
 
 
-      const p = {
+      const policy = {
+        ...oldPolicy,
 
         id:
           newId,
@@ -6731,226 +6099,272 @@ Os dados locais não serão apagados automaticamente.`
         clientId:
           newClientId,
 
-        insurer:
-          old.insurer ||
-          "Outra",
+        pdfPath:
+          newPdfPath,
 
-        type:
-          old.type === "Moto"
-            ? "Auto"
-            : old.type ||
-              "Outro",
-
-        number:
-          old.number ||
-          "",
-
-        startDate:
-          old.startDate ||
-          "",
-
-        endDate:
-          old.endDate ||
-          "",
-
-        status:
-          old.status ||
-          "Pendente",
-
-        notes:
-          old.notes ||
-          "",
-
-        alerts:
-          old.alerts || {
-            30: true,
-            15: true,
-            7: true,
-            1: true,
-            expired: true
-          },
-
-        pdfPath,
+        pdfId:
+          newPdfPath,
 
         renewedFrom:
           null,
 
         createdAt:
-          old.createdAt ||
+          oldPolicy.createdAt ||
           new Date()
             .toISOString(),
 
         updatedAt:
-          old.updatedAt ||
           new Date()
             .toISOString()
-
       };
+
+
+      delete policy.pdfBackup;
+      delete policy.pdfBackupName;
 
 
       const {
         error
       } =
         await sb
-          .from("policies")
-          .upsert(
-            policyToDb(p)
+          .from(
+            "policies"
+          )
+          .insert(
+            policyToDb(
+              policy
+            )
           );
 
 
-      if (error)
+      if (error) {
         throw error;
+      }
 
     }
 
 
     /*
-      CORRIGE RELAÇÕES DE RENOVAÇÃO
+      SEGUNDA PASSAGEM
+
+      Agora que todas as apólices
+      existem, restaura os vínculos
+      de renovação.
     */
 
     for (
-      const old of localPolicies
+      const oldPolicy
+      of backup.policies
     ) {
 
       if (
-        !old.renewedFrom
-      )
+        !oldPolicy.renewedFrom
+      ) {
         continue;
+      }
 
 
-      const currentId =
+      const newId =
         policyMap.get(
-          old.id
+          oldPolicy.id
         );
 
 
-      const parentId =
+      const renewedFrom =
         policyMap.get(
-          old.renewedFrom
+          oldPolicy.renewedFrom
         );
 
 
       if (
-        !currentId ||
-        !parentId
-      )
+        !newId ||
+        !renewedFrom
+      ) {
         continue;
+      }
 
 
       const {
         error
       } =
         await sb
-          .from("policies")
+          .from(
+            "policies"
+          )
           .update({
             renewed_from:
-              parentId
+              renewedFrom
           })
           .eq(
             "id",
-            currentId
+            newId
           );
 
 
-      if (error)
+      if (error) {
         throw error;
+      }
 
     }
 
 
     /*
-      MIGRA HISTÓRICO
+      IMPORTAR HISTÓRICO
     */
 
-    for (
-      const old of localEvents
+    if (
+      Array.isArray(
+        backup.events
+      )
     ) {
 
-      const policyId =
-        policyMap.get(
-          old.policyId
-        );
+      for (
+        const oldEvent
+        of backup.events
+      ) {
 
-
-      if (
-        !policyId
-      )
-        continue;
-
-
-      const ev = {
-
-        id:
-          validUuid(
-            old.id
-          )
-            ? old.id
-            : uid(),
-
-        policyId,
-
-        type:
-          old.type ||
-          "history",
-
-        message:
-          old.message ||
-          "Evento importado",
-
-        date:
-          old.date ||
-          new Date()
-            .toISOString()
-
-      };
-
-
-      const {
-        error
-      } =
-        await sb
-          .from("events")
-          .upsert(
-            eventToDb(ev)
+        const newPolicyId =
+          policyMap.get(
+            oldEvent.policyId
           );
 
 
-      if (error)
-        throw error;
+        if (!newPolicyId) {
+          continue;
+        }
+
+
+        const eventObject = {
+
+          id:
+            validUuid(
+              oldEvent.id
+            )
+              ? oldEvent.id
+              : uid(),
+
+          policyId:
+            newPolicyId,
+
+          type:
+            oldEvent.type ||
+            "history",
+
+          message:
+            oldEvent.message ||
+            "Evento importado",
+
+          date:
+            oldEvent.date ||
+            new Date()
+              .toISOString()
+
+        };
+
+
+        /*
+          Se o ID do evento já existir,
+          cria outro.
+        */
+
+        if (
+          state.events.some(
+            item =>
+              item.id ===
+              eventObject.id
+          )
+        ) {
+
+          eventObject.id =
+            uid();
+
+        }
+
+
+        const {
+          error
+        } =
+          await sb
+            .from(
+              "events"
+            )
+            .insert(
+              eventToDb(
+                eventObject
+              )
+            );
+
+
+        if (error) {
+          throw error;
+        }
+
+      }
 
     }
 
 
-    db.close();
+    /*
+      CONFIGURAÇÕES
+    */
+
+    if (
+      backup.settings &&
+      typeof backup.settings ===
+        "object"
+    ) {
+
+      state.settings = {
+        endpoint:
+          backup.settings.endpoint ||
+          "",
+
+        managerEmail:
+          backup.settings.managerEmail ||
+          "",
+
+        language:
+          backup.settings.language ||
+          "pt-BR"
+      };
+
+
+      await saveSettings();
+
+    }
 
 
     await loadCloudData();
 
 
     toast(
-      "Dados antigos migrados para a nuvem com sucesso."
+      "Backup importado com sucesso."
     );
 
   }
-  catch (err) {
+  catch (error) {
 
     console.error(
-      "Erro na migração:",
-      err
+      "Erro ao importar backup:",
+      error
     );
-
-
-    try {
-
-      db.close();
-
-    }
-    catch {}
 
 
     toast(
-      "Não foi possível concluir a migração."
+      "Não foi possível importar o backup."
     );
+
+  }
+  finally {
+
+    if (
+      event?.target
+    ) {
+
+      event.target.value =
+        "";
+
+    }
 
   }
 
@@ -6958,62 +6372,21 @@ Os dados locais não serão apagados automaticamente.`
 
 
 /* =========================================================
-   ABRIR BANCO ANTIGO
+   MIGRAÇÃO DO INDEXEDDB ANTIGO
 ========================================================= */
 
-function openLegacyDB() {
+function openLegacyDatabase() {
 
   return new Promise(
-    (resolve, reject) => {
+    (
+      resolve,
+      reject
+    ) => {
 
       const request =
         indexedDB.open(
-          "savaCRMv2"
+          "sava-renovacoes"
         );
-
-
-      let created =
-        false;
-
-
-      request.onupgradeneeded =
-        () => {
-
-          created =
-            true;
-
-        };
-
-
-      request.onsuccess =
-        () => {
-
-          const db =
-            request.result;
-
-
-          if (created) {
-
-            db.close();
-
-            indexedDB.deleteDatabase(
-              "savaCRMv2"
-            );
-
-            resolve(
-              null
-            );
-
-            return;
-
-          }
-
-
-          resolve(
-            db
-          );
-
-        };
 
 
       request.onerror =
@@ -7022,6 +6395,25 @@ function openLegacyDB() {
             request.error
           );
 
+
+      request.onsuccess =
+        () =>
+          resolve(
+            request.result
+          );
+
+
+      request.onupgradeneeded =
+        () => {
+
+          /*
+            Se o banco não existia,
+            não criamos estrutura nova.
+            Apenas encerramos depois.
+          */
+
+        };
+
     }
   );
 
@@ -7029,21 +6421,25 @@ function openLegacyDB() {
 
 
 /* =========================================================
-   LER STORE DO BANCO ANTIGO
+   LER STORE DO INDEXEDDB
 ========================================================= */
 
-function legacyGetAll(
+function readLegacyStore(
   db,
   storeName
 ) {
 
   return new Promise(
-    resolve => {
+    (
+      resolve,
+      reject
+    ) => {
 
       if (
-        !db.objectStoreNames.contains(
-          storeName
-        )
+        !db.objectStoreNames
+          .contains(
+            storeName
+          )
       ) {
 
         resolve(
@@ -7051,7 +6447,6 @@ function legacyGetAll(
         );
 
         return;
-
       }
 
 
@@ -7063,9 +6458,10 @@ function legacyGetAll(
 
 
       const store =
-        transaction.objectStore(
-          storeName
-        );
+        transaction
+          .objectStore(
+            storeName
+          );
 
 
       const request =
@@ -7082,8 +6478,8 @@ function legacyGetAll(
 
       request.onerror =
         () =>
-          resolve(
-            []
+          reject(
+            request.error
           );
 
     }
@@ -7093,164 +6489,928 @@ function legacyGetAll(
 
 
 /* =========================================================
-   ADICIONAR BOTÕES EXTRAS DE CONTA / MIGRAÇÃO
+   MIGRAR DADOS LOCAIS PARA SUPABASE
 ========================================================= */
 
-function setupExtraButtons() {
+async function migrateLocalDataToCloud() {
 
-  const accountCard =
-    $("#saveAccount")
-      ?.closest(
-        ".settings-card"
-      );
+  if (!state.user) {
 
+    toast(
+      "Faça login primeiro."
+    );
 
-  if (
-    accountCard &&
-    !$("#forgotPasswordConfig")
-  ) {
-
-    const forgot =
-      document.createElement(
-        "button"
-      );
+    return;
+  }
 
 
-    forgot.id =
-      "forgotPasswordConfig";
+  const status =
+    $("#migrationStatus");
 
 
-    forgot.type =
-      "button";
+  try {
+
+    if (status) {
+
+      status.textContent =
+        "Lendo dados antigos deste aparelho...";
+
+    }
 
 
-    forgot.className =
-      "btn btn-secondary";
+    const db =
+      await openLegacyDatabase();
 
 
-    forgot.style.marginTop =
-      "10px";
+    const storeNames =
+      [...db.objectStoreNames];
 
 
-    forgot.textContent =
-      "Enviar recuperação de senha";
+    if (
+      !storeNames.length
+    ) {
 
+      db.close();
 
-    forgot.addEventListener(
-      "click",
-      async () => {
+      if (status) {
 
-        const email =
-          state.user?.email;
-
-
-        if (!email) {
-
-          toast(
-            "Usuário não autenticado."
-          );
-
-          return;
-
-        }
-
-
-        try {
-
-          const {
-            error
-          } =
-            await sb
-              .auth
-              .resetPasswordForEmail(
-                email,
-                {
-                  redirectTo:
-                    window.location.origin +
-                    window.location.pathname
-                }
-              );
-
-
-          if (error)
-            throw error;
-
-
-          toast(
-            "E-mail de recuperação enviado."
-          );
-
-        }
-        catch (err) {
-
-          console.error(
-            err
-          );
-
-
-          toast(
-            "Não foi possível enviar a recuperação."
-          );
-
-        }
+        status.textContent =
+          "Nenhum banco antigo encontrado neste aparelho.";
 
       }
+
+      toast(
+        "Nenhum dado local antigo encontrado."
+      );
+
+      return;
+
+    }
+
+
+    /*
+      Tenta os nomes utilizados
+      nas versões anteriores.
+    */
+
+    let oldClients =
+      [];
+
+    let oldPolicies =
+      [];
+
+    let oldEvents =
+      [];
+
+
+    for (
+      const name
+      of [
+        "clients",
+        "clientes"
+      ]
+    ) {
+
+      const data =
+        await readLegacyStore(
+          db,
+          name
+        );
+
+      if (data.length) {
+
+        oldClients =
+          data;
+
+        break;
+
+      }
+
+    }
+
+
+    for (
+      const name
+      of [
+        "policies",
+        "apolices"
+      ]
+    ) {
+
+      const data =
+        await readLegacyStore(
+          db,
+          name
+        );
+
+      if (data.length) {
+
+        oldPolicies =
+          data;
+
+        break;
+
+      }
+
+    }
+
+
+    for (
+      const name
+      of [
+        "events",
+        "eventos"
+      ]
+    ) {
+
+      const data =
+        await readLegacyStore(
+          db,
+          name
+        );
+
+      if (data.length) {
+
+        oldEvents =
+          data;
+
+        break;
+
+      }
+
+    }
+
+
+    db.close();
+
+
+    if (
+      !oldClients.length &&
+      !oldPolicies.length
+    ) {
+
+      if (status) {
+
+        status.textContent =
+          "Nenhum cliente ou apólice antiga encontrada.";
+
+      }
+
+      toast(
+        "Não encontrei dados antigos para migrar."
+      );
+
+      return;
+
+    }
+
+
+    if (status) {
+
+      status.textContent =
+        "Migrando clientes...";
+
+    }
+
+
+    const clientMap =
+      new Map();
+
+    const policyMap =
+      new Map();
+
+
+    /*
+      CLIENTES
+    */
+
+    for (
+      const oldClient
+      of oldClients
+    ) {
+
+      const oldId =
+        oldClient.id;
+
+
+      let newId =
+        validUuid(
+          oldId
+        )
+          ? oldId
+          : uid();
+
+
+      if (
+        state.clients.some(
+          client =>
+            client.id ===
+            newId
+        )
+      ) {
+
+        newId =
+          uid();
+
+      }
+
+
+      clientMap.set(
+        oldId,
+        newId
+      );
+
+
+      const client = {
+
+        id:
+          newId,
+
+        name:
+          oldClient.name ||
+          oldClient.nome ||
+          "Cliente",
+
+        birthDate:
+          oldClient.birthDate ||
+          oldClient.birth_date ||
+          oldClient.nascimento ||
+          "",
+
+        phone:
+          cleanPhone(
+            oldClient.phone ||
+            oldClient.telefone ||
+            ""
+          ),
+
+        document:
+          oldClient.document ||
+          oldClient.cpfCnpj ||
+          oldClient.cpf_cnpj ||
+          "",
+
+        email:
+          oldClient.email ||
+          "",
+
+        notes:
+          oldClient.notes ||
+          oldClient.observacoes ||
+          "",
+
+        createdAt:
+          oldClient.createdAt ||
+          oldClient.created_at ||
+          new Date()
+            .toISOString(),
+
+        updatedAt:
+          new Date()
+            .toISOString()
+
+      };
+
+
+      const {
+        error
+      } =
+        await sb
+          .from(
+            "clients"
+          )
+          .insert(
+            clientToDb(
+              client
+            )
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+    }
+
+
+    if (status) {
+
+      status.textContent =
+        "Migrando apólices...";
+
+    }
+
+
+    /*
+      APÓLICES — PRIMEIRA PASSAGEM
+    */
+
+    for (
+      const oldPolicy
+      of oldPolicies
+    ) {
+
+      const oldId =
+        oldPolicy.id;
+
+
+      let newId =
+        validUuid(
+          oldId
+        )
+          ? oldId
+          : uid();
+
+
+      if (
+        state.policies.some(
+          policy =>
+            policy.id ===
+            newId
+        )
+      ) {
+
+        newId =
+          uid();
+
+      }
+
+
+      policyMap.set(
+        oldId,
+        newId
+      );
+
+
+      const oldClientId =
+        oldPolicy.clientId ||
+        oldPolicy.client_id ||
+        oldPolicy.clienteId;
+
+
+      const newClientId =
+        clientMap.get(
+          oldClientId
+        );
+
+
+      if (!newClientId) {
+
+        console.warn(
+          "Apólice antiga ignorada por falta de cliente:",
+          oldPolicy
+        );
+
+        continue;
+
+      }
+
+
+      const alerts =
+        oldPolicy.alerts ||
+        {};
+
+
+      const policy = {
+
+        id:
+          newId,
+
+        clientId:
+          newClientId,
+
+        insurer:
+          oldPolicy.insurer ||
+          oldPolicy.seguradora ||
+          "Outra",
+
+        type:
+          oldPolicy.type ||
+          oldPolicy.tipo ||
+          "Outro",
+
+        number:
+          oldPolicy.number ||
+          oldPolicy.numero ||
+          "",
+
+        startDate:
+          oldPolicy.startDate ||
+          oldPolicy.start_date ||
+          oldPolicy.inicioVigencia ||
+          "",
+
+        endDate:
+          oldPolicy.endDate ||
+          oldPolicy.end_date ||
+          oldPolicy.fimVigencia ||
+          "",
+
+        status:
+          oldPolicy.status ||
+          "Pendente",
+
+        notes:
+          oldPolicy.notes ||
+          oldPolicy.observacoes ||
+          "",
+
+        alerts: {
+
+          30:
+            alerts[30] !== false,
+
+          15:
+            alerts[15] !== false,
+
+          7:
+            alerts[7] !== false,
+
+          1:
+            alerts[1] !== false,
+
+          expired:
+            alerts.expired !== false
+
+        },
+
+        /*
+          PDF antigo do IndexedDB
+          não vira caminho do Storage
+          automaticamente.
+        */
+
+        pdfPath:
+          null,
+
+        renewedFrom:
+          null,
+
+        createdAt:
+          oldPolicy.createdAt ||
+          oldPolicy.created_at ||
+          new Date()
+            .toISOString(),
+
+        updatedAt:
+          new Date()
+            .toISOString()
+
+      };
+
+
+      const {
+        error
+      } =
+        await sb
+          .from(
+            "policies"
+          )
+          .insert(
+            policyToDb(
+              policy
+            )
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+    }
+
+
+    /*
+      APÓLICES — SEGUNDA PASSAGEM
+      Restaura vínculo de renovação.
+    */
+
+    for (
+      const oldPolicy
+      of oldPolicies
+    ) {
+
+      const oldRenewedFrom =
+        oldPolicy.renewedFrom ||
+        oldPolicy.renewed_from;
+
+
+      if (
+        !oldRenewedFrom
+      ) {
+        continue;
+      }
+
+
+      const newId =
+        policyMap.get(
+          oldPolicy.id
+        );
+
+
+      const renewedFrom =
+        policyMap.get(
+          oldRenewedFrom
+        );
+
+
+      if (
+        !newId ||
+        !renewedFrom
+      ) {
+        continue;
+      }
+
+
+      const {
+        error
+      } =
+        await sb
+          .from(
+            "policies"
+          )
+          .update({
+            renewed_from:
+              renewedFrom
+          })
+          .eq(
+            "id",
+            newId
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+    }
+
+
+    /*
+      HISTÓRICO
+    */
+
+    if (status) {
+
+      status.textContent =
+        "Migrando histórico...";
+
+    }
+
+
+    for (
+      const oldEvent
+      of oldEvents
+    ) {
+
+      const oldPolicyId =
+        oldEvent.policyId ||
+        oldEvent.policy_id ||
+        oldEvent.apoliceId;
+
+
+      const newPolicyId =
+        policyMap.get(
+          oldPolicyId
+        );
+
+
+      if (!newPolicyId) {
+        continue;
+      }
+
+
+      const eventObject = {
+
+        id:
+          validUuid(
+            oldEvent.id
+          )
+            ? oldEvent.id
+            : uid(),
+
+        policyId:
+          newPolicyId,
+
+        type:
+          oldEvent.type ||
+          oldEvent.tipo ||
+          "history",
+
+        message:
+          oldEvent.message ||
+          oldEvent.mensagem ||
+          "Evento migrado",
+
+        date:
+          oldEvent.date ||
+          oldEvent.created_at ||
+          oldEvent.createdAt ||
+          new Date()
+            .toISOString()
+
+      };
+
+
+      const {
+        error
+      } =
+        await sb
+          .from(
+            "events"
+          )
+          .insert(
+            eventToDb(
+              eventObject
+            )
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+    }
+
+
+    await loadCloudData();
+
+
+    if (status) {
+
+      status.textContent =
+        `Migração concluída: ${oldClients.length} cliente(s) e ${oldPolicies.length} apólice(s) encontrados.`;
+
+    }
+
+
+    toast(
+      "Migração concluída."
+    );
+
+  }
+  catch (error) {
+
+    console.error(
+      "Erro na migração:",
+      error
     );
 
 
-    accountCard.appendChild(
-      forgot
+    if (status) {
+
+      status.textContent =
+        "Erro durante a migração.";
+
+    }
+
+
+    toast(
+      "Não foi possível migrar os dados antigos."
     );
 
   }
 
+} /* =========================================================
+   RELATÓRIOS
+========================================================= */
 
-  const dataCard =
-    $("#exportData")
-      ?.closest(
-        ".settings-card"
-      );
+function renderReports() {
+
+  const container =
+    $("#reportsContent");
+
+  if (!container) {
+    return;
+  }
+
+  const total =
+    state.policies.length;
+
+  const pending =
+    state.policies.filter(
+      policy =>
+        policy.status === "Pendente"
+    ).length;
+
+  const progress =
+    state.policies.filter(
+      policy =>
+        policy.status === "Em andamento"
+    ).length;
+
+  const won =
+    state.policies.filter(
+      policy =>
+        policy.status === "Ganho"
+    ).length;
+
+  const expired =
+    state.policies.filter(
+      policy =>
+        daysUntil(policy.endDate) < 0
+    ).length;
+
+  const next30 =
+    state.policies.filter(
+      policy => {
+
+        const days =
+          daysUntil(policy.endDate);
+
+        return (
+          days >= 0 &&
+          days <= 30
+        );
+
+      }
+    ).length;
+
+  container.innerHTML = `
+
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <small>Total de apólices</small>
+        <strong>${total}</strong>
+      </div>
+
+      <div class="stat-card">
+        <small>Pendentes</small>
+        <strong>${pending}</strong>
+      </div>
+
+      <div class="stat-card">
+        <small>Em andamento</small>
+        <strong>${progress}</strong>
+      </div>
+
+      <div class="stat-card">
+        <small>Ganhos</small>
+        <strong>${won}</strong>
+      </div>
+
+      <div class="stat-card">
+        <small>Vencidas</small>
+        <strong>${expired}</strong>
+      </div>
+
+      <div class="stat-card">
+        <small>Vencem em até 30 dias</small>
+        <strong>${next30}</strong>
+      </div>
+
+    </div>
+  `;
+
+}
 
 
-  if (
-    dataCard &&
-    !$("#migrateLocalData")
-  ) {
+/* =========================================================
+   LIMPAR DADOS DA CONTA
+========================================================= */
 
-    const migrate =
-      document.createElement(
-        "button"
-      );
+function askClearData() {
 
+  openDeleteModal(
+    "Limpar dados",
+    "Esta ação excluirá clientes, apólices, históricos e PDFs desta conta. Essa operação não poderá ser desfeita.",
+    clearCloudData
+  );
 
-    migrate.id =
-      "migrateLocalData";
-
-
-    migrate.type =
-      "button";
+}
 
 
-    migrate.className =
-      "btn btn-primary";
+/* =========================================================
+   LIMPAR DADOS DO SUPABASE
+========================================================= */
+
+async function clearCloudData() {
+
+  if (!state.user) {
+    return;
+  }
+
+  try {
+
+    /*
+      Primeiro remove os PDFs.
+    */
+
+    const pdfPaths =
+      state.policies
+        .map(
+          policy =>
+            policy.pdfPath
+        )
+        .filter(Boolean);
+
+    if (pdfPaths.length) {
+
+      const {
+        error: pdfError
+      } =
+        await sb
+          .storage
+          .from("policy-pdfs")
+          .remove(pdfPaths);
+
+      if (pdfError) {
+
+        console.warn(
+          "Alguns PDFs não puderam ser removidos:",
+          pdfError
+        );
+
+      }
+
+    }
 
 
-    migrate.style.marginTop =
-      "12px";
+    /*
+      Remove histórico.
+    */
+
+    const {
+      error: eventError
+    } =
+      await sb
+        .from("events")
+        .delete()
+        .eq(
+          "user_id",
+          state.user.id
+        );
+
+    if (eventError) {
+      throw eventError;
+    }
 
 
-    migrate.textContent =
-      "☁ Migrar dados deste dispositivo";
+    /*
+      Remove apólices.
+    */
+
+    const {
+      error: policyError
+    } =
+      await sb
+        .from("policies")
+        .delete()
+        .eq(
+          "user_id",
+          state.user.id
+        );
+
+    if (policyError) {
+      throw policyError;
+    }
 
 
-    migrate.addEventListener(
-      "click",
-      migrateLocalDataToCloud
+    /*
+      Remove clientes.
+    */
+
+    const {
+      error: clientError
+    } =
+      await sb
+        .from("clients")
+        .delete()
+        .eq(
+          "user_id",
+          state.user.id
+        );
+
+    if (clientError) {
+      throw clientError;
+    }
+
+
+    state.clients = [];
+    state.policies = [];
+    state.events = [];
+
+    closeDeleteModal();
+
+    renderAll();
+
+    toast(
+      "Dados da conta apagados."
     );
 
+  }
+  catch (error) {
 
-    dataCard.appendChild(
-      migrate
+    console.error(
+      "Erro ao limpar dados:",
+      error
+    );
+
+    closeDeleteModal();
+
+    toast(
+      "Não foi possível limpar os dados."
     );
 
   }
@@ -7259,62 +7419,289 @@ function setupExtraButtons() {
 
 
 /* =========================================================
-   EVENTOS DO SISTEMA
+   FORMULÁRIO DE RENOVAÇÃO
+
+   Intercepta o salvamento para,
+   quando necessário, finalizar
+   também a apólice anterior.
 ========================================================= */
 
-function setupEvents() {
+async function handlePolicySubmit(event) {
 
-  $$("[data-view]")
-    .forEach(
-      b =>
-        b.addEventListener(
-          "click",
-          () =>
-            go(
-              b.dataset.view
-            )
-        )
+  const oldPolicyId =
+    $("#policyParentId")
+      ?.value ||
+    "";
+
+  const saved =
+    await savePolicy(event);
+
+  if (
+    saved &&
+    oldPolicyId
+  ) {
+
+    await finalizeRenewal(
+      oldPolicyId,
+      saved.id
     );
 
+    renderAll();
+
+  }
+
+}
+
+
+/* =========================================================
+   NAVEGAÇÃO — CLIQUES
+========================================================= */
+
+function setupNavigation() {
+
+  $$(".nav-item")
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const view =
+              button.dataset.view;
+
+            if (!view) {
+              return;
+            }
+
+            go(view);
+
+            if (
+              view === "relatorios"
+            ) {
+
+              renderReports();
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   EVENTOS DOS FILTROS
+========================================================= */
+
+function setupFilters() {
+
+  const selectors = [
+
+    "#clientSearch",
+    "#clientFilter",
+
+    "#policySearch",
+    "#statusFilter",
+    "#expiryFilter",
+    "#typeFilter",
+    "#insurerFilter"
+
+  ];
+
+
+  selectors.forEach(
+    selector => {
+
+      const element =
+        $(selector);
+
+      if (!element) {
+        return;
+      }
+
+      element.addEventListener(
+        "input",
+        () => {
+
+          if (
+            selector.startsWith(
+              "#client"
+            )
+          ) {
+
+            renderClients();
+
+          }
+          else {
+
+            renderPolicies();
+
+          }
+
+        }
+      );
+
+
+      element.addEventListener(
+        "change",
+        () => {
+
+          if (
+            selector.startsWith(
+              "#client"
+            )
+          ) {
+
+            renderClients();
+
+          }
+          else {
+
+            renderPolicies();
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   MÁSCARA DE TELEFONE
+========================================================= */
+
+function setupPhoneMask() {
+
+  const input =
+    $("#clientPhone");
+
+  if (!input) {
+    return;
+  }
+
+  input.addEventListener(
+    "input",
+    () => {
+
+      let value =
+        cleanPhone(
+          input.value
+        )
+          .slice(
+            0,
+            11
+          );
+
+      input.value =
+        formatPhone(
+          value
+        );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   EVENTOS DOS MODAIS
+========================================================= */
+
+function setupModalEvents() {
 
   $$("[data-close]")
     .forEach(
-      b =>
-        b.addEventListener(
+      button => {
+
+        button.addEventListener(
           "click",
-          () =>
-            closeModal(
-              b.dataset.close
-            )
-        )
+          () => {
+
+            const id =
+              button.dataset.close;
+
+            if (id) {
+
+              closeModal(id);
+
+            }
+
+          }
+        );
+
+      }
     );
 
 
   $$(".modal")
     .forEach(
-      m =>
-        m.addEventListener(
+      modal => {
+
+        modal.addEventListener(
           "click",
-          e => {
+          event => {
 
             if (
-              e.target === m
-            )
-              m.classList.remove(
-                "open"
+              event.target === modal
+            ) {
+
+              closeModal(
+                modal.id
               );
 
+            }
+
           }
-        )
+        );
+
+      }
     );
 
+}
+
+
+/* =========================================================
+   EVENTOS PRINCIPAIS
+========================================================= */
+
+function setupEvents() {
+
+  /*
+    LOGIN
+  */
 
   $("#loginForm")
     ?.addEventListener(
       "submit",
-      loginWithSupabase
+      login
     );
 
+
+  $("#forgotPasswordBtn")
+    ?.addEventListener(
+      "click",
+      forgotPassword
+    );
+
+
+  $("#recoverySaveBtn")
+    ?.addEventListener(
+      "click",
+      saveRecoveryPassword
+    );
+
+
+  /*
+    LOGOUT
+  */
 
   $("#logoutBtn")
     ?.addEventListener(
@@ -7323,41 +7710,14 @@ function setupEvents() {
     );
 
 
-  $("#newPolicyBtn")
-    ?.addEventListener(
-      "click",
-      () =>
-        newPolicyFor()
-    );
-
-
-  $("#newPolicyBtn2")
-    ?.addEventListener(
-      "click",
-      () =>
-        newPolicyFor()
-    );
-
+  /*
+    CLIENTES
+  */
 
   $("#newClientBtn")
     ?.addEventListener(
       "click",
       newClient
-    );
-
-
-  $("#dashboardRefresh")
-    ?.addEventListener(
-      "click",
-      async () => {
-
-        await loadCloudData();
-
-        toast(
-          "Dados atualizados."
-        );
-
-      }
     );
 
 
@@ -7368,75 +7728,28 @@ function setupEvents() {
     );
 
 
+  /*
+    APÓLICES
+  */
+
+  $("#newPolicyBtn")
+    ?.addEventListener(
+      "click",
+      () =>
+        newPolicyFor()
+    );
+
+
   $("#policyForm")
     ?.addEventListener(
       "submit",
-      async e => {
-
-        const old =
-          $("#policyRenewedFrom")
-            .value;
-
-
-        const saved =
-          await savePolicy(e);
-
-
-        if (
-          old &&
-          saved
-        ) {
-
-          await finalizeRenewal(
-            old,
-            saved.id
-          );
-
-
-          renderAll();
-
-        }
-
-      }
+      handlePolicySubmit
     );
 
 
-  $("#clientSearch")
-    ?.addEventListener(
-      "input",
-      renderClients
-    );
-
-
-  $("#policySearch")
-    ?.addEventListener(
-      "input",
-      renderPolicies
-    );
-
-
-  $("#clientFilter")
-    ?.addEventListener(
-      "change",
-      renderClients
-    );
-
-
-  [
-    "statusFilter",
-    "expiryFilter",
-    "typeFilter",
-    "insurerFilter"
-  ]
-    .forEach(
-      id =>
-        $("#" + id)
-          ?.addEventListener(
-            "change",
-            renderPolicies
-          )
-    );
-
+  /*
+    CONFIGURAÇÕES DA CONTA
+  */
 
   $("#saveAccount")
     ?.addEventListener(
@@ -7445,12 +7758,20 @@ function setupEvents() {
     );
 
 
+  /*
+    E-MAIL
+  */
+
   $("#saveEmail")
     ?.addEventListener(
       "click",
       saveEmailSettings
     );
 
+
+  /*
+    IDIOMA
+  */
 
   $("#saveLanguage")
     ?.addEventListener(
@@ -7459,25 +7780,9 @@ function setupEvents() {
     );
 
 
-  $("#generateReportBtn")
-    ?.addEventListener(
-      "click",
-      showReport
-    );
-
-
-  $("#settingsReport")
-    ?.addEventListener(
-      "click",
-      () => {
-
-        $("#settingsReportOutput")
-          .innerHTML =
-          generateReport();
-
-      }
-    );
-
+  /*
+    BACKUP
+  */
 
   $("#exportData")
     ?.addEventListener(
@@ -7493,190 +7798,189 @@ function setupEvents() {
     );
 
 
+  /*
+    LIMPAR DADOS
+  */
+
   $("#clearData")
     ?.addEventListener(
       "click",
-      clearAll
+      askClearData
     );
 
 
-  setupExtraButtons();
+  /*
+    MIGRAÇÃO DO BANCO ANTIGO
+
+    Agora usamos diretamente
+    o botão que já existe no HTML.
+  */
+
+  $("#migrateLocalBtn")
+    ?.addEventListener(
+      "click",
+      migrateLocalDataToCloud
+    );
+
+
+  /*
+    MODAL DE EXCLUSÃO
+  */
+
+  $("#confirmDeleteBtn")
+    ?.addEventListener(
+      "click",
+      confirmDelete
+    );
+
+
+  $("#cancelDeleteBtn")
+    ?.addEventListener(
+      "click",
+      closeDeleteModal
+    );
+
+
+  /*
+    OUTROS
+  */
+
+  setupNavigation();
+  setupFilters();
+  setupPhoneMask();
+  setupModalEvents();
 
 }
 
 
 /* =========================================================
-   ESCUTAR ALTERAÇÃO DA SESSÃO SUPABASE
+   ATALHOS GLOBAIS
+
+   Necessários porque alguns botões
+   são criados pelo innerHTML e usam
+   onclick="..."
 ========================================================= */
 
-function setupAuthListener() {
+window.go =
+  go;
 
-  sb.auth.onAuthStateChange(
-    async (
-      event,
-      session
-    ) => {
+window.openClient =
+  openClient;
 
-      if (
-        event ===
-        "SIGNED_OUT"
-      ) {
+window.newPolicyFor =
+  newPolicyFor;
 
-        state.user =
-          null;
+window.editPolicy =
+  editPolicy;
+
+window.openDetails =
+  openDetails;
+
+window.openPdf =
+  openPdf;
+
+window.openWhatsApp =
+  openWhatsApp;
+
+window.renewPolicy =
+  renewPolicy;
+
+window.changeStatus =
+  changeStatus;
+
+window.deleteClient =
+  deleteClient;
+
+window.askDeletePolicy =
+  askDeletePolicy;
+
+window.closeModal =
+  closeModal;
+
+window.closeDeleteModal =
+  closeDeleteModal;
 
 
-        showLogin();
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
 
-        return;
+async function init() {
 
-      }
+  console.log(
+    "SAVA CRM iniciando..."
+  );
 
 
-      if (
-        session?.user
-      ) {
+  /*
+    Confere se a biblioteca do
+    Supabase realmente carregou.
+  */
 
-        state.user =
-          session.user;
+  if (
+    !window.supabase
+  ) {
 
-      }
+    console.error(
+      "Biblioteca do Supabase não carregada."
+    );
 
-    }
+    alert(
+      "Erro ao carregar o Supabase. Verifique sua conexão e o index.html."
+    );
+
+    return;
+  }
+
+
+  /*
+    Configura todos os botões antes
+    de restaurar a sessão.
+  */
+
+  setupEvents();
+
+
+  /*
+    Listener de login/logout/
+    recuperação de senha.
+  */
+
+  setupAuthListener();
+
+
+  /*
+    Verifica se já existe sessão
+    salva no navegador.
+  */
+
+  await restoreSession();
+
+
+  console.log(
+    "SAVA CRM iniciado."
   );
 
 }
 
 
 /* =========================================================
-   INICIALIZAÇÃO DO CRM
+   INICIAR QUANDO O HTML ESTIVER PRONTO
 ========================================================= */
 
-async function init() {
+if (
+  document.readyState ===
+  "loading"
+) {
 
-  setupEvents();
-
-
-  setupAuthListener();
-
-
-  try {
-
-    const {
-      data,
-      error
-    } =
-      await sb
-        .auth
-        .getSession();
-
-
-    if (error)
-      throw error;
-
-
-    const session =
-      data?.session;
-
-
-    if (
-      session?.user
-    ) {
-
-      state.user =
-        session.user;
-
-
-      showApp();
-
-
-      await loadCloudData();
-
-    }
-    else {
-
-      showLogin();
-
-    }
-
-  }
-  catch (err) {
-
-    console.error(
-      "Erro ao iniciar CRM:",
-      err
-    );
-
-
-    showLogin();
-
-
-    if (
-      $("#loginError")
-    )
-      $("#loginError")
-        .textContent =
-        "Não foi possível conectar ao servidor.";
-
-  }
+  document.addEventListener(
+    "DOMContentLoaded",
+    init
+  );
 
 }
+else {
 
+  init();
 
-/* =========================================================
-   EXPORTA FUNÇÕES USADAS PELO HTML
-========================================================= */
-
-window.openDetails =
-  openDetails;
-
-
-window.editPolicy =
-  editPolicy;
-
-
-window.renewPolicy =
-  renewPolicy;
-
-
-window.openPdf =
-  openPdf;
-
-
-window.newPolicyFor =
-  newPolicyFor;
-
-
-window.openClient =
-  openClient;
-
-
-window.changeStatus =
-  changeStatus;
-
-
-window.manualWhatsApp =
-  manualWhatsApp;
-
-
-window.sendEmail =
-  sendEmail;
-
-
-window.deletePolicy =
-  deletePolicy;
-
-
-window.deleteClient =
-  deleteClient;
-
-
-window.closeModal =
-  closeModal;
-
-
-/* =========================================================
-   INICIAR
-========================================================= */
-
-init();
+}

@@ -2,257 +2,652 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAVA Seguros | Central de Renovações</title>
-  <meta name="description" content="CRM de seguros e central de renovações da SAVA Seguros">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    SAVA Seguros | Central de Renovações
+  </title>
+
+  <meta
+    name="description"
+    content="CRM de seguros e central de renovações da SAVA Seguros"
+  >
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
 </head>
+
 <body>
-  <div id="loginScreen" class="login-screen">
+
+  <!-- =========================
+       LOGIN
+  ========================== -->
+
+  <div
+    id="loginScreen"
+    class="login-screen"
+  >
+
     <div class="login-card">
-      <div class="brand-mark">S</div>
-      <div class="login-brand">SAVA <span>SEGUROS</span></div>
-      <h1>Central de Renovações</h1>
-      <p>Acesse o CRM para gerenciar clientes, apólices e renovações.</p>
+
+      <div class="brand-mark">
+        S
+      </div>
+
+      <div class="login-brand">
+        SAVA <span>SEGUROS</span>
+      </div>
+
+      <h1>
+        Central de Renovações
+      </h1>
+
+      <p>
+        Acesse o CRM para gerenciar clientes,
+        apólices e renovações.
+      </p>
 
       <form id="loginForm">
+
         <label>
-          Usuário
-          <input id="loginUser" autocomplete="username" required placeholder="Usuário">
+          E-mail
+
+          <input
+            id="loginUser"
+            type="email"
+            autocomplete="username"
+            required
+            placeholder="seuemail@empresa.com"
+          >
         </label>
 
         <label>
           Senha
-          <input id="loginPass" type="password" autocomplete="current-password" required placeholder="Senha">
+
+          <input
+            id="loginPass"
+            type="password"
+            autocomplete="current-password"
+            required
+            placeholder="Senha"
+          >
         </label>
 
-        <button class="btn btn-primary btn-block" type="submit">
+        <button
+          class="btn btn-primary btn-block"
+          type="submit"
+        >
           Entrar no sistema
         </button>
 
-        <div id="loginError" class="form-error"></div>
+        <button
+          id="forgotPasswordBtn"
+          class="link-btn"
+          type="button"
+          style="margin-top:14px"
+        >
+          Esqueci minha senha
+        </button>
+
+        <div
+          id="loginError"
+          class="form-error"
+        ></div>
+
       </form>
 
       <small>
-        Primeiro acesso: <b>admin</b> / <b>sava123</b>. Altere em Configurações.
+        Utilize a conta cadastrada no sistema
+        da SAVA Seguros.
       </small>
+
     </div>
+
   </div>
 
-  <div id="app" class="app hidden">
+
+  <!-- =========================
+       RECUPERAÇÃO DE SENHA
+  ========================== -->
+
+  <div
+    id="recoveryScreen"
+    class="login-screen hidden"
+  >
+
+    <div class="login-card">
+
+      <div class="brand-mark">
+        S
+      </div>
+
+      <div class="login-brand">
+        SAVA <span>SEGUROS</span>
+      </div>
+
+      <h1>
+        Nova senha
+      </h1>
+
+      <p>
+        Digite uma nova senha para sua conta.
+      </p>
+
+      <label>
+        Nova senha
+
+        <input
+          id="recoveryPassword"
+          type="password"
+          placeholder="Digite a nova senha"
+        >
+      </label>
+
+      <label>
+        Confirmar senha
+
+        <input
+          id="recoveryPassword2"
+          type="password"
+          placeholder="Repita a nova senha"
+        >
+      </label>
+
+      <button
+        id="recoverySaveBtn"
+        class="btn btn-primary btn-block"
+        type="button"
+      >
+        Salvar nova senha
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       APLICATIVO
+  ========================== -->
+
+  <div
+    id="app"
+    class="app hidden"
+  >
 
     <aside class="sidebar">
+
       <div class="sidebar-brand">
-        <div class="brand-mark small">S</div>
+
+        <div class="brand-mark small">
+          S
+        </div>
+
         <div>
           <strong>SAVA</strong>
           <span>SEGUROS</span>
         </div>
+
       </div>
 
+
       <nav>
-        <button class="nav-item active" data-view="dashboard">
+
+        <button
+          class="nav-item active"
+          data-view="dashboard"
+        >
           ⌂ <span>Dashboard</span>
         </button>
 
-        <button class="nav-item" data-view="clientes">
+        <button
+          class="nav-item"
+          data-view="clientes"
+        >
           ♙ <span>Clientes</span>
         </button>
 
-        <button class="nav-item" data-view="apolices">
+        <button
+          class="nav-item"
+          data-view="apolices"
+        >
           ▣ <span>Apólices</span>
         </button>
 
-        <button class="nav-item" data-view="renovacoes">
+        <button
+          class="nav-item"
+          data-view="renovacoes"
+        >
           ↻ <span>Renovações</span>
         </button>
 
-        <button class="nav-item" data-view="relatorios">
+        <button
+          class="nav-item"
+          data-view="relatorios"
+        >
           ▤ <span>Relatórios</span>
         </button>
+
       </nav>
 
+
       <div class="sidebar-bottom">
-        <button class="nav-item" data-view="config">
+
+        <button
+          class="nav-item"
+          data-view="config"
+        >
           ⚙ <span>Configurações</span>
         </button>
 
-        <button id="logoutBtn" class="nav-item danger">
+        <button
+          id="logoutBtn"
+          class="nav-item danger"
+        >
           ⇥ <span>Sair</span>
         </button>
+
       </div>
+
     </aside>
+
 
     <main class="main">
 
+      <!-- TOPO -->
+
       <header class="topbar">
+
         <div>
-          <div class="eyebrow">SAVA SEGUROS</div>
-          <h2 id="pageTitle">Dashboard</h2>
+
+          <div class="eyebrow">
+            SAVA SEGUROS
+          </div>
+
+          <h2 id="pageTitle">
+            Dashboard
+          </h2>
+
         </div>
 
+
         <div class="top-actions">
-          <span id="emailAutomationBadge" class="automation-badge">
+
+          <span
+            id="emailAutomationBadge"
+            class="automation-badge"
+          >
             ● E-mail automático: configurando
           </span>
 
-          <button id="newPolicyBtn" class="btn btn-primary">
+          <button
+            id="newPolicyBtn"
+            class="btn btn-primary"
+          >
             ＋ Nova apólice
           </button>
 
-          <button class="icon-btn" data-view="config" title="Configurações">
+          <button
+            class="icon-btn"
+            data-view="config"
+            title="Configurações"
+          >
             ⚙
           </button>
+
         </div>
+
       </header>
 
-      <section id="dashboard" class="view active">
+
+      <!-- =========================
+           DASHBOARD
+      ========================== -->
+
+      <section
+        id="dashboard"
+        class="view active"
+      >
 
         <div class="welcome-row">
+
           <div>
-            <h3>Visão geral da carteira</h3>
+
+            <h3>
+              Visão geral da carteira
+            </h3>
+
             <p>
-              Acompanhe vencimentos e o andamento das renovações em um só lugar.
+              Acompanhe vencimentos e o andamento
+              das renovações em um só lugar.
             </p>
+
           </div>
 
-          <button id="dashboardRefresh" class="btn btn-secondary">
+          <button
+            id="dashboardRefresh"
+            class="btn btn-secondary"
+          >
             ↻ Atualizar
           </button>
+
         </div>
+
 
         <div class="stats-grid">
 
           <article class="stat-card">
-            <div class="stat-icon blue">▣</div>
-            <div>
-              <span>Total de apólices</span>
-              <strong id="statTotal">0</strong>
-              <small>cadastradas</small>
+
+            <div class="stat-icon blue">
+              ▣
             </div>
+
+            <div>
+
+              <span>
+                Total de apólices
+              </span>
+
+              <strong id="statTotal">
+                0
+              </strong>
+
+              <small>
+                cadastradas
+              </small>
+
+            </div>
+
           </article>
 
-          <article class="stat-card">
-            <div class="stat-icon orange">!</div>
-            <div>
-              <span>Vencem em até 7 dias</span>
-              <strong id="stat7">0</strong>
-              <small>atenção imediata</small>
-            </div>
-          </article>
 
           <article class="stat-card">
-            <div class="stat-icon red">⌛</div>
-            <div>
-              <span>Vencidas</span>
-              <strong id="statExpired">0</strong>
-              <small>precisam de ação</small>
+
+            <div class="stat-icon orange">
+              !
             </div>
+
+            <div>
+
+              <span>
+                Vencem em até 7 dias
+              </span>
+
+              <strong id="stat7">
+                0
+              </strong>
+
+              <small>
+                atenção imediata
+              </small>
+
+            </div>
+
           </article>
 
+
           <article class="stat-card">
-            <div class="stat-icon green">✓</div>
-            <div>
-              <span>Renovadas / Ganhas</span>
-              <strong id="statWon">0</strong>
-              <small>fechadas com sucesso</small>
+
+            <div class="stat-icon red">
+              ⌛
             </div>
+
+            <div>
+
+              <span>
+                Vencidas
+              </span>
+
+              <strong id="statExpired">
+                0
+              </strong>
+
+              <small>
+                precisam de ação
+              </small>
+
+            </div>
+
+          </article>
+
+
+          <article class="stat-card">
+
+            <div class="stat-icon green">
+              ✓
+            </div>
+
+            <div>
+
+              <span>
+                Renovadas / Ganhas
+              </span>
+
+              <strong id="statWon">
+                0
+              </strong>
+
+              <small>
+                fechadas com sucesso
+              </small>
+
+            </div>
+
           </article>
 
         </div>
+
 
         <div class="dashboard-grid">
 
           <article class="panel large">
+
             <div class="panel-head">
+
               <div>
-                <h3>Próximos vencimentos</h3>
-                <p>Apólices que merecem atenção</p>
+
+                <h3>
+                  Próximos vencimentos
+                </h3>
+
+                <p>
+                  Apólices que merecem atenção
+                </p>
+
               </div>
 
-              <button class="link-btn" data-view="apolices">
+              <button
+                class="link-btn"
+                data-view="apolices"
+              >
                 Ver todas →
               </button>
+
             </div>
 
-            <div id="upcomingList" class="upcoming-list"></div>
+            <div
+              id="upcomingList"
+              class="upcoming-list"
+            ></div>
+
           </article>
 
+
           <article class="panel">
+
             <div class="panel-head">
+
               <div>
-                <h3>Andamento das renovações</h3>
-                <p>Status comercial</p>
+
+                <h3>
+                  Andamento das renovações
+                </h3>
+
+                <p>
+                  Status comercial
+                </p>
+
               </div>
+
             </div>
 
-            <div id="processSummary" class="process-summary"></div>
+            <div
+              id="processSummary"
+              class="process-summary"
+            ></div>
+
           </article>
 
         </div>
 
+
         <article class="panel">
 
           <div class="panel-head">
+
             <div>
-              <h3>Carteira por seguradora</h3>
-              <p>Distribuição das apólices cadastradas</p>
+
+              <h3>
+                Carteira por seguradora
+              </h3>
+
+              <p>
+                Distribuição das apólices cadastradas
+              </p>
+
             </div>
+
           </div>
 
-          <div id="insurerSummary" class="insurer-summary"></div>
+          <div
+            id="insurerSummary"
+            class="insurer-summary"
+          ></div>
 
         </article>
 
       </section>
 
-      <section id="clientes" class="view">
+
+      <!-- =========================
+           CLIENTES
+      ========================== -->
+
+      <section
+        id="clientes"
+        class="view"
+      >
 
         <div class="section-head">
+
           <div>
-            <h3>Clientes</h3>
+
+            <h3>
+              Clientes
+            </h3>
+
             <p>
-              Um cliente pode possuir quantas apólices forem necessárias.
+              Um cliente pode possuir quantas
+              apólices forem necessárias.
             </p>
+
           </div>
 
-          <button class="btn btn-primary" id="newClientBtn">
+          <button
+            class="btn btn-primary"
+            id="newClientBtn"
+          >
             ＋ Novo cliente
           </button>
+
         </div>
 
+
         <div class="toolbar">
+
           <input
             id="clientSearch"
             placeholder="Buscar cliente, CPF ou telefone..."
           >
 
           <select id="clientFilter">
-            <option value="all">Todos</option>
-            <option value="withPolicies">Com apólices</option>
-            <option value="withoutPolicies">Sem apólices</option>
+
+            <option value="all">
+              Todos
+            </option>
+
+            <option value="withPolicies">
+              Com apólices
+            </option>
+
+            <option value="withoutPolicies">
+              Sem apólices
+            </option>
+
           </select>
+
         </div>
 
-        <div id="clientsGrid" class="clients-grid"></div>
+        <div
+          id="clientsGrid"
+          class="clients-grid"
+        ></div>
 
       </section>
 
-      <section id="apolices" class="view">
+
+      <!-- =========================
+           APÓLICES
+      ========================== -->
+
+      <section
+        id="apolices"
+        class="view"
+      >
 
         <div class="section-head">
+
           <div>
-            <h3>Apólices</h3>
-            <p>Controle de vigência, documentos e renovação.</p>
+
+            <h3>
+              Apólices
+            </h3>
+
+            <p>
+              Controle de vigência, documentos
+              e renovação.
+            </p>
+
           </div>
 
-          <button class="btn btn-primary" id="newPolicyBtn2">
+          <button
+            class="btn btn-primary"
+            id="newPolicyBtn2"
+          >
             ＋ Nova apólice
           </button>
+
         </div>
+
 
         <div class="toolbar">
 
@@ -262,35 +657,79 @@
           >
 
           <select id="statusFilter">
-            <option value="all">Todos os processos</option>
-            <option>Pendente</option>
-            <option>Em andamento</option>
-            <option>Ganho</option>
+
+            <option value="all">
+              Todos os processos
+            </option>
+
+            <option>
+              Pendente
+            </option>
+
+            <option>
+              Em andamento
+            </option>
+
+            <option>
+              Ganho
+            </option>
+
           </select>
+
 
           <select id="expiryFilter">
-            <option value="all">Qualquer vencimento</option>
-            <option value="7">Até 7 dias</option>
-            <option value="15">Até 15 dias</option>
-            <option value="30">Até 30 dias</option>
-            <option value="expired">Vencidas</option>
+
+            <option value="all">
+              Qualquer vencimento
+            </option>
+
+            <option value="7">
+              Até 7 dias
+            </option>
+
+            <option value="15">
+              Até 15 dias
+            </option>
+
+            <option value="30">
+              Até 30 dias
+            </option>
+
+            <option value="expired">
+              Vencidas
+            </option>
+
           </select>
+
 
           <select id="typeFilter">
-            <option value="all">Todos os tipos</option>
+
+            <option value="all">
+              Todos os tipos
+            </option>
+
           </select>
 
+
           <select id="insurerFilter">
-            <option value="all">Todas as seguradoras</option>
+
+            <option value="all">
+              Todas as seguradoras
+            </option>
+
           </select>
 
         </div>
 
+
         <div class="table-wrap">
+
           <table>
 
             <thead>
+
               <tr>
+
                 <th>Cliente</th>
                 <th>Seguro</th>
                 <th>Seguradora</th>
@@ -298,67 +737,144 @@
                 <th>Processo</th>
                 <th>Vencimento</th>
                 <th>Ações</th>
+
               </tr>
+
             </thead>
 
             <tbody id="policiesTable"></tbody>
 
           </table>
+
         </div>
 
       </section>
 
-      <section id="renovacoes" class="view">
+
+      <!-- =========================
+           RENOVAÇÕES
+      ========================== -->
+
+      <section
+        id="renovacoes"
+        class="view"
+      >
 
         <div class="section-head">
+
           <div>
-            <h3>Renovações</h3>
-            <p>Pipeline comercial das apólices em renovação.</p>
+
+            <h3>
+              Renovações
+            </h3>
+
+            <p>
+              Pipeline comercial das apólices
+              em renovação.
+            </p>
+
           </div>
+
         </div>
 
-        <div class="kanban" id="kanban"></div>
+        <div
+          class="kanban"
+          id="kanban"
+        ></div>
 
       </section>
 
-      <section id="relatorios" class="view">
+
+      <!-- =========================
+           RELATÓRIOS
+      ========================== -->
+
+      <section
+        id="relatorios"
+        class="view"
+      >
 
         <div class="section-head">
+
           <div>
-            <h3>Relatórios e IA</h3>
-            <p>Resumo da carteira, riscos e oportunidades.</p>
+
+            <h3>
+              Relatórios e IA
+            </h3>
+
+            <p>
+              Resumo da carteira, riscos
+              e oportunidades.
+            </p>
+
           </div>
 
-          <button class="btn btn-primary" id="generateReportBtn">
+          <button
+            class="btn btn-primary"
+            id="generateReportBtn"
+          >
             ✦ Gerar relatório
           </button>
+
         </div>
 
-        <div id="reportArea" class="report-area"></div>
+        <div
+          id="reportArea"
+          class="report-area"
+        ></div>
 
       </section>
 
-      <section id="config" class="view">
+
+      <!-- =========================
+           CONFIGURAÇÕES
+      ========================== -->
+
+      <section
+        id="config"
+        class="view"
+      >
 
         <div class="section-head">
+
           <div>
-            <h3>Configurações</h3>
-            <p>Idioma, segurança, dados e automação.</p>
+
+            <h3>
+              Configurações
+            </h3>
+
+            <p>
+              Conta, dados e automação.
+            </p>
+
           </div>
+
         </div>
+
 
         <div class="settings-grid">
 
+
+          <!-- CONTA -->
+
           <article class="settings-card">
-            <h4>⚙ Conta e segurança</h4>
+
+            <h4>
+              ⚙ Conta e segurança
+            </h4>
 
             <label>
-              Usuário
-              <input id="cfgUser">
+              E-mail da conta
+
+              <input
+                id="cfgUser"
+                disabled
+              >
             </label>
 
             <label>
               Nova senha
+
               <input
                 id="cfgPass"
                 type="password"
@@ -366,23 +882,32 @@
               >
             </label>
 
-            <button class="btn btn-primary" id="saveAccount">
-              Salvar conta
+            <button
+              class="btn btn-primary"
+              id="saveAccount"
+            >
+              Alterar senha
             </button>
+
           </article>
+
+
+          <!-- E-MAIL -->
 
           <article class="settings-card">
 
-            <h4>✉ Automação de e-mail</h4>
+            <h4>
+              ✉ Automação de e-mail
+            </h4>
 
             <p>
-              O sistema prepara e envia lembretes pelos marcos de 30, 15,
-              7 e 1 dia, além de pós-vencimento, usando um endpoint seguro
-              configurado por você.
+              Configure o e-mail da empresa que
+              receberá os alertas de renovação.
             </p>
 
             <label>
               Endpoint do Google Apps Script
+
               <input
                 id="emailEndpoint"
                 placeholder="https://script.google.com/macros/s/.../exec"
@@ -390,7 +915,8 @@
             </label>
 
             <label>
-              Seu e-mail remetente/gestor
+              E-mail do gestor
+
               <input
                 id="managerEmail"
                 type="email"
@@ -398,80 +924,160 @@
               >
             </label>
 
-            <button class="btn btn-primary" id="saveEmail">
+            <button
+              class="btn btn-primary"
+              id="saveEmail"
+            >
               Salvar automação
             </button>
 
-            <div id="emailTestResult" class="mini-note"></div>
+            <div
+              id="emailTestResult"
+              class="mini-note"
+            ></div>
 
           </article>
 
+
+          <!-- IDIOMA -->
+
           <article class="settings-card">
 
-            <h4>🌐 Idioma</h4>
+            <h4>
+              🌐 Idioma
+            </h4>
 
-            <p>Idioma atual</p>
+            <p>
+              Idioma atual
+            </p>
 
             <select id="languageSelect">
+
               <option value="pt-BR">
                 Português (Brasil)
               </option>
+
             </select>
 
-            <button class="btn btn-secondary" id="saveLanguage">
+            <button
+              class="btn btn-secondary"
+              id="saveLanguage"
+            >
               Salvar idioma
             </button>
 
           </article>
 
+
+          <!-- BANCO -->
+
           <article class="settings-card">
 
-            <h4>💾 Gerenciar dados</h4>
+            <h4>
+              ☁ Banco online
+            </h4>
 
             <p>
-              Faça backup completo ou restaure o CRM em outro computador.
-              PDFs anexados também entram no backup.
+              Os dados deste CRM agora ficam
+              sincronizados com o banco online.
+            </p>
+
+            <div
+              id="cloudStatus"
+              class="mini-note"
+            >
+              Supabase conectado.
+            </div>
+
+            <button
+              class="btn btn-primary"
+              id="migrateLocalBtn"
+            >
+              Migrar dados deste dispositivo
+            </button>
+
+            <div
+              id="migrationStatus"
+              class="mini-note"
+              style="margin-top:10px"
+            ></div>
+
+          </article>
+
+
+          <!-- BACKUP -->
+
+          <article class="settings-card">
+
+            <h4>
+              💾 Gerenciar dados
+            </h4>
+
+            <p>
+              Faça backup completo ou restaure
+              os dados do CRM.
             </p>
 
             <div class="button-row">
 
-              <button class="btn btn-secondary" id="exportData">
+              <button
+                class="btn btn-secondary"
+                id="exportData"
+              >
                 Exportar backup
               </button>
 
-              <label class="btn btn-secondary file-btn">
+              <label
+                class="btn btn-secondary file-btn"
+              >
                 Importar backup
+
                 <input
                   id="importData"
                   type="file"
                   accept=".json"
                   hidden
                 >
+
               </label>
 
             </div>
 
-            <button class="btn btn-danger-outline" id="clearData">
+            <button
+              class="btn btn-danger-outline"
+              id="clearData"
+            >
               Apagar todos os dados
             </button>
 
           </article>
 
+
+          <!-- IA -->
+
           <article class="settings-card full">
 
-            <h4>🤖 IA / relatório inteligente</h4>
+            <h4>
+              🤖 IA / relatório inteligente
+            </h4>
 
             <p>
-              A IA local do sistema analisa vencimentos, processos pendentes,
-              concentração de seguradoras e possíveis prioridades.
-              Nenhum dado é enviado para uma IA externa nesta versão.
+              A análise local verifica vencimentos,
+              processos pendentes e prioridades
+              comerciais.
             </p>
 
-            <button class="btn btn-primary" id="settingsReport">
+            <button
+              class="btn btn-primary"
+              id="settingsReport"
+            >
               Gerar análise agora
             </button>
 
-            <div id="settingsReportOutput" class="analysis-box"></div>
+            <div
+              id="settingsReportOutput"
+              class="analysis-box"
+            ></div>
 
           </article>
 
@@ -483,41 +1089,81 @@
 
   </div>
 
-  <!-- Client modal -->
 
-  <div class="modal" id="clientModal">
+  <!-- =========================
+       MODAL CLIENTE
+  ========================== -->
+
+  <div
+    class="modal"
+    id="clientModal"
+  >
 
     <div class="modal-card compact">
 
       <div class="modal-head">
 
         <div>
-          <h3 id="clientModalTitle">Novo cliente</h3>
-          <p>Dados do segurado</p>
+
+          <h3 id="clientModalTitle">
+            Novo cliente
+          </h3>
+
+          <p>
+            Dados do segurado
+          </p>
+
         </div>
 
-        <button class="close-btn" data-close="clientModal">
+        <button
+          class="close-btn"
+          data-close="clientModal"
+        >
           ×
         </button>
 
       </div>
 
-      <form id="clientForm" class="form-grid">
 
-        <input type="hidden" id="clientId">
+      <form
+        id="clientForm"
+        class="form-grid"
+      >
+
+        <input
+          type="hidden"
+          id="clientId"
+        >
 
         <label class="span-2">
+
           Nome completo*
-          <input id="clientName" required>
+
+          <input
+            id="clientName"
+            required
+          >
+
         </label>
 
+
         <label>
+
           Data de nascimento*
-          <input id="clientBirth" type="date" required>
+
+          <input
+            id="clientBirth"
+            type="date"
+            required
+          >
+
         </label>
 
+
         <label>
+
           Telefone / WhatsApp*
+
           <input
             id="clientPhone"
             type="tel"
@@ -525,28 +1171,50 @@
             placeholder="(27) 99999-9999"
             required
           >
+
         </label>
 
+
         <label>
+
           CPF/CNPJ
-          <input id="clientDoc" placeholder="Opcional">
+
+          <input
+            id="clientDoc"
+            placeholder="Opcional"
+          >
+
         </label>
 
+
         <label>
+
           E-mail
+
           <input
             id="clientEmail"
             type="email"
             placeholder="cliente@email.com"
           >
+
         </label>
+
 
         <label class="span-2">
+
           Observações
-          <textarea id="clientNotes" rows="3"></textarea>
+
+          <textarea
+            id="clientNotes"
+            rows="3"
+          ></textarea>
+
         </label>
 
-        <div class="modal-actions span-2">
+
+        <div
+          class="modal-actions span-2"
+        >
 
           <button
             type="button"
@@ -556,7 +1224,9 @@
             Cancelar
           </button>
 
-          <button class="btn btn-primary">
+          <button
+            class="btn btn-primary"
+          >
             Salvar cliente
           </button>
 
@@ -568,131 +1238,265 @@
 
   </div>
 
-  <!-- Policy modal -->
 
-  <div class="modal" id="policyModal">
+  <!-- =========================
+       MODAL APÓLICE
+  ========================== -->
+
+  <div
+    class="modal"
+    id="policyModal"
+  >
 
     <div class="modal-card wide">
 
       <div class="modal-head">
 
         <div>
-          <h3 id="policyModalTitle">Nova apólice</h3>
+
+          <h3 id="policyModalTitle">
+            Nova apólice
+          </h3>
+
           <p>
-            Cadastre a apólice sem perder o histórico anterior.
+            Cadastre a apólice sem perder
+            o histórico anterior.
           </p>
+
         </div>
 
-        <button class="close-btn" data-close="policyModal">
+        <button
+          class="close-btn"
+          data-close="policyModal"
+        >
           ×
         </button>
 
       </div>
 
-      <form id="policyForm" class="form-grid">
 
-        <input type="hidden" id="policyId">
-        <input type="hidden" id="policyParentId">
-        <input type="hidden" id="policyRenewedFrom">
+      <form
+        id="policyForm"
+        class="form-grid"
+      >
+
+        <input
+          type="hidden"
+          id="policyId"
+        >
+
+        <input
+          type="hidden"
+          id="policyParentId"
+        >
+
+        <input
+          type="hidden"
+          id="policyRenewedFrom"
+        >
+
 
         <div class="form-section-title span-2">
           Cliente segurado
         </div>
 
+
         <label class="span-2">
+
           Cliente*
-          <select id="policyClient" required></select>
+
+          <select
+            id="policyClient"
+            required
+          ></select>
+
         </label>
+
 
         <div class="form-section-title span-2">
           Dados da apólice
         </div>
 
+
         <label>
+
           Seguradora*
-          <select id="policyInsurer" required></select>
+
+          <select
+            id="policyInsurer"
+            required
+          ></select>
+
         </label>
 
+
         <label>
+
           Tipo de seguro*
-          <select id="policyType" required></select>
+
+          <select
+            id="policyType"
+            required
+          ></select>
+
         </label>
 
+
         <label>
+
           Número da apólice*
-          <input id="policyNumber" required>
+
+          <input
+            id="policyNumber"
+            required
+          >
+
         </label>
 
+
         <label>
+
           Início da vigência*
-          <input id="policyStart" type="date" required>
+
+          <input
+            id="policyStart"
+            type="date"
+            required
+          >
+
         </label>
 
+
         <label>
+
           Fim da vigência*
-          <input id="policyEnd" type="date" required>
+
+          <input
+            id="policyEnd"
+            type="date"
+            required
+          >
+
         </label>
 
+
         <label>
+
           Status da renovação
+
           <select id="policyStatus">
-            <option>Pendente</option>
-            <option>Em andamento</option>
-            <option>Ganho</option>
+
+            <option>
+              Pendente
+            </option>
+
+            <option>
+              Em andamento
+            </option>
+
+            <option>
+              Ganho
+            </option>
+
           </select>
+
         </label>
+
 
         <label class="span-2">
+
           PDF da apólice
+
           <input
             id="policyPdf"
             type="file"
             accept="application/pdf"
           >
-          <small id="currentPdfName" class="file-current"></small>
+
+          <small
+            id="currentPdfName"
+            class="file-current"
+          ></small>
+
         </label>
 
+
         <label class="span-2">
+
           Observações
-          <textarea id="policyNotes" rows="3"></textarea>
+
+          <textarea
+            id="policyNotes"
+            rows="3"
+          ></textarea>
+
         </label>
+
 
         <div class="form-section-title span-2">
           Lembretes automáticos
         </div>
 
+
         <div class="checks span-2">
 
           <label>
-            <input id="alert30" type="checkbox" checked>
+            <input
+              id="alert30"
+              type="checkbox"
+              checked
+            >
             30 dias
           </label>
 
           <label>
-            <input id="alert15" type="checkbox" checked>
+            <input
+              id="alert15"
+              type="checkbox"
+              checked
+            >
             15 dias
           </label>
 
           <label>
-            <input id="alert7" type="checkbox" checked>
+            <input
+              id="alert7"
+              type="checkbox"
+              checked
+            >
             7 dias
           </label>
 
           <label>
-            <input id="alert1" type="checkbox" checked>
+            <input
+              id="alert1"
+              type="checkbox"
+              checked
+            >
             1 dia
           </label>
 
           <label>
-            <input id="alertExpired" type="checkbox" checked>
+            <input
+              id="alertExpired"
+              type="checkbox"
+              checked
+            >
             Pós-vencimento
           </label>
 
         </div>
 
-        <div id="renewInfo" class="info-box span-2 hidden"></div>
 
-        <div class="modal-actions span-2">
+        <div
+          id="renewInfo"
+          class="info-box span-2 hidden"
+        ></div>
+
+
+        <div
+          class="modal-actions span-2"
+        >
 
           <button
             type="button"
@@ -702,7 +1506,9 @@
             Cancelar
           </button>
 
-          <button class="btn btn-primary">
+          <button
+            class="btn btn-primary"
+          >
             Salvar apólice
           </button>
 
@@ -714,20 +1520,34 @@
 
   </div>
 
-  <!-- Details modal -->
 
-  <div class="modal" id="detailsModal">
+  <!-- =========================
+       DETALHES
+  ========================== -->
+
+  <div
+    class="modal"
+    id="detailsModal"
+  >
 
     <div class="modal-card wide">
 
       <div class="modal-head">
 
         <div>
-          <h3 id="detailsTitle">Detalhes</h3>
+
+          <h3 id="detailsTitle">
+            Detalhes
+          </h3>
+
           <p id="detailsSubtitle"></p>
+
         </div>
 
-        <button class="close-btn" data-close="detailsModal">
+        <button
+          class="close-btn"
+          data-close="detailsModal"
+        >
           ×
         </button>
 
@@ -739,20 +1559,34 @@
 
   </div>
 
-  <!-- PDF modal -->
 
-  <div class="modal" id="pdfModal">
+  <!-- =========================
+       PDF
+  ========================== -->
+
+  <div
+    class="modal"
+    id="pdfModal"
+  >
 
     <div class="modal-card pdf-card">
 
       <div class="modal-head">
 
         <div>
-          <h3>Documento da apólice</h3>
+
+          <h3>
+            Documento da apólice
+          </h3>
+
           <p id="pdfTitle"></p>
+
         </div>
 
-        <button class="close-btn" data-close="pdfModal">
+        <button
+          class="close-btn"
+          data-close="pdfModal"
+        >
           ×
         </button>
 
@@ -767,7 +1601,18 @@
 
   </div>
 
-  <div id="toast" class="toast"></div>
+
+  <div
+    id="toast"
+    class="toast"
+  ></div>
+
+
+  <!-- SUPABASE -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- SAVA CRM -->
 
   <script src="script.js"></script>
 

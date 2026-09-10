@@ -2,15 +2,9 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>
-    SAVA Seguros | Central de Renovações
-  </title>
+  <title>SAVA Seguros | Central de Renovações</title>
 
   <meta
     name="description"
@@ -30,17 +24,43 @@
     rel="stylesheet"
   >
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .auth-link{
+      margin-top:12px;
+      background:none;
+      border:0;
+      color:#155eef;
+      font:inherit;
+      font-weight:600;
+      cursor:pointer
+    }
+
+    .auth-link:hover{
+      text-decoration:underline
+    }
+
+    .auth-note{
+      display:block;
+      margin-top:14px;
+      color:#667085;
+      line-height:1.5
+    }
+
+    .migration-box{
+      margin-top:14px;
+      padding:12px;
+      border:1px solid #eaecf0;
+      border-radius:10px;
+      background:#f9fafb
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- =========================
-       LOGIN
-  ========================== -->
+  <!-- LOGIN -->
 
   <div
     id="loginScreen"
@@ -101,9 +121,8 @@
 
         <button
           id="forgotPasswordBtn"
-          class="link-btn"
+          class="auth-link"
           type="button"
-          style="margin-top:14px"
         >
           Esqueci minha senha
         </button>
@@ -115,9 +134,61 @@
 
       </form>
 
-      <small>
-        Utilize a conta cadastrada no sistema
-        da SAVA Seguros.
+
+      <!-- RECUPERAÇÃO -->
+
+      <div
+        id="recoveryPanel"
+        class="hidden"
+      >
+
+        <h3>
+          Definir nova senha
+        </h3>
+
+        <p>
+          Digite a nova senha da sua conta.
+        </p>
+
+        <label>
+          Nova senha
+
+          <input
+            id="recoveryPass"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Mínimo de 6 caracteres"
+          >
+        </label>
+
+        <label>
+          Confirmar nova senha
+
+          <input
+            id="recoveryPassConfirm"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Repita a nova senha"
+          >
+        </label>
+
+        <button
+          id="recoverySaveBtn"
+          class="btn btn-primary btn-block"
+          type="button"
+        >
+          Salvar nova senha
+        </button>
+
+        <div
+          id="recoveryError"
+          class="form-error"
+        ></div>
+
+      </div>
+
+      <small class="auth-note">
+        Login protegido pelo Supabase Auth.
       </small>
 
     </div>
@@ -125,69 +196,7 @@
   </div>
 
 
-  <!-- =========================
-       RECUPERAÇÃO DE SENHA
-  ========================== -->
-
-  <div
-    id="recoveryScreen"
-    class="login-screen hidden"
-  >
-
-    <div class="login-card">
-
-      <div class="brand-mark">
-        S
-      </div>
-
-      <div class="login-brand">
-        SAVA <span>SEGUROS</span>
-      </div>
-
-      <h1>
-        Nova senha
-      </h1>
-
-      <p>
-        Digite uma nova senha para sua conta.
-      </p>
-
-      <label>
-        Nova senha
-
-        <input
-          id="recoveryPassword"
-          type="password"
-          placeholder="Digite a nova senha"
-        >
-      </label>
-
-      <label>
-        Confirmar senha
-
-        <input
-          id="recoveryPassword2"
-          type="password"
-          placeholder="Repita a nova senha"
-        >
-      </label>
-
-      <button
-        id="recoverySaveBtn"
-        class="btn btn-primary btn-block"
-        type="button"
-      >
-        Salvar nova senha
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-       APLICATIVO
-  ========================== -->
+  <!-- APP -->
 
   <div
     id="app"
@@ -208,7 +217,6 @@
         </div>
 
       </div>
-
 
       <nav>
 
@@ -249,7 +257,6 @@
 
       </nav>
 
-
       <div class="sidebar-bottom">
 
         <button
@@ -289,7 +296,6 @@
 
         </div>
 
-
         <div class="top-actions">
 
           <span
@@ -319,9 +325,7 @@
       </header>
 
 
-      <!-- =========================
-           DASHBOARD
-      ========================== -->
+      <!-- DASHBOARD -->
 
       <section
         id="dashboard"
@@ -548,9 +552,7 @@
       </section>
 
 
-      <!-- =========================
-           CLIENTES
-      ========================== -->
+      <!-- CLIENTES -->
 
       <section
         id="clientes"
@@ -615,9 +617,7 @@
       </section>
 
 
-      <!-- =========================
-           APÓLICES
-      ========================== -->
+      <!-- APÓLICES -->
 
       <section
         id="apolices"
@@ -751,9 +751,7 @@
       </section>
 
 
-      <!-- =========================
-           RENOVAÇÕES
-      ========================== -->
+      <!-- RENOVAÇÕES -->
 
       <section
         id="renovacoes"
@@ -785,9 +783,7 @@
       </section>
 
 
-      <!-- =========================
-           RELATÓRIOS
-      ========================== -->
+      <!-- RELATÓRIOS -->
 
       <section
         id="relatorios"
@@ -826,9 +822,7 @@
       </section>
 
 
-      <!-- =========================
-           CONFIGURAÇÕES
-      ========================== -->
+      <!-- CONFIGURAÇÕES -->
 
       <section
         id="config"
@@ -844,7 +838,7 @@
             </h3>
 
             <p>
-              Conta, dados e automação.
+              Conta, segurança, dados e automação.
             </p>
 
           </div>
@@ -853,7 +847,6 @@
 
 
         <div class="settings-grid">
-
 
           <!-- CONTA -->
 
@@ -868,7 +861,8 @@
 
               <input
                 id="cfgUser"
-                disabled
+                type="email"
+                readonly
               >
             </label>
 
@@ -878,7 +872,19 @@
               <input
                 id="cfgPass"
                 type="password"
+                autocomplete="new-password"
                 placeholder="Deixe vazio para manter"
+              >
+            </label>
+
+            <label>
+              Confirmar nova senha
+
+              <input
+                id="cfgPassConfirm"
+                type="password"
+                autocomplete="new-password"
+                placeholder="Repita a nova senha"
               >
             </label>
 
@@ -901,8 +907,9 @@
             </h4>
 
             <p>
-              Configure o e-mail da empresa que
-              receberá os alertas de renovação.
+              Os lembretes automáticos de renovação
+              são enviados para o e-mail do gestor
+              configurado abaixo.
             </p>
 
             <label>
@@ -978,29 +985,36 @@
             </h4>
 
             <p>
-              Os dados deste CRM agora ficam
-              sincronizados com o banco online.
+              Clientes, apólices, histórico e PDFs
+              agora ficam no Supabase e aparecem em
+              todos os seus dispositivos.
             </p>
 
-            <div
-              id="cloudStatus"
-              class="mini-note"
-            >
-              Supabase conectado.
+            <div class="migration-box">
+
+              <strong>
+                Migração do banco antigo
+              </strong>
+
+              <p>
+                Use uma única vez no computador onde
+                estão os clientes e apólices salvos
+                no navegador antigo.
+              </p>
+
+              <button
+                class="btn btn-secondary"
+                id="migrateLocalBtn"
+              >
+                Migrar dados deste dispositivo
+              </button>
+
+              <div
+                id="migrationStatus"
+                class="mini-note"
+              ></div>
+
             </div>
-
-            <button
-              class="btn btn-primary"
-              id="migrateLocalBtn"
-            >
-              Migrar dados deste dispositivo
-            </button>
-
-            <div
-              id="migrationStatus"
-              class="mini-note"
-              style="margin-top:10px"
-            ></div>
 
           </article>
 
@@ -1014,8 +1028,8 @@
             </h4>
 
             <p>
-              Faça backup completo ou restaure
-              os dados do CRM.
+              Faça backup completo ou restaure o CRM.
+              PDFs também entram no backup.
             </p>
 
             <div class="button-row">
@@ -1062,9 +1076,8 @@
             </h4>
 
             <p>
-              A análise local verifica vencimentos,
-              processos pendentes e prioridades
-              comerciais.
+              A análise é feita localmente no navegador
+              e não envia seus dados para uma IA externa.
             </p>
 
             <button
@@ -1090,9 +1103,7 @@
   </div>
 
 
-  <!-- =========================
-       MODAL CLIENTE
-  ========================== -->
+  <!-- MODAL CLIENTE -->
 
   <div
     class="modal"
@@ -1239,9 +1250,7 @@
   </div>
 
 
-  <!-- =========================
-       MODAL APÓLICE
-  ========================== -->
+  <!-- MODAL APÓLICE -->
 
   <div
     class="modal"
@@ -1521,9 +1530,7 @@
   </div>
 
 
-  <!-- =========================
-       DETALHES
-  ========================== -->
+  <!-- DETALHES -->
 
   <div
     class="modal"
@@ -1560,9 +1567,7 @@
   </div>
 
 
-  <!-- =========================
-       PDF
-  ========================== -->
+  <!-- PDF -->
 
   <div
     class="modal"

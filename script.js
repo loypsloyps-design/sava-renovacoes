@@ -106,15 +106,74 @@ const esc=value=>
   );
 
 const fmtDate=date=>{
+
   if(!date){
     return "—";
   }
 
-  return new Intl.DateTimeFormat(
-    "pt-BR"
-  ).format(
-    new Date(date+"T12:00:00")
-  );
+  try{
+
+    let value;
+
+    if(date instanceof Date){
+
+      value=date;
+
+    }else{
+
+      const text=String(date).trim();
+
+      if(!text){
+        return "—";
+      }
+
+      // Formato padrão do banco: AAAA-MM-DD
+      if(/^\d{4}-\d{2}-\d{2}$/.test(text)){
+
+        const [year,month,day]=text
+          .split("-")
+          .map(Number);
+
+        value=new Date(
+          year,
+          month-1,
+          day,
+          12,
+          0,
+          0
+        );
+
+      }else{
+
+        value=new Date(text);
+
+      }
+
+    }
+
+    if(
+      Number.isNaN(
+        value.getTime()
+      )
+    ){
+      return "—";
+    }
+
+    return new Intl.DateTimeFormat(
+      "pt-BR"
+    ).format(value);
+
+  }catch(error){
+
+    console.warn(
+      "Data inválida encontrada:",
+      date
+    );
+
+    return "—";
+
+  }
+
 };
 
 const iso=date=>{

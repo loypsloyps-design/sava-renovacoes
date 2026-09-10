@@ -39,9 +39,246 @@ button{
 .hidden{
   display:none!important
 }
+/* =========================================================
+   LOGIN SAVA SEGUROS
+   ========================================================= */
 
-v
+.login-screen{
+  min-height:100vh;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  position:relative;
+  overflow:hidden;
 
+  padding:40px 11% 40px 50%;
+
+  background-image:url("sava-login-bg.png");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+
+
+/* CAIXA DO LOGIN */
+.login-card{
+  width:min(520px,100%);
+  position:relative;
+  z-index:5;
+
+  padding:48px 46px;
+  border-radius:22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(20,43,66,.90),
+      rgba(4,22,40,.94)
+    );
+
+  border:1px solid rgba(255,255,255,.18);
+
+  box-shadow:
+    0 35px 90px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.05);
+
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+}
+
+
+/* ESCONDE O S AZUL ANTIGO */
+.login-card .brand-mark{
+  display:none;
+}
+
+
+/* SAVA SEGUROS */
+.login-brand{
+  color:#f0c472;
+  font-weight:800;
+  font-size:27px;
+  text-align:center;
+  letter-spacing:.04em;
+  margin-bottom:6px;
+}
+
+.login-brand span{
+  display:block;
+  color:#c59c57;
+  font-size:10px;
+  letter-spacing:.22em;
+  margin-top:5px;
+}
+
+
+/* TÍTULO */
+.login-card h1{
+  color:#f3ca7c;
+  font-size:34px;
+  text-align:center;
+  margin:24px 0 8px;
+}
+
+
+/* DESCRIÇÃO */
+.login-card p{
+  color:#aebdca;
+  line-height:1.6;
+  text-align:center;
+  margin-bottom:28px;
+}
+
+
+/* LABEL */
+.login-card label{
+  color:#f7f9fc;
+  font-weight:600;
+}
+
+
+/* INPUTS */
+.login-card input{
+  width:100%;
+
+  background:rgba(36,61,86,.72);
+  color:#fff;
+
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:11px;
+
+  padding:14px 15px;
+  outline:none;
+
+  transition:.2s ease;
+}
+
+.login-card input::placeholder{
+  color:#8fa2b5;
+}
+
+.login-card input:focus{
+  border-color:#d8aa58;
+  background:rgba(41,67,94,.82);
+
+  box-shadow:
+    0 0 0 3px rgba(216,170,88,.10);
+}
+
+
+/* BOTÃO ENTRAR */
+.login-card .btn-primary{
+  width:100%;
+  margin-top:10px;
+  padding:15px;
+
+  border:none;
+  border-radius:11px;
+
+  color:#111;
+
+  font-size:15px;
+  font-weight:800;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f6d180,
+      #d99f43
+    );
+
+  box-shadow:
+    0 10px 25px rgba(213,158,65,.24);
+
+  transition:.2s ease;
+}
+
+.login-card .btn-primary:hover{
+  background:
+    linear-gradient(
+      135deg,
+      #ffe09d,
+      #e2aa4d
+    );
+
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 14px 32px rgba(213,158,65,.32);
+}
+
+
+/* ESQUECI A SENHA */
+#forgotPasswordBtn{
+  color:#e3b867;
+}
+
+
+/* TEXTO PEQUENO */
+.login-card small{
+  display:block;
+  color:#91a4b6;
+  margin-top:16px;
+  text-align:center;
+}
+
+
+/* ERRO */
+.form-error{
+  color:#ff9d9d;
+  min-height:20px;
+  margin-top:10px;
+}
+
+
+/* RECUPERAÇÃO */
+#recoveryPanel{
+  color:#fff;
+}
+
+#recoveryPanel h3{
+  color:#f3ca7c;
+}
+
+
+/* CELULAR / TABLET */
+@media(max-width:900px){
+
+  .login-screen{
+    justify-content:center;
+    padding:30px;
+    background-position:35% center;
+  }
+
+  .login-card{
+    width:min(500px,100%);
+    padding:38px 32px;
+  }
+
+}
+
+@media(max-width:520px){
+
+  .login-screen{
+    padding:20px;
+    background-position:38% center;
+  }
+
+  .login-card{
+    padding:28px 22px;
+    border-radius:18px;
+  }
+
+  .login-card h1{
+    font-size:27px;
+  }
+
+  .login-brand{
+    font-size:23px;
+  }
+
+}
 .app{
   min-height:100vh;
   display:flex

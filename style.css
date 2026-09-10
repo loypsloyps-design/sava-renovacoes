@@ -52,7 +52,7 @@ button{
   position:relative;
   overflow:hidden;
 
- padding:40px 5% 40px 35%;
+ padding:40px 5% 40px 30%;
 
   background-image:url("sava-login-bg.png.png");
   background-size:cover;
@@ -1144,7 +1144,7 @@ tbody tr:hover{
 
 .timeline{
   border-left:2px solid #dbe3f0;
-  padding-left:15px;
+  padding-left:30px;
   margin-top:15px
 }
 

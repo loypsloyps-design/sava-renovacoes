@@ -50,6 +50,7 @@ button{
   align-items:center;
   justify-content:flex-end;
   position:relative;
+  right:12%;
   overflow:hidden;
 
  padding:40px 5% 40px 30%;

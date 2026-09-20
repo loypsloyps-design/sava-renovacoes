@@ -9219,3 +9219,2391 @@ function clearAggerImport() {
 }
 
 
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+
+async function login(event) {
+
+  event.preventDefault();
+
+  const email =
+    $("#loginUser")
+      ?.value
+      ?.trim();
+
+  const password =
+    $("#loginPass")
+      ?.value || "";
+
+  const errorBox =
+    $("#loginError");
+
+  if (errorBox) {
+    errorBox.textContent = "";
+  }
+
+  if (!email || !password) {
+
+    if (errorBox) {
+      errorBox.textContent =
+        "Informe o e-mail e a senha.";
+    }
+
+    return;
+  }
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await sb.auth
+        .signInWithPassword({
+          email,
+          password
+        });
+
+    if (error) {
+      throw error;
+    }
+
+    state.user =
+      data.user;
+
+    showApp();
+
+    await loadCloudData();
+
+    renderAll();
+
+    checkAutomation();
+
+  } catch (error) {
+
+    console.error(
+      "Erro no login:",
+      error
+    );
+
+    if (errorBox) {
+
+      errorBox.textContent =
+        "E-mail ou senha inválidos.";
+
+    }
+
+  }
+
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+async function logout() {
+
+  try {
+
+    await sb.auth
+      .signOut();
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao sair:",
+      error
+    );
+
+  }
+
+  state.user = null;
+
+  state.clients = [];
+
+  state.policies = [];
+
+  state.events = [];
+
+  showLogin();
+
+}
+
+
+/* ============================================================
+   ESQUECI MINHA SENHA
+   ============================================================ */
+
+async function forgotPassword() {
+
+  const email =
+    $("#loginUser")
+      ?.value
+      ?.trim();
+
+  if (!email) {
+
+    toast(
+      "Digite seu e-mail primeiro."
+    );
+
+    return;
+  }
+
+  try {
+
+    const {
+      error
+    } =
+      await sb.auth
+        .resetPasswordForEmail(
+          email,
+          {
+            redirectTo:
+              window.location.origin +
+              window.location.pathname
+          }
+        );
+
+    if (error) {
+      throw error;
+    }
+
+    toast(
+      "Enviamos o link de recuperação para o seu e-mail."
+    );
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+    toast(
+      "Não foi possível enviar a recuperação de senha."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   SALVAR SENHA APÓS RECUPERAÇÃO
+   ============================================================ */
+
+async function saveRecoveryPassword() {
+
+  const password =
+    $("#recoveryPass")
+      ?.value || "";
+
+  const confirmPassword =
+    $("#recoveryPassConfirm")
+      ?.value || "";
+
+  const errorBox =
+    $("#recoveryError");
+
+  if (errorBox) {
+    errorBox.textContent = "";
+  }
+
+  if (
+    password.length < 6
+  ) {
+
+    if (errorBox) {
+      errorBox.textContent =
+        "A senha precisa ter pelo menos 6 caracteres.";
+    }
+
+    return;
+  }
+
+  if (
+    password !==
+    confirmPassword
+  ) {
+
+    if (errorBox) {
+      errorBox.textContent =
+        "As senhas não são iguais.";
+    }
+
+    return;
+  }
+
+  try {
+
+    const {
+      error
+    } =
+      await sb.auth
+        .updateUser({
+          password
+        });
+
+    if (error) {
+      throw error;
+    }
+
+    toast(
+      "Senha alterada com sucesso."
+    );
+
+    $("#recoveryPanel")
+      ?.classList
+      .add("hidden");
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+    if (errorBox) {
+
+      errorBox.textContent =
+        "Não foi possível alterar a senha.";
+
+    }
+
+  }
+
+}
+
+
+/* ============================================================
+   ALTERAR SENHA PELAS CONFIGURAÇÕES
+   ============================================================ */
+
+async function saveAccountSettings() {
+
+  const password =
+    $("#cfgPass")
+      ?.value || "";
+
+  const confirmPassword =
+    $("#cfgPassConfirm")
+      ?.value || "";
+
+  if (!password) {
+
+    toast(
+      "Digite a nova senha."
+    );
+
+    return;
+  }
+
+  if (
+    password.length < 6
+  ) {
+
+    toast(
+      "A senha precisa ter pelo menos 6 caracteres."
+    );
+
+    return;
+  }
+
+  if (
+    password !==
+    confirmPassword
+  ) {
+
+    toast(
+      "As senhas não são iguais."
+    );
+
+    return;
+  }
+
+  try {
+
+    const {
+      error
+    } =
+      await sb.auth
+        .updateUser({
+          password
+        });
+
+    if (error) {
+      throw error;
+    }
+
+    if ($("#cfgPass")) {
+      $("#cfgPass").value = "";
+    }
+
+    if ($("#cfgPassConfirm")) {
+      $("#cfgPassConfirm").value = "";
+    }
+
+    toast(
+      "Senha alterada com sucesso."
+    );
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+    toast(
+      "Não foi possível alterar a senha."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   CONFIGURAÇÃO DE E-MAIL
+   ============================================================ */
+
+async function saveEmailSettings() {
+
+  state.settings.endpoint =
+    $("#emailEndpoint")
+      ?.value
+      ?.trim() || "";
+
+  state.settings.managerEmail =
+    $("#managerEmail")
+      ?.value
+      ?.trim() || "";
+
+  try {
+
+    await saveSettings();
+
+    saveLocalCache();
+
+    checkAutomation();
+
+    toast(
+      "Configuração de e-mail salva."
+    );
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+    toast(
+      "Não foi possível salvar a configuração."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   IDIOMA
+   ============================================================ */
+
+async function saveLanguageSettings() {
+
+  state.settings.language =
+    $("#languageSelect")
+      ?.value ||
+    "pt-BR";
+
+  try {
+
+    await saveSettings();
+
+    saveLocalCache();
+
+    toast(
+      "Idioma salvo."
+    );
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+    toast(
+      "Não foi possível salvar o idioma."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   BACKUP
+   ============================================================ */
+
+function exportBackup() {
+
+  const backup = {
+
+    version:
+      "SAVA-CRM-2026",
+
+    exportedAt:
+      new Date()
+        .toISOString(),
+
+    clients:
+      state.clients,
+
+    policies:
+      state.policies,
+
+    events:
+      state.events,
+
+    settings:
+      state.settings
+
+  };
+
+  const blob =
+    new Blob(
+      [
+        JSON.stringify(
+          backup,
+          null,
+          2
+        )
+      ],
+      {
+        type:
+          "application/json"
+      }
+    );
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+  const anchor =
+    document.createElement(
+      "a"
+    );
+
+  anchor.href =
+    url;
+
+  anchor.download =
+    `sava-backup-${iso(new Date())}.json`;
+
+  document.body
+    .appendChild(
+      anchor
+    );
+
+  anchor.click();
+
+  anchor.remove();
+
+  URL.revokeObjectURL(
+    url
+  );
+
+  toast(
+    "Backup exportado."
+  );
+
+}
+
+
+/* ============================================================
+   IMPORTAR BACKUP
+   ============================================================ */
+
+async function importBackup(event) {
+
+  const file =
+    event?.target
+      ?.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  try {
+
+    const text =
+      await file.text();
+
+    const backup =
+      JSON.parse(
+        text
+      );
+
+    if (
+      !Array.isArray(
+        backup.clients
+      ) ||
+      !Array.isArray(
+        backup.policies
+      )
+    ) {
+
+      throw new Error(
+        "Backup inválido."
+      );
+
+    }
+
+    const confirmed =
+      window.confirm(
+        "Importar este backup para o CRM?\n\nOs registros do arquivo serão enviados para sua conta."
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    /* CLIENTES */
+
+    for (
+      const client
+      of backup.clients
+    ) {
+
+      const normalized = {
+
+        ...client,
+
+        id:
+          client.id ||
+          uid(),
+
+        birthDate:
+          client.birthDate ||
+          "",
+
+        createdAt:
+          client.createdAt ||
+          new Date()
+            .toISOString(),
+
+        updatedAt:
+          new Date()
+            .toISOString()
+
+      };
+
+      const {
+        error
+      } =
+        await sb
+          .from("clients")
+          .upsert(
+            clientToDb(
+              normalized
+            )
+          );
+
+      if (error) {
+        throw error;
+      }
+
+    }
+
+
+    /* APÓLICES */
+
+    for (
+      const policy
+      of backup.policies
+    ) {
+
+      const normalized = {
+
+        ...policy,
+
+        id:
+          policy.id ||
+          uid(),
+
+        feedback:
+          policy.feedback ||
+          "",
+
+        feedbackUpdatedAt:
+          policy.feedbackUpdatedAt ||
+          null,
+
+        status:
+          [
+            "Pendente",
+            "Em andamento",
+            "Ganho",
+            "Perdido"
+          ].includes(
+            policy.status
+          )
+            ? policy.status
+            : "Pendente",
+
+        createdAt:
+          policy.createdAt ||
+          new Date()
+            .toISOString(),
+
+        updatedAt:
+          new Date()
+            .toISOString()
+
+      };
+
+      const {
+        error
+      } =
+        await sb
+          .from("policies")
+          .upsert(
+            policyToDb(
+              normalized
+            )
+          );
+
+      if (error) {
+        throw error;
+      }
+
+    }
+
+
+    if (
+      backup.settings
+    ) {
+
+      state.settings = {
+
+        ...state.settings,
+
+        ...backup.settings
+
+      };
+
+      await saveSettings();
+
+    }
+
+
+    await loadCloudData();
+
+    renderAll();
+
+    toast(
+      "Backup importado com sucesso."
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao importar backup:",
+      error
+    );
+
+    toast(
+      "Não foi possível importar o backup."
+    );
+
+  } finally {
+
+    if (
+      event?.target
+    ) {
+
+      event.target.value =
+        "";
+
+    }
+
+  }
+
+}
+
+
+/* ============================================================
+   APAGAR TODOS OS DADOS
+   ============================================================ */
+
+async function clearAllData() {
+
+  const firstConfirm =
+    window.confirm(
+      "ATENÇÃO!\n\nIsso apagará todos os clientes, apólices e históricos da sua conta.\n\nDeseja continuar?"
+    );
+
+  if (!firstConfirm) {
+    return;
+  }
+
+  const secondConfirm =
+    window.confirm(
+      "Última confirmação:\n\nEssa ação não poderá ser desfeita. Apagar tudo?"
+    );
+
+  if (!secondConfirm) {
+    return;
+  }
+
+  try {
+
+    /*
+      Apaga eventos primeiro.
+    */
+
+    const {
+      error: eventsError
+    } =
+      await sb
+        .from("events")
+        .delete()
+        .eq(
+          "user_id",
+          state.user.id
+        );
+
+    if (
+      eventsError
+    ) {
+      console.warn(
+        eventsError
+      );
+    }
+
+
+    /*
+      PDFs existentes.
+    */
+
+    const pdfPaths =
+      state.policies
+        .map(
+          policy =>
+            policy.pdfPath
+        )
+        .filter(Boolean);
+
+    if (
+      pdfPaths.length
+    ) {
+
+      const {
+        error: pdfError
+      } =
+        await sb
+          .storage
+          .from(
+            "policy-pdfs"
+          )
+          .remove(
+            pdfPaths
+          );
+
+      if (
+        pdfError
+      ) {
+
+        console.warn(
+          pdfError
+        );
+
+      }
+
+    }
+
+
+    /*
+      Apólices.
+    */
+
+    const {
+      error: policiesError
+    } =
+      await sb
+        .from("policies")
+        .delete()
+        .eq(
+          "user_id",
+          state.user.id
+        );
+
+    if (
+      policiesError
+    ) {
+      throw policiesError;
+    }
+
+
+    /*
+      Clientes.
+    */
+
+    const {
+      error: clientsError
+    } =
+      await sb
+        .from("clients")
+        .delete()
+        .eq(
+          "user_id",
+          state.user.id
+        );
+
+    if (
+      clientsError
+    ) {
+      throw clientsError;
+    }
+
+
+    state.clients = [];
+
+    state.policies = [];
+
+    state.events = [];
+
+    saveLocalCache();
+
+    renderAll();
+
+    toast(
+      "Todos os dados foram apagados."
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao limpar dados:",
+      error
+    );
+
+    toast(
+      "Não foi possível apagar todos os dados."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   MIGRAÇÃO DO LOCALSTORAGE ANTIGO
+   ============================================================ */
+
+function getLegacyData() {
+
+  const candidates = [
+    "savaData",
+    "savaCRM",
+    "sava_crm",
+    "savaClients",
+    "savaPolicies"
+  ];
+
+  const result = {
+
+    clients: [],
+
+    policies: []
+
+  };
+
+  for (
+    const key
+    of candidates
+  ) {
+
+    try {
+
+      const raw =
+        localStorage
+          .getItem(key);
+
+      if (!raw) {
+        continue;
+      }
+
+      const parsed =
+        JSON.parse(raw);
+
+      if (
+        Array.isArray(
+          parsed?.clients
+        )
+      ) {
+
+        result.clients.push(
+          ...parsed.clients
+        );
+
+      }
+
+      if (
+        Array.isArray(
+          parsed?.policies
+        )
+      ) {
+
+        result.policies.push(
+          ...parsed.policies
+        );
+
+      }
+
+      if (
+        key ===
+          "savaClients" &&
+        Array.isArray(parsed)
+      ) {
+
+        result.clients.push(
+          ...parsed
+        );
+
+      }
+
+      if (
+        key ===
+          "savaPolicies" &&
+        Array.isArray(parsed)
+      ) {
+
+        result.policies.push(
+          ...parsed
+        );
+
+      }
+
+    } catch (error) {
+
+      console.warn(
+        "Não foi possível ler:",
+        key,
+        error
+      );
+
+    }
+
+  }
+
+  return result;
+
+}
+
+
+/* ============================================================
+   MIGRAR DADOS ANTIGOS
+   ============================================================ */
+
+async function migrateLocalData() {
+
+  const status =
+    $("#migrationStatus");
+
+  try {
+
+    const legacy =
+      getLegacyData();
+
+    if (
+      !legacy.clients.length &&
+      !legacy.policies.length
+    ) {
+
+      if (status) {
+
+        status.textContent =
+          "Nenhum banco antigo foi encontrado neste navegador.";
+
+      }
+
+      return;
+    }
+
+    if (status) {
+
+      status.textContent =
+        "Migrando dados...";
+
+    }
+
+    const clientMap =
+      new Map();
+
+
+    for (
+      const oldClient
+      of legacy.clients
+    ) {
+
+      const document =
+        onlyNumbers(
+          oldClient.document ||
+          oldClient.doc ||
+          ""
+        );
+
+      const existing =
+        state.clients.find(
+          client => {
+
+            if (
+              document &&
+              onlyNumbers(
+                client.document
+              ) === document
+            ) {
+              return true;
+            }
+
+            return (
+              normalizeText(
+                client.name
+              ) ===
+              normalizeText(
+                oldClient.name
+              )
+            );
+
+          }
+        );
+
+      if (existing) {
+
+        clientMap.set(
+          oldClient.id,
+          existing.id
+        );
+
+        continue;
+      }
+
+      const client = {
+
+        id:
+          uid(),
+
+        name:
+          oldClient.name ||
+          "Cliente",
+
+        birthDate:
+          oldClient.birthDate ||
+          oldClient.birth ||
+          "",
+
+        phone:
+          cleanPhone(
+            oldClient.phone ||
+            ""
+          ),
+
+        document:
+          formatDocument(
+            oldClient.document ||
+            oldClient.doc ||
+            ""
+          ),
+
+        email:
+          oldClient.email ||
+          "",
+
+        notes:
+          oldClient.notes ||
+          "",
+
+        createdAt:
+          oldClient.createdAt ||
+          new Date()
+            .toISOString(),
+
+        updatedAt:
+          new Date()
+            .toISOString()
+
+      };
+
+      const {
+        data,
+        error
+      } =
+        await sb
+          .from("clients")
+          .insert(
+            clientToDb(
+              client
+            )
+          )
+          .select()
+          .single();
+
+      if (error) {
+        throw error;
+      }
+
+      const saved =
+        clientFromDb(
+          data
+        );
+
+      state.clients.push(
+        saved
+      );
+
+      clientMap.set(
+        oldClient.id,
+        saved.id
+      );
+
+    }
+
+
+    for (
+      const oldPolicy
+      of legacy.policies
+    ) {
+
+      const clientId =
+        clientMap.get(
+          oldPolicy.clientId
+        ) ||
+        oldPolicy.clientId;
+
+      if (
+        !clientById(
+          clientId
+        )
+      ) {
+        continue;
+      }
+
+      const duplicate =
+        state.policies.some(
+          policy =>
+            policy.clientId ===
+              clientId &&
+            oldPolicy.number &&
+            normalizeText(
+              policy.number
+            ) ===
+              normalizeText(
+                oldPolicy.number
+              )
+        );
+
+      if (duplicate) {
+        continue;
+      }
+
+      const policy = {
+
+        id:
+          uid(),
+
+        clientId,
+
+        insurer:
+          oldPolicy.insurer ||
+          "Outra",
+
+        type:
+          oldPolicy.type ||
+          "Outro",
+
+        number:
+          oldPolicy.number ||
+          "",
+
+        startDate:
+          oldPolicy.startDate ||
+          "",
+
+        endDate:
+          oldPolicy.endDate ||
+          "",
+
+        status:
+          [
+            "Pendente",
+            "Em andamento",
+            "Ganho",
+            "Perdido"
+          ].includes(
+            oldPolicy.status
+          )
+            ? oldPolicy.status
+            : "Pendente",
+
+        notes:
+          oldPolicy.notes ||
+          "",
+
+        feedback:
+          oldPolicy.feedback ||
+          "",
+
+        feedbackUpdatedAt:
+          oldPolicy.feedbackUpdatedAt ||
+          null,
+
+        alerts:
+          oldPolicy.alerts || {
+            30: true,
+            15: true,
+            7: true,
+            1: true,
+            expired: true
+          },
+
+        pdfPath:
+          oldPolicy.pdfPath ||
+          null,
+
+        renewedFrom:
+          oldPolicy.renewedFrom ||
+          null,
+
+        createdAt:
+          oldPolicy.createdAt ||
+          new Date()
+            .toISOString(),
+
+        updatedAt:
+          new Date()
+            .toISOString()
+
+      };
+
+      const {
+        data,
+        error
+      } =
+        await sb
+          .from("policies")
+          .insert(
+            policyToDb(
+              policy
+            )
+          )
+          .select()
+          .single();
+
+      if (error) {
+        throw error;
+      }
+
+      state.policies.push(
+        policyFromDb(
+          data
+        )
+      );
+
+    }
+
+    saveLocalCache();
+
+    renderAll();
+
+    if (status) {
+
+      status.textContent =
+        "Migração concluída com sucesso.";
+
+    }
+
+    toast(
+      "Dados antigos migrados."
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Erro na migração:",
+      error
+    );
+
+    if (status) {
+
+      status.textContent =
+        "Não foi possível concluir a migração.";
+
+    }
+
+    toast(
+      "Erro ao migrar dados."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   FEEDBACK COMERCIAL RÁPIDO NO KANBAN
+   ============================================================ */
+
+async function saveFeedback(
+  id,
+  value
+) {
+
+  const policy =
+    policyById(id);
+
+  if (!policy) {
+    return;
+  }
+
+  const next =
+    String(
+      value || ""
+    ).trim();
+
+  if (
+    String(
+      policy.feedback || ""
+    ) === next
+  ) {
+    return;
+  }
+
+  const updatedAt =
+    new Date()
+      .toISOString();
+
+  try {
+
+    const {
+      error
+    } =
+      await sb
+        .from("policies")
+        .update({
+
+          feedback:
+            next || null,
+
+          feedback_updated_at:
+            updatedAt,
+
+          updated_at:
+            updatedAt
+
+        })
+        .eq(
+          "id",
+          id
+        )
+        .eq(
+          "user_id",
+          state.user.id
+        );
+
+    if (error) {
+      throw error;
+    }
+
+    policy.feedback =
+      next;
+
+    policy.feedbackUpdatedAt =
+      updatedAt;
+
+    policy.updatedAt =
+      updatedAt;
+
+    saveLocalCache();
+
+    try {
+
+      await addEvent(
+        id,
+        "feedback",
+        next
+          ? "Feedback comercial atualizado."
+          : "Feedback comercial removido."
+      );
+
+    } catch (eventError) {
+
+      console.warn(
+        eventError
+      );
+
+    }
+
+    toast(
+      "Feedback salvo."
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao salvar feedback:",
+      error
+    );
+
+    toast(
+      "Não foi possível salvar o feedback."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   ALTERAR STATUS
+   ============================================================ */
+
+async function changeStatus(
+  id,
+  status
+) {
+
+  const allowed = [
+    "Pendente",
+    "Em andamento",
+    "Ganho",
+    "Perdido"
+  ];
+
+  if (
+    !allowed.includes(
+      status
+    )
+  ) {
+    return;
+  }
+
+  const policy =
+    policyById(id);
+
+  if (!policy) {
+    return;
+  }
+
+  if (
+    policy.status ===
+    status
+  ) {
+    return;
+  }
+
+  try {
+
+    const updatedAt =
+      new Date()
+        .toISOString();
+
+    const {
+      data,
+      error
+    } =
+      await sb
+        .from("policies")
+        .update({
+
+          status,
+
+          updated_at:
+            updatedAt
+
+        })
+        .eq(
+          "id",
+          id
+        )
+        .eq(
+          "user_id",
+          state.user.id
+        )
+        .select()
+        .single();
+
+    if (error) {
+      throw error;
+    }
+
+    const saved =
+      policyFromDb(
+        data
+      );
+
+    const index =
+      state.policies
+        .findIndex(
+          item =>
+            item.id === id
+        );
+
+    if (
+      index >= 0
+    ) {
+
+      state.policies[index] =
+        saved;
+
+    }
+
+    saveLocalCache();
+
+    try {
+
+      await addEvent(
+        id,
+        "status",
+        `Status alterado para ${status}.`
+      );
+
+    } catch (eventError) {
+
+      console.warn(
+        eventError
+      );
+
+    }
+
+    renderAll();
+
+    if (
+      $("#detailsModal")
+        ?.classList
+        .contains("show")
+    ) {
+
+      openDetails(id);
+
+    }
+
+    toast(
+      `Status alterado para ${status}.`
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao alterar status:",
+      error
+    );
+
+    toast(
+      "Não foi possível alterar o status."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   CPF / CNPJ AUTOMÁTICO
+   ============================================================ */
+
+function handleDocumentInput(
+  event
+) {
+
+  const input =
+    event.target;
+
+  input.value =
+    formatDocument(
+      input.value
+    );
+
+}
+
+
+/* ============================================================
+   TELEFONE AUTOMÁTICO
+   ============================================================ */
+
+function handlePhoneInput(
+  event
+) {
+
+  const input =
+    event.target;
+
+  input.value =
+    formatPhone(
+      input.value
+    );
+
+}
+
+
+/* ============================================================
+   LIMPAR FILTROS DE RENOVAÇÃO
+   ============================================================ */
+
+function clearRenewalDateFilters() {
+
+  if (
+    $("#renewalStartDateFilter")
+  ) {
+
+    $("#renewalStartDateFilter")
+      .value = "";
+
+  }
+
+  if (
+    $("#renewalEndDateFilter")
+  ) {
+
+    $("#renewalEndDateFilter")
+      .value = "";
+
+  }
+
+  if (
+    $("#commercialReportArea")
+  ) {
+
+    $("#commercialReportArea")
+      .textContent = "";
+
+  }
+
+  renderKanban();
+
+}
+
+
+/* ============================================================
+   RELATÓRIO NAS CONFIGURAÇÕES
+   ============================================================ */
+
+function settingsReport() {
+
+  const output =
+    $("#settingsReportOutput");
+
+  if (!output) {
+    return;
+  }
+
+  const total =
+    state.policies.length;
+
+  const pending =
+    state.policies.filter(
+      policy =>
+        policy.status ===
+        "Pendente"
+    ).length;
+
+  const progress =
+    state.policies.filter(
+      policy =>
+        policy.status ===
+        "Em andamento"
+    ).length;
+
+  const won =
+    state.policies.filter(
+      policy =>
+        policy.status ===
+        "Ganho"
+    ).length;
+
+  const lost =
+    state.policies.filter(
+      policy =>
+        policy.status ===
+        "Perdido"
+    ).length;
+
+  const expired =
+    state.policies.filter(
+      policy =>
+        daysUntil(
+          policy.endDate
+        ) < 0
+    ).length;
+
+  const next7 =
+    state.policies.filter(
+      policy => {
+
+        const days =
+          daysUntil(
+            policy.endDate
+          );
+
+        return (
+          days >= 0 &&
+          days <= 7
+        );
+
+      }
+    ).length;
+
+  const withoutFeedback =
+    state.policies.filter(
+      policy =>
+        !String(
+          policy.feedback ||
+          ""
+        ).trim()
+    ).length;
+
+  output.innerHTML = `
+
+    <strong>
+      Análise atual da carteira
+    </strong>
+
+    <br><br>
+
+    Total de apólices:
+    <b>${total}</b>
+
+    <br>
+
+    Pendentes:
+    <b>${pending}</b>
+
+    <br>
+
+    Em andamento:
+    <b>${progress}</b>
+
+    <br>
+
+    Ganhas:
+    <b>${won}</b>
+
+    <br>
+
+    Perdidas:
+    <b>${lost}</b>
+
+    <br>
+
+    Vencidas:
+    <b>${expired}</b>
+
+    <br>
+
+    Vencem em até 7 dias:
+    <b>${next7}</b>
+
+    <br>
+
+    Sem feedback comercial:
+    <b>${withoutFeedback}</b>
+
+  `;
+
+}
+
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+
+function setupEvents() {
+
+  /* LOGIN */
+
+  $("#loginForm")
+    ?.addEventListener(
+      "submit",
+      login
+    );
+
+  $("#logoutBtn")
+    ?.addEventListener(
+      "click",
+      logout
+    );
+
+  $("#forgotPasswordBtn")
+    ?.addEventListener(
+      "click",
+      forgotPassword
+    );
+
+  $("#recoverySaveBtn")
+    ?.addEventListener(
+      "click",
+      saveRecoveryPassword
+    );
+
+
+  /* NAVEGAÇÃO */
+
+  $$("[data-view]")
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () =>
+            go(
+              button.dataset.view
+            )
+        );
+
+      }
+    );
+
+
+  /* FECHAR MODAIS */
+
+  $$("[data-close]")
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () =>
+            closeModal(
+              button.dataset.close
+            )
+        );
+
+      }
+    );
+
+
+  $$(".modal")
+    .forEach(
+      modal => {
+
+        modal.addEventListener(
+          "click",
+          event => {
+
+            if (
+              event.target ===
+              modal
+            ) {
+
+              closeModal(
+                modal.id
+              );
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+
+  /* NOVO CLIENTE */
+
+  $("#newClientBtn")
+    ?.addEventListener(
+      "click",
+      newClient
+    );
+
+  $("#clientForm")
+    ?.addEventListener(
+      "submit",
+      saveClient
+    );
+
+
+  /* CPF/CNPJ */
+
+  $("#clientDoc")
+    ?.addEventListener(
+      "input",
+      handleDocumentInput
+    );
+
+
+  /* TELEFONE */
+
+  $("#clientPhone")
+    ?.addEventListener(
+      "input",
+      handlePhoneInput
+    );
+
+
+  /* NOVA APÓLICE */
+
+  $("#newPolicyBtn")
+    ?.addEventListener(
+      "click",
+      () =>
+        newPolicyFor()
+    );
+
+  $("#newPolicyBtn2")
+    ?.addEventListener(
+      "click",
+      () =>
+        newPolicyFor()
+    );
+
+  $("#policyForm")
+    ?.addEventListener(
+      "submit",
+      savePolicy
+    );
+
+
+  /* DASHBOARD */
+
+  $("#dashboardRefresh")
+    ?.addEventListener(
+      "click",
+      async () => {
+
+        await loadCloudData();
+
+        renderAll();
+
+        toast(
+          "Dados atualizados."
+        );
+
+      }
+    );
+
+
+  /* CLIENTES */
+
+  $("#clientSearch")
+    ?.addEventListener(
+      "input",
+      renderClients
+    );
+
+  $("#clientFilter")
+    ?.addEventListener(
+      "change",
+      renderClients
+    );
+
+  $("#clientStartDateFilter")
+    ?.addEventListener(
+      "change",
+      renderClients
+    );
+
+  $("#clientEndDateFilter")
+    ?.addEventListener(
+      "change",
+      renderClients
+    );
+
+
+  /* APÓLICES */
+
+  $("#policySearch")
+    ?.addEventListener(
+      "input",
+      renderPolicies
+    );
+
+  $("#statusFilter")
+    ?.addEventListener(
+      "change",
+      renderPolicies
+    );
+
+  $("#expiryFilter")
+    ?.addEventListener(
+      "change",
+      renderPolicies
+    );
+
+  $("#typeFilter")
+    ?.addEventListener(
+      "change",
+      renderPolicies
+    );
+
+  $("#insurerFilter")
+    ?.addEventListener(
+      "change",
+      renderPolicies
+    );
+
+  $("#policyStartDateFilter")
+    ?.addEventListener(
+      "change",
+      renderPolicies
+    );
+
+  $("#policyEndDateFilter")
+    ?.addEventListener(
+      "change",
+      renderPolicies
+    );
+
+
+  /* RENOVAÇÕES */
+
+  $("#renewalStartDateFilter")
+    ?.addEventListener(
+      "change",
+      renderKanban
+    );
+
+  $("#renewalEndDateFilter")
+    ?.addEventListener(
+      "change",
+      renderKanban
+    );
+
+  $("#clearRenewalDates")
+    ?.addEventListener(
+      "click",
+      clearRenewalDateFilters
+    );
+
+  $("#generateCommercialReport")
+    ?.addEventListener(
+      "click",
+      showCommercialReport
+    );
+
+
+  /* RELATÓRIO */
+
+  $("#generateReportBtn")
+    ?.addEventListener(
+      "click",
+      showReport
+    );
+
+  $("#askReportBtn")
+    ?.addEventListener(
+      "click",
+      askReportAssistant
+    );
+
+  $("#reportQuestion")
+    ?.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key ===
+          "Enter"
+        ) {
+
+          event.preventDefault();
+
+          askReportAssistant();
+
+        }
+
+      }
+    );
+
+
+  /* CONFIGURAÇÕES */
+
+  $("#saveAccount")
+    ?.addEventListener(
+      "click",
+      saveAccountSettings
+    );
+
+  $("#saveEmail")
+    ?.addEventListener(
+      "click",
+      saveEmailSettings
+    );
+
+  $("#saveLanguage")
+    ?.addEventListener(
+      "click",
+      saveLanguageSettings
+    );
+
+  $("#settingsReport")
+    ?.addEventListener(
+      "click",
+      settingsReport
+    );
+
+
+  /* AGGER */
+
+  $("#aggerFile")
+    ?.addEventListener(
+      "change",
+      importAggerExcel
+    );
+
+
+  /* BACKUP */
+
+  $("#exportData")
+    ?.addEventListener(
+      "click",
+      exportBackup
+    );
+
+  $("#importData")
+    ?.addEventListener(
+      "change",
+      importBackup
+    );
+
+  $("#clearData")
+    ?.addEventListener(
+      "click",
+      clearAllData
+    );
+
+
+  /* MIGRAÇÃO */
+
+  $("#migrateLocalBtn")
+    ?.addEventListener(
+      "click",
+      migrateLocalData
+    );
+
+}
+
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+
+async function init() {
+
+  setupEvents();
+
+  /*
+    Verifica se o Supabase carregou.
+  */
+
+  if (
+    !window.supabase
+  ) {
+
+    console.error(
+      "Supabase não foi carregado."
+    );
+
+    return;
+
+  }
+
+  try {
+
+    /*
+      Detecta recuperação de senha.
+    */
+
+    sb.auth.onAuthStateChange(
+      async (
+        event,
+        session
+      ) => {
+
+        if (
+          event ===
+          "PASSWORD_RECOVERY"
+        ) {
+
+          showLogin();
+
+          $("#loginForm")
+            ?.classList
+            .add("hidden");
+
+          $("#recoveryPanel")
+            ?.classList
+            .remove("hidden");
+
+          return;
+
+        }
+
+        if (
+          event ===
+          "SIGNED_OUT"
+        ) {
+
+          state.user =
+            null;
+
+          showLogin();
+
+        }
+
+      }
+    );
+
+
+    /*
+      Recupera sessão existente.
+    */
+
+    const {
+      data,
+      error
+    } =
+      await sb.auth
+        .getSession();
+
+    if (error) {
+      throw error;
+    }
+
+    const session =
+      data.session;
+
+    if (
+      !session?.user
+    ) {
+
+      showLogin();
+
+      return;
+
+    }
+
+    state.user =
+      session.user;
+
+    showApp();
+
+    /*
+      Primeiro tenta carregar
+      banco online.
+    */
+
+    await loadCloudData();
+
+    /*
+      Depois renderiza.
+      Se o Supabase falhar,
+      loadCloudData mantém o cache
+      em vez de zerar tudo.
+    */
+
+    renderAll();
+
+    checkAutomation();
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao iniciar CRM:",
+      error
+    );
+
+    /*
+      Nunca zera a interface
+      por causa de uma falha
+      temporária do Supabase.
+    */
+
+    if (
+      state.user
+    ) {
+
+      loadLocalCache();
+
+      showApp();
+
+      renderAll();
+
+    } else {
+
+      showLogin();
+
+    }
+
+  }
+
+}
+
+
+/* ============================================================
+   FUNÇÕES GLOBAIS
+   Necessárias para os botões gerados dinamicamente
+   ============================================================ */
+
+window.editClient =
+  editClient;
+
+window.deleteClient =
+  deleteClient;
+
+window.newPolicyFor =
+  newPolicyFor;
+
+window.editPolicy =
+  editPolicy;
+
+window.deletePolicy =
+  deletePolicy;
+
+window.openDetails =
+  openDetails;
+
+window.openPdf =
+  openPdf;
+
+window.renewPolicy =
+  renewPolicy;
+
+window.changeStatus =
+  changeStatus;
+
+window.manualWhatsApp =
+  manualWhatsApp;
+
+window.sendEmail =
+  sendEmail;
+
+window.saveFeedback =
+  saveFeedback;
+
+window.closeModal =
+  closeModal;
+
+window.openModal =
+  openModal;
+
+window.go =
+  go;
+
+
+/* ============================================================
+   INICIAR SISTEMA
+   ============================================================ */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  init
+);
+
+
+
+

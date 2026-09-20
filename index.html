@@ -670,9 +670,13 @@
               Em andamento
             </option>
 
-            <option>
-              Ganho
-            </option>
+        <option>
+         Ganho
+       </option>
+
+       <option>
+        Perdido
+        </option>
 
           </select>
 
@@ -775,10 +779,21 @@
 
         </div>
 
-        <div
-          class="kanban"
-          id="kanban"
-        ></div>
+     <div class="button-row" style="margin-bottom:15px">
+
+  <button
+    id="generateCommercialReport"
+    class="btn btn-primary"
+  >
+    📊 Gerar Feedback Comercial
+  </button>
+
+</div>
+
+<div
+  class="kanban"
+  id="kanban"
+></div>
 
       </section>
 
@@ -1157,18 +1172,16 @@
 
         </label>
 
+<label>
 
-        <label>
+  Data de nascimento
 
-          Data de nascimento*
+  <input
+    id="clientBirth"
+    type="date"
+  >
 
-          <input
-            id="clientBirth"
-            type="date"
-            required
-          >
-
-        </label>
+</label>
 
 
         <label>
@@ -1406,7 +1419,9 @@
             <option>
               Ganho
             </option>
-
+           <option>
+            Perdido
+            </option>
           </select>
 
         </label>
@@ -1440,7 +1455,17 @@
           ></textarea>
 
         </label>
+<label class="span-2">
 
+  Feedback Comercial
+
+  <textarea
+    id="policyFeedback"
+    rows="5"
+    placeholder="Ex: Falta cotar com Porto. Cliente pediu retorno dia 25. Aguardando proposta."
+  ></textarea>
+
+</label>
 
         <div class="form-section-title span-2">
           Lembretes automáticos

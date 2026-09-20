@@ -1,12 +1,26 @@
-const SUPABASE_URL="https://txwgxpmgegntsnvamtda.supabase.co";
-const SUPABASE_KEY="sb_publishable_IG_YmrreIPbgnt05gubpHw_CriLdyfV";
 
-const sb=window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+/* ============================================================
+   SUPABASE
+   ============================================================ */
 
-const TYPES=[
+const SUPABASE_URL =
+  "https://txwgxpmgegntsnvamtda.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_IG_YmrreIPbgnt05gubpHw_CriLdyfV";
+
+const sb =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* ============================================================
+   TIPOS DE SEGURO
+   ============================================================ */
+
+const TYPES = [
   "Auto",
   "Auto Frota",
   "Residencial",
@@ -30,804 +44,1599 @@ const TYPES=[
   "Outro"
 ];
 
-const INSURERS=[
-  "AIG",
-  "Akad Seguros",
-  "Allianz",
-  "Austral",
-  "AXA",
-  "Azos",
-  "Banestes Seguros",
-  "Bradesco Seguros",
-  "Capemisa",
-  "Chubb",
-  "Essor",
-  "Excelsior",
-  "Ezze",
-  "Fairfax",
-  "Fator",
-  "HDI Seguros",
-  "Icatu",
-  "Junto Seguros",
-  "MAG Seguros",
-  "Mapfre",
-  "MetLife",
-  "Mitsui Sumitomo",
-  "Pottencial",
+
+/* ============================================================
+   SEGURADORAS
+   ============================================================ */
+
+const INSURERS = [
   "Porto Seguro",
-  "Prudential",
-  "Sancor",
-  "Sompo",
-  "Suhai",
-  "SulAmérica",
-  "Sura",
-  "Swiss Re",
   "Tokio Marine",
-  "Unimed",
-  "Yelum",
-  "Youse",
+  "Azul Seguros",
+  "Allianz",
+  "HDI Seguros",
+  "Mapfre",
+  "Bradesco Seguros",
   "Zurich",
+  "Suhai",
+  "Sompo",
+  "Liberty",
+  "Itaú Seguros",
+  "SulAmérica",
+  "Mitsui Sumitomo",
+  "Chubb",
+  "AXA",
+  "Generali",
+  "Zurich Santander",
+  "MAG Seguros",
+  "Prudential",
+  "MetLife",
+  "Icatu",
+  "Pottencial",
+  "Junto Seguros",
+  "Essor",
+  "Fairfax",
+  "Argo Seguros",
+  "Akad Seguros",
+  "Excelsior",
+  "Too Seguros",
+  "Alfa Seguradora",
+  "Austral",
+  "Sancor",
+  "Kovr",
+  "Newe",
   "Outra"
 ];
 
-const state={
-  user:null,
-  clients:[],
-  policies:[],
-  events:[],
-  settings:{
-    endpoint:"",
-    managerEmail:"",
-    language:"pt-BR"
+
+/* ============================================================
+   ESTADO DO SISTEMA
+   ============================================================ */
+
+const state = {
+
+  user: null,
+
+  clients: [],
+
+  policies: [],
+
+  events: [],
+
+  settings: {
+    endpoint: "",
+    managerEmail: "",
+    language: "pt-BR"
   }
+
 };
 
-const $=selector=>document.querySelector(selector);
 
-const $$=selector=>[
-  ...document.querySelectorAll(selector)
-];
+/* ============================================================
+   ATALHOS
+   ============================================================ */
 
-const uid=()=>crypto.randomUUID();
+const $ =
+  selector =>
+    document.querySelector(selector);
 
-const cleanPhone=value=>
-  String(value||"").replace(/\D/g,"");
 
-const esc=value=>
-  String(value??"").replace(
-    /[&<>"']/g,
-    char=>({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[char])
-  );
+const $$ =
+  selector =>
+    [
+      ...document.querySelectorAll(
+        selector
+      )
+    ];
 
-const fmtDate=date=>{
 
-  if(!date){
-    return "—";
+/* ============================================================
+   IDENTIFICADOR
+   ============================================================ */
+
+const uid = () =>
+  crypto.randomUUID();
+
+
+/* ============================================================
+   TELEFONE
+   ============================================================ */
+
+const cleanPhone =
+  value =>
+    String(value || "")
+      .replace(/\D/g, "");
+
+
+function validBrazilPhone(value) {
+
+  const number =
+    cleanPhone(value);
+
+
+  if (
+    number.length !== 10 &&
+    number.length !== 11
+  ) {
+    return false;
   }
 
-  try{
 
-    let value;
+  if (
+    /^(\d)\1+$/.test(number)
+  ) {
+    return false;
+  }
 
-    if(date instanceof Date){
 
-      value=date;
+  if (
+    /^0/.test(number) ||
+    /^1/.test(number)
+  ) {
+    return false;
+  }
 
-    }else{
 
-      const text=String(date).trim();
+  return /^[1-9]{2}9?[2-9]\d{7}$/
+    .test(number);
 
-      if(!text){
-        return "—";
-      }
+}
 
-      // Formato padrão do banco: AAAA-MM-DD
-      if(/^\d{4}-\d{2}-\d{2}$/.test(text)){
 
-        const [year,month,day]=text
-          .split("-")
-          .map(Number);
+function formatPhone(value) {
 
-        value=new Date(
-          year,
-          month-1,
-          day,
-          12,
-          0,
-          0
-        );
+  const number =
+    cleanPhone(value);
 
-      }else{
 
-        value=new Date(text);
+  if (
+    number.length === 11
+  ) {
 
-      }
+    return (
+      `(${number.slice(0, 2)}) ` +
+      `${number.slice(2, 7)}-` +
+      `${number.slice(7)}`
+    );
 
-    }
+  }
 
-    if(
-      Number.isNaN(
-        value.getTime()
+
+  if (
+    number.length === 10
+  ) {
+
+    return (
+      `(${number.slice(0, 2)}) ` +
+      `${number.slice(2, 6)}-` +
+      `${number.slice(6)}`
+    );
+
+  }
+
+
+  return number;
+
+}
+
+
+/* ============================================================
+   CPF / CNPJ
+   ============================================================ */
+
+function onlyNumbers(value) {
+
+  return String(value || "")
+    .replace(/\D/g, "");
+
+}
+
+
+function formatDocument(value) {
+
+  let number =
+    onlyNumbers(value)
+      .slice(0, 14);
+
+
+  /*
+    CPF
+  */
+
+  if (
+    number.length <= 11
+  ) {
+
+    number =
+      number.slice(0, 11);
+
+
+    return number
+      .replace(
+        /(\d{3})(\d)/,
+        "$1.$2"
       )
-    ){
+      .replace(
+        /(\d{3})(\d)/,
+        "$1.$2"
+      )
+      .replace(
+        /(\d{3})(\d{1,2})$/,
+        "$1-$2"
+      );
+
+  }
+
+
+  /*
+    CNPJ
+  */
+
+  return number
+    .replace(
+      /^(\d{2})(\d)/,
+      "$1.$2"
+    )
+    .replace(
+      /^(\d{2})\.(\d{3})(\d)/,
+      "$1.$2.$3"
+    )
+    .replace(
+      /\.(\d{3})(\d)/,
+      ".$1/$2"
+    )
+    .replace(
+      /(\d{4})(\d{1,2})$/,
+      "$1-$2"
+    );
+
+}
+
+
+/* ============================================================
+   ESCAPAR HTML
+   ============================================================ */
+
+const esc =
+  value =>
+    String(value ?? "")
+      .replace(
+        /[&<>"']/g,
+        character => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        })[character]
+      );
+
+
+/* ============================================================
+   DATAS
+   ============================================================ */
+
+const fmtDate =
+  date => {
+
+    if (!date) {
       return "—";
     }
 
+
     return new Intl.DateTimeFormat(
       "pt-BR"
-    ).format(value);
-
-  }catch(error){
-
-    console.warn(
-      "Data inválida encontrada:",
-      date
+    ).format(
+      new Date(
+        date + "T12:00:00"
+      )
     );
 
-    return "—";
-
-  }
-
-};
-
-const iso=date=>{
-  const value=new Date(date);
-
-  return new Date(
-    value.getTime()-
-    value.getTimezoneOffset()*60000
-  )
-    .toISOString()
-    .slice(0,10);
-};
-
-const daysUntil=date=>{
-  if(!date){
-    return 0;
-  }
-
-  const [year,month,day]=date
-    .split("-")
-    .map(Number);
-
-  const target=Date.UTC(
-    year,
-    month-1,
-    day
-  );
-
-  const now=new Date();
-
-  const current=Date.UTC(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate()
-  );
-
-  return Math.round(
-    (target-current)/86400000
-  );
-};
-
-const initials=name=>
-  (name||"?")
-    .split(" ")
-    .filter(Boolean)
-    .slice(0,2)
-    .map(item=>item[0])
-    .join("")
-    .toUpperCase();
+  };
 
 
-function validBrazilPhone(value){
+const iso =
+  date => {
 
-  const number=cleanPhone(value);
+    const value =
+      new Date(date);
 
-  if(
-    number.length!==10 &&
-    number.length!==11
-  ){
+
+    return new Date(
+      value.getTime() -
+      value.getTimezoneOffset() *
+      60000
+    )
+      .toISOString()
+      .slice(0, 10);
+
+  };
+
+
+const daysUntil =
+  date => {
+
+    if (!date) {
+      return 0;
+    }
+
+
+    const [
+      year,
+      month,
+      day
+    ] =
+      date
+        .split("-")
+        .map(Number);
+
+
+    const target =
+      Date.UTC(
+        year,
+        month - 1,
+        day
+      );
+
+
+    const now =
+      new Date();
+
+
+    const current =
+      Date.UTC(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+      );
+
+
+    return Math.round(
+      (
+        target -
+        current
+      ) /
+      86400000
+    );
+
+  };
+
+
+/* ============================================================
+   FILTRO DE VIGÊNCIA
+   ============================================================ */
+
+function inDateRange(
+  policy,
+  start,
+  end
+) {
+
+  /*
+    Data inicial selecionada:
+    início da apólice precisa ser
+    igual ou posterior.
+  */
+
+  if (
+    start &&
+    (
+      !policy.startDate ||
+      policy.startDate < start
+    )
+  ) {
     return false;
   }
 
-  if(
-    /^(\d)\1+$/.test(number)
-  ){
+
+  /*
+    Data final selecionada:
+    fim da apólice precisa ser
+    igual ou anterior.
+  */
+
+  if (
+    end &&
+    (
+      !policy.endDate ||
+      policy.endDate > end
+    )
+  ) {
     return false;
   }
 
-  if(
-    /^0/.test(number) ||
-    /^1/.test(number)
-  ){
-    return false;
-  }
 
-  return /^[1-9]{2}9?[2-9]\d{7}$/.test(
-    number
-  );
+  return true;
+
 }
 
 
-function formatPhone(value){
+/* ============================================================
+   OUTROS UTILITÁRIOS
+   ============================================================ */
 
-  const number=cleanPhone(value);
-
-  if(number.length===11){
-
-    return `(${number.slice(0,2)}) ${number.slice(2,7)}-${number.slice(7)}`;
-
-  }
-
-  if(number.length===10){
-
-    return `(${number.slice(0,2)}) ${number.slice(2,6)}-${number.slice(6)}`;
-
-  }
-
-  return number;
-}
+const sleep =
+  milliseconds =>
+    new Promise(
+      resolve =>
+        setTimeout(
+          resolve,
+          milliseconds
+        )
+    );
 
 
-function clientById(id){
+const initials =
+  name =>
+    (name || "?")
+      .split(" ")
+      .slice(0, 2)
+      .map(
+        part =>
+          part[0]
+      )
+      .join("")
+      .toUpperCase();
+
+
+function clientById(id) {
 
   return state.clients.find(
-    client=>client.id===id
+    client =>
+      client.id === id
   );
 
 }
 
 
-function policyById(id){
+function policyById(id) {
 
   return state.policies.find(
-    policy=>policy.id===id
+    policy =>
+      policy.id === id
   );
 
 }
 
 
-function processClass(status){
+/* ============================================================
+   STATUS
+   ============================================================ */
 
-  if(status==="Ganho"){
+function processClass(status) {
+
+  if (
+    status === "Ganho"
+  ) {
     return "green";
   }
 
-  if(status==="Em andamento"){
+
+  if (
+    status === "Perdido"
+  ) {
+    return "red";
+  }
+
+
+  if (
+    status === "Em andamento"
+  ) {
     return "orange";
   }
 
+
   return "gray";
+
 }
 
 
-function expiryLabel(policy){
+/* ============================================================
+   VENCIMENTO
+   ============================================================ */
 
-  const days=daysUntil(
-    policy.endDate
-  );
+function expiryLabel(policy) {
 
-  if(days<0){
+  const days =
+    daysUntil(
+      policy.endDate
+    );
+
+
+  if (
+    days < 0
+  ) {
 
     return {
-      text:`Vencida há ${Math.abs(days)} dias`,
-      cls:"red"
+      text:
+        `Vencida há ${Math.abs(days)} dias`,
+      cls:
+        "red"
     };
 
   }
 
-  if(days===0){
+
+  if (
+    days === 0
+  ) {
 
     return {
-      text:"Vence hoje",
-      cls:"red"
+      text:
+        "Vence hoje",
+      cls:
+        "red"
     };
 
   }
 
-  if(days<=30){
+
+  if (
+    days <= 30
+  ) {
 
     return {
-      text:`Vence em ${days} dias`,
-      cls:"orange"
+      text:
+        `Vence em ${days} dias`,
+      cls:
+        "orange"
     };
 
   }
+
 
   return {
-    text:"Vigente",
-    cls:"green"
+    text:
+      "Vigente",
+    cls:
+      "green"
   };
+
 }
 
 
-function toast(message){
+/* ============================================================
+   TOAST
+   ============================================================ */
 
-  const element=$("#toast");
+function toast(message) {
 
-  if(!element){
+  const element =
+    $("#toast");
+
+
+  if (!element) {
     return;
   }
 
-  element.textContent=message;
+
+  element.textContent =
+    message;
+
 
   element.classList.add(
     "show"
   );
 
+
   clearTimeout(
     toast._timer
   );
 
-  toast._timer=setTimeout(
-    ()=>{
-      element.classList.remove(
-        "show"
-      );
-    },
-    3200
-  );
+
+  toast._timer =
+    setTimeout(
+      () =>
+        element.classList.remove(
+          "show"
+        ),
+      3200
+    );
+
 }
 
 
-function showLogin(){
+/* ============================================================
+   LOGIN / APP
+   ============================================================ */
+
+function showLogin() {
 
   $("#loginScreen")
-    .classList
+    ?.classList
     .remove("hidden");
 
+
   $("#app")
-    .classList
+    ?.classList
     .add("hidden");
 
 }
 
 
-function showApp(){
+function showApp() {
 
   $("#loginScreen")
-    .classList
+    ?.classList
     .add("hidden");
 
+
   $("#app")
-    .classList
+    ?.classList
     .remove("hidden");
 
 }
 
 
-function showRecovery(){
+/* ============================================================
+   CLIENTE — BANCO → SISTEMA
+   ============================================================ */
 
-  $("#loginForm")
-    .classList
-    .add("hidden");
-
-  $("#recoveryPanel")
-    .classList
-    .remove("hidden");
-
-  $("#loginScreen")
-    .classList
-    .remove("hidden");
-
-  $("#app")
-    .classList
-    .add("hidden");
-
-}
-
-
-function clientFromDb(row){
+function clientFromDb(row) {
 
   return {
-    id:row.id,
-    name:row.name,
-    birthDate:row.birth_date||"",
-    phone:row.phone||"",
-    document:row.document||"",
-    email:row.email||"",
-    notes:row.notes||"",
-    createdAt:row.created_at,
-    updatedAt:row.updated_at
+
+    id:
+      row.id,
+
+    name:
+      row.name,
+
+    birthDate:
+      row.birth_date || "",
+
+    phone:
+      row.phone || "",
+
+    document:
+      row.document || "",
+
+    email:
+      row.email || "",
+
+    notes:
+      row.notes || "",
+
+    createdAt:
+      row.created_at,
+
+    updatedAt:
+      row.updated_at
+
   };
 
 }
 
 
-function clientToDb(client){
+/* ============================================================
+   CLIENTE — SISTEMA → BANCO
+   ============================================================ */
+
+function clientToDb(client) {
 
   return {
-    id:client.id,
-    user_id:state.user.id,
-    name:client.name,
-    birth_date:client.birthDate||null,
-    phone:client.phone,
-    document:client.document||null,
-    email:client.email||null,
-    notes:client.notes||null,
+
+    id:
+      client.id,
+
+    user_id:
+      state.user.id,
+
+    name:
+      client.name,
+
+    /*
+      Data de nascimento agora
+      é OPCIONAL.
+    */
+
+    birth_date:
+      client.birthDate || null,
+
+    phone:
+      client.phone,
+
+    document:
+      client.document || null,
+
+    email:
+      client.email || null,
+
+    notes:
+      client.notes || null,
+
     created_at:
-      client.createdAt||
+      client.createdAt ||
       new Date().toISOString(),
+
     updated_at:
       new Date().toISOString()
+
   };
 
 }
 
 
-function policyFromDb(row){
+/* ============================================================
+   APÓLICE — BANCO → SISTEMA
+   ============================================================ */
+
+function policyFromDb(row) {
 
   return {
-    id:row.id,
-    clientId:row.client_id,
-    insurer:row.insurer,
-    type:row.type,
-    number:row.number||"",
-    startDate:row.start_date||"",
-    endDate:row.end_date||"",
-    status:row.status||"Pendente",
-    notes:row.notes||"",
 
-    alerts:{
-      30:row.alert_30!==false,
-      15:row.alert_15!==false,
-      7:row.alert_7!==false,
-      1:row.alert_1!==false,
+    id:
+      row.id,
+
+    clientId:
+      row.client_id,
+
+    insurer:
+      row.insurer,
+
+    type:
+      row.type,
+
+    number:
+      row.number || "",
+
+    startDate:
+      row.start_date || "",
+
+    endDate:
+      row.end_date || "",
+
+    status:
+      row.status || "Pendente",
+
+    notes:
+      row.notes || "",
+
+
+    /*
+      NOVO:
+      feedback comercial separado
+      das observações da apólice.
+    */
+
+    feedback:
+      row.feedback || "",
+
+    feedbackUpdatedAt:
+      row.feedback_updated_at ||
+      null,
+
+
+    alerts: {
+
+      30:
+        row.alert_30 !== false,
+
+      15:
+        row.alert_15 !== false,
+
+      7:
+        row.alert_7 !== false,
+
+      1:
+        row.alert_1 !== false,
+
       expired:
-        row.alert_expired!==false
+        row.alert_expired !== false
+
     },
 
-    pdfPath:row.pdf_path||null,
-    pdfId:row.pdf_path||null,
+
+    pdfPath:
+      row.pdf_path || null,
+
+    pdfId:
+      row.pdf_path || null,
 
     renewedFrom:
-      row.renewed_from||null,
+      row.renewed_from || null,
 
-    createdAt:row.created_at,
-    updatedAt:row.updated_at
+    createdAt:
+      row.created_at,
+
+    updatedAt:
+      row.updated_at
+
   };
 
 }
 
 
-function policyToDb(policy){
+/* ============================================================
+   APÓLICE — SISTEMA → BANCO
+   ============================================================ */
+
+function policyToDb(policy) {
 
   return {
-    id:policy.id,
-    user_id:state.user.id,
-    client_id:policy.clientId,
-    insurer:policy.insurer,
-    type:policy.type,
-    number:policy.number||null,
+
+    id:
+      policy.id,
+
+    user_id:
+      state.user.id,
+
+    client_id:
+      policy.clientId,
+
+    insurer:
+      policy.insurer,
+
+    type:
+      policy.type,
+
+    number:
+      policy.number || null,
+
     start_date:
-      policy.startDate||null,
+      policy.startDate || null,
+
     end_date:
-      policy.endDate||null,
+      policy.endDate || null,
+
     status:
-      policy.status||"Pendente",
+      policy.status ||
+      "Pendente",
+
     notes:
-      policy.notes||null,
+      policy.notes || null,
+
+
+    /*
+      NOVO FEEDBACK
+    */
+
+    feedback:
+      policy.feedback || null,
+
+    feedback_updated_at:
+      policy.feedbackUpdatedAt ||
+      null,
+
 
     alert_30:
-      policy.alerts?.[30]!==false,
+      policy.alerts?.[30] !== false,
 
     alert_15:
-      policy.alerts?.[15]!==false,
+      policy.alerts?.[15] !== false,
 
     alert_7:
-      policy.alerts?.[7]!==false,
+      policy.alerts?.[7] !== false,
 
     alert_1:
-      policy.alerts?.[1]!==false,
+      policy.alerts?.[1] !== false,
 
     alert_expired:
-      policy.alerts?.expired!==false,
+      policy.alerts?.expired !== false,
 
     pdf_path:
-      policy.pdfPath||null,
+      policy.pdfPath || null,
 
     renewed_from:
-      policy.renewedFrom||null,
+      policy.renewedFrom || null,
 
     created_at:
-      policy.createdAt||
+      policy.createdAt ||
       new Date().toISOString(),
 
     updated_at:
       new Date().toISOString()
+
   };
 
 }
 
 
-function eventFromDb(row){
+/* ============================================================
+   EVENTOS — BANCO → SISTEMA
+   ============================================================ */
+
+function eventFromDb(row) {
 
   return {
-    id:row.id,
-    policyId:row.policy_id,
-    type:row.type||"",
-    message:row.message,
-    date:row.created_at
+
+    id:
+      row.id,
+
+    policyId:
+      row.policy_id,
+
+    type:
+      row.type || "",
+
+    message:
+      row.message,
+
+    date:
+      row.created_at
+
   };
 
 }
 
+
+/* ============================================================
+   ADICIONAR EVENTO
+   ============================================================ */
 
 async function addEvent(
   policyId,
   type,
   message
-){
+) {
 
-  const row={
-    id:uid(),
-    user_id:state.user.id,
-    policy_id:policyId,
+  const row = {
+
+    id:
+      uid(),
+
+    user_id:
+      state.user.id,
+
+    policy_id:
+      policyId,
+
     type,
+
     message,
+
     created_at:
       new Date().toISOString()
+
   };
+
 
   const {
     data,
     error
-  }=await sb
-    .from("events")
-    .insert(row)
-    .select()
-    .single();
+  } =
+    await sb
+      .from("events")
+      .insert(row)
+      .select()
+      .single();
 
-  if(error){
+
+  if (error) {
     throw error;
   }
 
-  const event=
+
+  const event =
     eventFromDb(data);
 
-  state.events.push(event);
+
+  state.events.push(
+    event
+  );
+
 
   return event;
+
 }
 
 
-async function loadCloudData(){
+/* ============================================================
+   CACHE LOCAL DE SEGURANÇA
+   ============================================================ */
 
-  if(!state.user){
+function cacheKey() {
+
+  if (
+    !state.user?.id
+  ) {
+    return null;
+  }
+
+
+  return (
+    "savaCache_" +
+    state.user.id
+  );
+
+}
+
+
+function saveLocalCache() {
+
+  try {
+
+    const key =
+      cacheKey();
+
+
+    if (!key) {
+      return;
+    }
+
+
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+
+        userId:
+          state.user.id,
+
+        clients:
+          state.clients,
+
+        policies:
+          state.policies,
+
+        events:
+          state.events,
+
+        settings:
+          state.settings,
+
+        savedAt:
+          new Date()
+            .toISOString()
+
+      })
+    );
+
+
+  } catch (error) {
+
+    console.warn(
+      "Não foi possível salvar o cache local.",
+      error
+    );
+
+  }
+
+}
+
+
+function loadLocalCache() {
+
+  try {
+
+    const key =
+      cacheKey();
+
+
+    if (!key) {
+      return false;
+    }
+
+
+    const raw =
+      localStorage.getItem(
+        key
+      );
+
+
+    if (!raw) {
+      return false;
+    }
+
+
+    const cache =
+      JSON.parse(raw);
+
+
+    /*
+      Não mistura cache
+      entre usuários diferentes.
+    */
+
+    if (
+      cache.userId &&
+      cache.userId !==
+      state.user.id
+    ) {
+      return false;
+    }
+
+
+    if (
+      !Array.isArray(
+        cache.clients
+      ) ||
+      !Array.isArray(
+        cache.policies
+      )
+    ) {
+      return false;
+    }
+
+
+    state.clients =
+      cache.clients || [];
+
+
+    state.policies =
+      cache.policies || [];
+
+
+    state.events =
+      cache.events || [];
+
+
+    state.settings =
+      cache.settings || {
+        endpoint: "",
+        managerEmail: "",
+        language: "pt-BR"
+      };
+
+
+    return true;
+
+
+  } catch (error) {
+
+    console.warn(
+      "Cache local inválido.",
+      error
+    );
+
+
+    return false;
+
+  }
+
+}
+
+
+/* ============================================================
+   CARREGAR DADOS DO SUPABASE
+   COM RETENTATIVA E PROTEÇÃO CONTRA TELA ZERADA
+   ============================================================ */
+
+async function loadCloudData() {
+
+  if (
+    !state.user
+  ) {
     return;
   }
 
-  try{
 
-    const [
-      clientsResult,
-      policiesResult,
-      eventsResult,
-      settingsResult
-    ]=await Promise.all([
+  let lastError =
+    null;
 
-      sb
-        .from("clients")
-        .select("*")
-        .order("name"),
 
-      sb
-        .from("policies")
-        .select("*")
-        .order("end_date"),
+  /*
+    Três tentativas.
+    Não apagamos o state antes
+    de confirmar que tudo carregou.
+  */
 
-      sb
-        .from("events")
-        .select("*")
-        .order(
-          "created_at",
-          {ascending:false}
-        ),
+  for (
+    let attempt = 1;
+    attempt <= 3;
+    attempt++
+  ) {
 
-      sb
-        .from("settings")
-        .select("*")
-        .maybeSingle()
+    try {
 
-    ]);
-
-    for(
-      const result of [
+      const [
         clientsResult,
         policiesResult,
         eventsResult,
         settingsResult
-      ]
-    ){
+      ] =
+        await Promise.all([
 
-      if(result.error){
-        throw result.error;
+          sb
+            .from("clients")
+            .select("*")
+            .order("name"),
+
+          sb
+            .from("policies")
+            .select("*")
+            .order("end_date"),
+
+          sb
+            .from("events")
+            .select("*")
+            .order(
+              "created_at",
+              {
+                ascending: false
+              }
+            ),
+
+          sb
+            .from("settings")
+            .select("*")
+            .maybeSingle()
+
+        ]);
+
+
+      const results = [
+        clientsResult,
+        policiesResult,
+        eventsResult,
+        settingsResult
+      ];
+
+
+      for (
+        const result
+        of results
+      ) {
+
+        if (
+          result.error
+        ) {
+          throw result.error;
+        }
+
+      }
+
+
+      /*
+        Só cria os novos dados
+        depois que TODAS as consultas
+        deram certo.
+      */
+
+      const newClients =
+        (
+          clientsResult.data ||
+          []
+        )
+          .map(
+            clientFromDb
+          );
+
+
+      const newPolicies =
+        (
+          policiesResult.data ||
+          []
+        )
+          .map(
+            policyFromDb
+          );
+
+
+      const newEvents =
+        (
+          eventsResult.data ||
+          []
+        )
+          .map(
+            eventFromDb
+          );
+
+
+      const newSettings =
+        settingsResult.data
+
+          ? {
+
+              endpoint:
+                settingsResult
+                  .data
+                  .email_endpoint ||
+                "",
+
+              managerEmail:
+                settingsResult
+                  .data
+                  .manager_email ||
+                "",
+
+              language:
+                settingsResult
+                  .data
+                  .language ||
+                "pt-BR"
+
+            }
+
+          : {
+
+              endpoint: "",
+              managerEmail: "",
+              language: "pt-BR"
+
+            };
+
+
+      /*
+        Agora sim substitui o state.
+      */
+
+      state.clients =
+        newClients;
+
+
+      state.policies =
+        newPolicies;
+
+
+      state.events =
+        newEvents;
+
+
+      state.settings =
+        newSettings;
+
+
+      saveLocalCache();
+
+
+      renderAll();
+
+
+      return true;
+
+
+    } catch (error) {
+
+      lastError =
+        error;
+
+
+      console.warn(
+        `Falha Supabase ${attempt}/3`,
+        error
+      );
+
+
+      if (
+        attempt < 3
+      ) {
+
+        await sleep(
+          attempt === 1
+            ? 500
+            : 1200
+        );
+
       }
 
     }
 
-    state.clients=
-      (clientsResult.data||[])
-        .map(clientFromDb);
+  }
 
-    state.policies=
-      (policiesResult.data||[])
-        .map(policyFromDb);
 
-    state.events=
-      (eventsResult.data||[])
-        .map(eventFromDb);
+  console.error(
+    "Erro ao carregar Supabase:",
+    lastError
+  );
 
-    state.settings=
-      settingsResult.data
-      ?{
-        endpoint:
-          settingsResult
-            .data
-            .email_endpoint||"",
 
-        managerEmail:
-          settingsResult
-            .data
-            .manager_email||"",
+  /*
+    IMPORTANTE:
+    Se já existem dados na tela,
+    NÃO zeramos.
+  */
 
-        language:
-          settingsResult
-            .data
-            .language||
-          "pt-BR"
-      }
-      :{
-        endpoint:"",
-        managerEmail:"",
-        language:"pt-BR"
-      };
+  if (
+    state.clients.length ||
+    state.policies.length
+  ) {
+
+    toast(
+      "Conexão instável. Mantendo os dados já carregados."
+    );
+
+
+    return false;
+
+  }
+
+
+  /*
+    Se abriu o sistema sem conseguir
+    acessar a nuvem, tenta a última
+    cópia salva neste dispositivo.
+  */
+
+  if (
+    loadLocalCache()
+  ) {
 
     renderAll();
 
-  }catch(error){
-
-    console.error(error);
 
     toast(
-      "Não foi possível carregar os dados do Supabase."
+      "Conexão instável. Exibindo os últimos dados salvos."
     );
 
+
+    return false;
+
   }
+
+
+  toast(
+    "Não foi possível carregar os dados do Supabase. Tente novamente em instantes."
+  );
+
+
+  return false;
 
 }
 
 
-async function saveSettings(){
+/* ============================================================
+   SALVAR CONFIGURAÇÕES
+   ============================================================ */
 
-  const payload={
+async function saveSettings() {
+
+  const payload = {
+
     user_id:
       state.user.id,
 
     manager_email:
-      state.settings.managerEmail||
+      state.settings
+        .managerEmail ||
       null,
 
     email_endpoint:
-      state.settings.endpoint||
+      state.settings
+        .endpoint ||
       null,
 
     language:
-      state.settings.language||
+      state.settings
+        .language ||
       "pt-BR",
 
     updated_at:
-      new Date().toISOString()
+      new Date()
+        .toISOString()
+
   };
+
 
   const {
     error
-  }=await sb
-    .from("settings")
-    .upsert(
-      payload,
-      {
-        onConflict:"user_id"
-      }
-    );
+  } =
+    await sb
+      .from("settings")
+      .upsert(
+        payload,
+        {
+          onConflict:
+            "user_id"
+        }
+      );
 
-  if(error){
+
+  if (
+    error
+  ) {
     throw error;
   }
 
 }
 
 
-function populateSelects(){
+/* ============================================================
+   PREENCHER SELECTS
+   ============================================================ */
 
-  const typeFilter=
+function populateSelects() {
+
+  const type =
     $("#typeFilter");
 
-  const insurerFilter=
+  const insurer =
     $("#insurerFilter");
 
-  const policyType=
+  const policyType =
     $("#policyType");
 
-  const policyInsurer=
+  const policyInsurer =
     $("#policyInsurer");
 
-  const policyClient=
+  const policyClient =
     $("#policyClient");
 
-  if(
-    !typeFilter ||
-    !insurerFilter ||
+
+  if (
+    !type ||
+    !insurer ||
     !policyType ||
     !policyInsurer ||
     !policyClient
-  ){
+  ) {
     return;
   }
 
-  policyType.innerHTML=
+
+  policyType.innerHTML =
     TYPES
       .map(
-        item=>
+        item =>
           `<option>${esc(item)}</option>`
       )
       .join("");
 
-  policyInsurer.innerHTML=
+
+  policyInsurer.innerHTML =
     INSURERS
       .map(
-        item=>
+        item =>
           `<option>${esc(item)}</option>`
       )
       .join("");
 
-  typeFilter.innerHTML=
-    `<option value="all">Todos os tipos</option>`+
+
+  type.innerHTML =
+    `
+      <option value="all">
+        Todos os tipos
+      </option>
+    ` +
     TYPES
       .map(
-        item=>
+        item =>
           `<option>${esc(item)}</option>`
       )
       .join("");
 
-  insurerFilter.innerHTML=
-    `<option value="all">Todas as seguradoras</option>`+
+
+  insurer.innerHTML =
+    `
+      <option value="all">
+        Todas as seguradoras
+      </option>
+    ` +
     INSURERS
       .map(
-        item=>
+        item =>
           `<option>${esc(item)}</option>`
       )
       .join("");
 
-  policyClient.innerHTML=
-    `<option value="">Selecione...</option>`+
+
+  policyClient.innerHTML =
+    `
+      <option value="">
+        Selecione...
+      </option>
+    ` +
     [...state.clients]
       .sort(
-        (a,b)=>
+        (a, b) =>
           a.name.localeCompare(
             b.name
           )
       )
       .map(
-        client=>
-          `<option value="${client.id}">${esc(client.name)}</option>`
+        client =>
+          `
+            <option value="${client.id}">
+              ${esc(client.name)}
+            </option>
+          `
       )
       .join("");
 
 }
 
 
-function renderAll(){
+/* ============================================================
+   RENDERIZAR SISTEMA
+   ============================================================ */
 
-  if(!state.user){
+function renderAll() {
+
+  if (
+    !state.user
+  ) {
     return;
   }
+
 
   populateSelects();
 
@@ -843,600 +1652,948 @@ function renderAll(){
 
   checkAutomation();
 
-} function renderDashboard(){
-
-  const total=state.policies.length;
-
-  const e7=state.policies.filter(
-    p=>{
-      const d=daysUntil(p.endDate);
-      return d>=0 && d<=7;
-    }
-  ).length;
-
-  const expired=state.policies.filter(
-    p=>daysUntil(p.endDate)<0
-  ).length;
-
-  const won=state.policies.filter(
-    p=>p.status==="Ganho"
-  ).length;
+}
 
 
-  $("#statTotal").textContent=total;
-  $("#stat7").textContent=e7;
-  $("#statExpired").textContent=expired;
-  $("#statWon").textContent=won;
 
 
-  const upcoming=[...state.policies]
-    .sort(
-      (a,b)=>
-        new Date(a.endDate)-
-        new Date(b.endDate)
-    )
-    .filter(
-      p=>{
-        const d=daysUntil(p.endDate);
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
 
-        return d>=0 && d<=30;
-      }
-    )
-    .slice(0,8);
+function renderDashboard() {
+
+  const total =
+    state.policies.length;
 
 
-  $("#upcomingList").innerHTML=
-    upcoming.length
-    ?upcoming.map(
-      p=>{
+  const next7 =
+    state.policies.filter(
+      policy => {
 
-        const c=clientById(
-          p.clientId
+        const days =
+          daysUntil(
+            policy.endDate
+          );
+
+        return (
+          days >= 0 &&
+          days <= 7
         );
 
-        const e=expiryLabel(p);
-
-        return `
-          <div class="upcoming-item">
-
-            <div>
-
-              <div class="name">
-                ${esc(c?.name||"Cliente")}
-              </div>
-
-              <small>
-                ${esc(p.type)} ·
-                ${esc(p.insurer)}
-              </small>
-
-            </div>
-
-            <div>
-
-              <small>
-                Vigência
-              </small>
-
-              <b>
-                ${fmtDate(p.startDate)}
-                →
-                ${fmtDate(p.endDate)}
-              </b>
-
-            </div>
-
-            <div>
-              <span class="pill ${e.cls}">
-                ${e.text}
-              </span>
-            </div>
-
-            <div class="actions">
-
-              <button
-                class="action-btn"
-                onclick="openDetails('${p.id}')"
-              >
-                Abrir
-              </button>
-
-            </div>
-
-          </div>
-        `;
       }
-    ).join("")
-    :`
-      <div class="empty">
-        Nenhuma apólice vencendo
-        nos próximos 30 dias.
-      </div>
-    `;
+    ).length;
 
 
-  const counts={
+  const expired =
+    state.policies.filter(
+      policy =>
+        daysUntil(
+          policy.endDate
+        ) < 0
+    ).length;
+
+
+  const won =
+    state.policies.filter(
+      policy =>
+        policy.status ===
+        "Ganho"
+    ).length;
+
+
+  const lost =
+    state.policies.filter(
+      policy =>
+        policy.status ===
+        "Perdido"
+    ).length;
+
+
+  if ($("#statTotal")) {
+    $("#statTotal").textContent =
+      total;
+  }
+
+
+  if ($("#stat7")) {
+    $("#stat7").textContent =
+      next7;
+  }
+
+
+  if ($("#statExpired")) {
+    $("#statExpired").textContent =
+      expired;
+  }
+
+
+  if ($("#statWon")) {
+    $("#statWon").textContent =
+      won;
+  }
+
+
+  /* ==========================================================
+     PRÓXIMOS VENCIMENTOS
+     ========================================================== */
+
+  const upcoming =
+    [...state.policies]
+      .filter(
+        policy =>
+          daysUntil(
+            policy.endDate
+          ) <= 30
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.endDate) -
+          new Date(b.endDate)
+      )
+      .slice(
+        0,
+        8
+      );
+
+
+  const upcomingList =
+    $("#upcomingList");
+
+
+  if (upcomingList) {
+
+    upcomingList.innerHTML =
+      upcoming.length
+
+        ? upcoming
+            .map(
+              policy => {
+
+                const client =
+                  clientById(
+                    policy.clientId
+                  );
+
+
+                const expiry =
+                  expiryLabel(
+                    policy
+                  );
+
+
+                return `
+                  <div class="upcoming-item">
+
+                    <div>
+
+                      <div class="name">
+                        ${esc(
+                          client?.name ||
+                          "Cliente"
+                        )}
+                      </div>
+
+                      <small>
+                        ${esc(policy.type)}
+                        ·
+                        ${esc(policy.insurer)}
+                      </small>
+
+                    </div>
+
+
+                    <div>
+
+                      <small>
+                        Vigência
+                      </small>
+
+                      <b>
+                        ${fmtDate(
+                          policy.startDate
+                        )}
+                        →
+                        ${fmtDate(
+                          policy.endDate
+                        )}
+                      </b>
+
+                    </div>
+
+
+                    <div>
+
+                      <span
+                        class="pill ${expiry.cls}"
+                      >
+                        ${esc(
+                          expiry.text
+                        )}
+                      </span>
+
+                    </div>
+
+
+                    <div class="actions">
+
+                      <button
+                        class="action-btn"
+                        onclick="openDetails('${policy.id}')"
+                      >
+                        Abrir
+                      </button>
+
+                    </div>
+
+                  </div>
+                `;
+
+              }
+            )
+            .join("")
+
+        : `
+            <div class="empty">
+              Nenhuma apólice vencendo
+              nos próximos 30 dias.
+            </div>
+          `;
+
+  }
+
+
+  /* ==========================================================
+     PROCESSOS
+     AGORA COM PERDIDO
+     ========================================================== */
+
+  const counts = {
 
     Pendente:
       state.policies.filter(
-        p=>p.status==="Pendente"
+        policy =>
+          policy.status ===
+          "Pendente"
       ).length,
+
 
     "Em andamento":
       state.policies.filter(
-        p=>p.status==="Em andamento"
+        policy =>
+          policy.status ===
+          "Em andamento"
       ).length,
 
-    Ganho:won
+
+    Ganho:
+      won,
+
+
+    Perdido:
+      lost
 
   };
 
 
-  const max=Math.max(
-    total,
-    1
-  );
+  const max =
+    Math.max(
+      total,
+      1
+    );
 
 
-  $("#processSummary").innerHTML=
-    Object.entries(counts)
-      .map(
-        ([status,value])=>{
+  const processSummary =
+    $("#processSummary");
 
-          const cls=
-            status==="Pendente"
-              ?"pendente"
-              :status==="Ganho"
-                ?"ganho"
-                :"andamento";
 
-          return `
-            <div class="process-line">
+  if (processSummary) {
 
-              <div class="line-top">
+    processSummary.innerHTML =
+      Object
+        .entries(counts)
+        .map(
+          ([status, value]) => {
 
-                <span>
-                  ${status}
-                </span>
+            let cssClass =
+              "pendente";
 
-                <b>
-                  ${value}
-                </b>
+
+            if (
+              status ===
+              "Em andamento"
+            ) {
+              cssClass =
+                "andamento";
+            }
+
+
+            if (
+              status ===
+              "Ganho"
+            ) {
+              cssClass =
+                "ganho";
+            }
+
+
+            if (
+              status ===
+              "Perdido"
+            ) {
+              cssClass =
+                "perdido";
+            }
+
+
+            return `
+              <div class="process-line">
+
+                <div class="line-top">
+
+                  <span>
+                    ${esc(status)}
+                  </span>
+
+                  <b>
+                    ${value}
+                  </b>
+
+                </div>
+
+
+                <div
+                  class="bar ${cssClass}"
+                >
+
+                  <i
+                    style="
+                      width:
+                      ${
+                        (
+                          value /
+                          max
+                        ) *
+                        100
+                      }%
+                    "
+                  ></i>
+
+                </div>
 
               </div>
+            `;
 
-              <div class="bar ${cls}">
+          }
+        )
+        .join("");
 
-                <i
-                  style="width:${value/max*100}%"
-                ></i>
-
-              </div>
-
-            </div>
-          `;
-        }
-      )
-      .join("");
+  }
 
 
-  const insurers={};
+  /* ==========================================================
+     SEGURADORAS
+     ========================================================== */
+
+  const insurerCounts =
+    {};
 
 
   state.policies.forEach(
-    p=>{
+    policy => {
 
-      insurers[p.insurer]=
-        (insurers[p.insurer]||0)+1;
+      insurerCounts[
+        policy.insurer
+      ] =
+        (
+          insurerCounts[
+            policy.insurer
+          ] ||
+          0
+        ) +
+        1;
 
     }
   );
 
 
-  const top=Object.entries(
-    insurers
-  )
-    .sort(
-      (a,b)=>b[1]-a[1]
-    )
-    .slice(0,10);
+  const topInsurers =
+    Object
+      .entries(
+        insurerCounts
+      )
+      .sort(
+        (a, b) =>
+          b[1] -
+          a[1]
+      )
+      .slice(
+        0,
+        10
+      );
 
 
-  $("#insurerSummary").innerHTML=
-    top.length
-    ?top.map(
-      ([name,total])=>`
+  const insurerSummary =
+    $("#insurerSummary");
 
-        <div class="insurer-chip">
 
-          <strong>
-            ${total}
-          </strong>
+  if (insurerSummary) {
 
-          <span>
-            ${esc(name)}
-          </span>
+    insurerSummary.innerHTML =
+      topInsurers.length
 
-        </div>
+        ? topInsurers
+            .map(
+              ([name, amount]) => `
+                <div class="insurer-chip">
 
-      `
-    ).join("")
-    :`
-      <div class="empty">
-        Cadastre uma apólice
-        para começar.
-      </div>
-    `;
+                  <strong>
+                    ${amount}
+                  </strong>
+
+                  <span>
+                    ${esc(name)}
+                  </span>
+
+                </div>
+              `
+            )
+            .join("")
+
+        : `
+            <div class="empty">
+              Cadastre uma apólice
+              para começar.
+            </div>
+          `;
+
+  }
 
 }
 
 
+/* ============================================================
+   FILTRO DE CLIENTE POR VIGÊNCIA
+   ============================================================ */
 
-function renderClients(){
+function clientMatchesDateFilter(
+  client,
+  start,
+  end
+) {
 
-  const search=(
-    $("#clientSearch")?.value||
-    ""
-  )
-    .trim()
-    .toLowerCase();
-
-
-  const filter=
-    $("#clientFilter")?.value||
-    "all";
-
-
-  const clients=
-    state.clients.filter(
-      client=>{
-
-        const policies=
-          state.policies.filter(
-            policy=>
-              policy.clientId===
-              client.id
-          );
+  if (
+    !start &&
+    !end
+  ) {
+    return true;
+  }
 
 
-        if(
-          filter==="withPolicies" &&
-          !policies.length
-        ){
-          return false;
-        }
-
-
-        if(
-          filter==="withoutPolicies" &&
-          policies.length
-        ){
-          return false;
-        }
-
-
-        const haystack=[
-          client.name,
-          client.document,
-          client.phone,
-          client.email
-        ]
-          .join(" ")
-          .toLowerCase();
-
-
-        return haystack.includes(
-          search
-        );
-
-      }
+  const policies =
+    state.policies.filter(
+      policy =>
+        policy.clientId ===
+        client.id
     );
 
 
-  const grid=$("#clientsGrid");
+  return policies.some(
+    policy =>
+      inDateRange(
+        policy,
+        start,
+        end
+      )
+  );
+
+}
 
 
-  if(!grid){
+/* ============================================================
+   CLIENTES
+   ============================================================ */
+
+function renderClients() {
+
+  const search =
+    (
+      $("#clientSearch")
+        ?.value ||
+      ""
+    )
+      .toLowerCase()
+      .trim();
+
+
+  const filter =
+    $("#clientFilter")
+      ?.value ||
+    "all";
+
+
+  /*
+    Esses dois campos serão adicionados
+    no INDEX.HTML final.
+  */
+
+  const startDate =
+    $("#clientStartDateFilter")
+      ?.value ||
+    "";
+
+
+  const endDate =
+    $("#clientEndDateFilter")
+      ?.value ||
+    "";
+
+
+  const clients =
+    state.clients
+      .filter(
+        client => {
+
+          const policies =
+            state.policies.filter(
+              policy =>
+                policy.clientId ===
+                client.id
+            );
+
+
+          if (
+            filter ===
+              "withPolicies" &&
+            !policies.length
+          ) {
+            return false;
+          }
+
+
+          if (
+            filter ===
+              "withoutPolicies" &&
+            policies.length
+          ) {
+            return false;
+          }
+
+
+          if (
+            !clientMatchesDateFilter(
+              client,
+              startDate,
+              endDate
+            )
+          ) {
+            return false;
+          }
+
+
+          const searchable =
+            [
+              client.name,
+              client.document,
+              client.phone,
+              client.email
+            ]
+              .join(" ")
+              .toLowerCase();
+
+
+          return (
+            !search ||
+            searchable.includes(
+              search
+            )
+          );
+
+        }
+      );
+
+
+  const grid =
+    $("#clientsGrid");
+
+
+  if (!grid) {
     return;
   }
 
 
-  grid.innerHTML=
+  grid.innerHTML =
     clients.length
-    ?clients.map(
-      client=>{
 
-        const policies=
-          state.policies.filter(
-            policy=>
-              policy.clientId===
-              client.id
-          );
+      ? clients
+          .map(
+            client => {
 
-
-        return `
-          <article class="client-card">
-
-            <div class="client-card-head">
-
-              <div class="client-cell">
-
-                <div class="avatar">
-                  ${initials(client.name)}
-                </div>
-
-                <div>
-
-                  <h4>
-                    ${esc(client.name)}
-                  </h4>
-
-                  <small>
-                    ${fmtDate(
-                      client.birthDate
-                    )}
-                  </small>
-
-                </div>
-
-              </div>
+              const policies =
+                state.policies.filter(
+                  policy =>
+                    policy.clientId ===
+                    client.id
+                );
 
 
-              <span class="policy-count">
+              return `
+                <article class="client-card">
 
-                ${policies.length}
-                apólice${policies.length===1?"":"s"}
+                  <div class="client-card-head">
 
-              </span>
+                    <div class="client-cell">
 
-            </div>
-
-
-            <div class="client-meta">
-
-              <span>
-                ☎
-                ${
-                  esc(
-                    formatPhone(
-                      client.phone
-                    )||
-                    "Sem telefone"
-                  )
-                }
-              </span>
-
-              <span>
-                ✉
-                ${
-                  esc(
-                    client.email||
-                    "Sem e-mail"
-                  )
-                }
-              </span>
-
-              <span>
-                ▣
-                ${
-                  esc(
-                    client.document||
-                    "Documento não informado"
-                  )
-                }
-              </span>
-
-            </div>
+                      <div class="avatar">
+                        ${initials(
+                          client.name
+                        )}
+                      </div>
 
 
-            <div class="client-policies">
+                      <div>
 
-              ${
-                policies
-                  .slice(0,5)
-                  .map(
-                    policy=>`
-
-                      <div class="mini-policy">
-
-                        <span>
-                          ${esc(policy.type)}
-                          ·
-                          ${esc(policy.insurer)}
-                        </span>
-
-                        <b>
-                          ${fmtDate(
-                            policy.endDate
+                        <h4>
+                          ${esc(
+                            client.name
                           )}
-                        </b>
+                        </h4>
+
+                        <small>
+                          ${
+                            client.birthDate
+                              ? fmtDate(
+                                  client.birthDate
+                                )
+                              : "Nascimento não informado"
+                          }
+                        </small>
 
                       </div>
 
-                    `
-                  )
-                  .join("")
-              }
+                    </div>
 
 
-              ${
-                policies.length>5
-                ?`
-                  <small>
-                    + ${policies.length-5}
-                    apólice(s)
-                  </small>
-                `
-                :""
-              }
+                    <span class="policy-count">
 
-            </div>
+                      ${policies.length}
 
+                      apólice${
+                        policies.length === 1
+                          ? ""
+                          : "s"
+                      }
 
-            <div
-              class="actions"
-              style="margin-top:13px"
-            >
+                    </span>
 
-              <button
-                class="action-btn"
-                onclick="openClient('${client.id}')"
-              >
-                Editar
-              </button>
+                  </div>
 
 
-              <button
-                class="action-btn"
-                onclick="newPolicyFor('${client.id}')"
-              >
-                ＋ Apólice
-              </button>
+                  <div class="client-meta">
+
+                    <span>
+                      ☎
+                      ${
+                        esc(
+                          formatPhone(
+                            client.phone
+                          ) ||
+                          "Sem telefone"
+                        )
+                      }
+                    </span>
 
 
-              <button
-                class="action-btn"
-                style="
-                  color:#b42318;
-                  border-color:#fecdca;
-                  background:#fff5f5;
-                "
-                onclick="deleteClient('${client.id}')"
-              >
-                🗑 Excluir
-              </button>
+                    <span>
+                      ✉
+                      ${
+                        esc(
+                          client.email ||
+                          "Sem e-mail"
+                        )
+                      }
+                    </span>
 
-            </div>
 
-          </article>
+                    <span>
+                      ▣
+                      ${
+                        esc(
+                          client.document ||
+                          "Documento não informado"
+                        )
+                      }
+                    </span>
+
+                  </div>
+
+
+                  <div class="client-policies">
+
+                    ${
+                      policies
+                        .slice(
+                          0,
+                          5
+                        )
+                        .map(
+                          policy => `
+                            <div class="mini-policy">
+
+                              <span>
+                                ${esc(
+                                  policy.type
+                                )}
+                                ·
+                                ${esc(
+                                  policy.insurer
+                                )}
+                              </span>
+
+                              <b>
+                                ${fmtDate(
+                                  policy.endDate
+                                )}
+                              </b>
+
+                            </div>
+                          `
+                        )
+                        .join("")
+                    }
+
+
+                    ${
+                      policies.length > 5
+
+                        ? `
+                            <small>
+                              +
+                              ${
+                                policies.length -
+                                5
+                              }
+                              apólice(s)
+                            </small>
+                          `
+
+                        : ""
+                    }
+
+                  </div>
+
+
+                  <div
+                    class="actions"
+                    style="margin-top:13px"
+                  >
+
+                    <button
+                      class="action-btn"
+                      onclick="openClient('${client.id}')"
+                    >
+                      Editar
+                    </button>
+
+
+                    <button
+                      class="action-btn"
+                      onclick="newPolicyFor('${client.id}')"
+                    >
+                      ＋ Apólice
+                    </button>
+
+
+                    <button
+                      class="action-btn"
+                      style="
+                        color:#b42318;
+                        border-color:#fecdca;
+                        background:#fff5f5
+                      "
+                      onclick="deleteClient('${client.id}')"
+                    >
+                      🗑 Excluir
+                    </button>
+
+                  </div>
+
+                </article>
+              `;
+
+            }
+          )
+          .join("")
+
+      : `
+          <div class="empty">
+            Nenhum cliente encontrado.
+          </div>
         `;
-
-      }
-    ).join("")
-    :`
-      <div class="empty">
-        Nenhum cliente encontrado.
-      </div>
-    `;
 
 }
 
 
+/* ============================================================
+   APÓLICES
+   ============================================================ */
 
-function renderPolicies(){
+function renderPolicies() {
 
-  const search=(
-    $("#policySearch")?.value||
-    ""
-  )
-    .trim()
-    .toLowerCase();
+  const search =
+    (
+      $("#policySearch")
+        ?.value ||
+      ""
+    )
+      .toLowerCase()
+      .trim();
 
 
-  const statusFilter=
-    $("#statusFilter")?.value||
+  const statusFilter =
+    $("#statusFilter")
+      ?.value ||
     "all";
 
 
-  const expiryFilter=
-    $("#expiryFilter")?.value||
+  const expiryFilter =
+    $("#expiryFilter")
+      ?.value ||
     "all";
 
 
-  const typeFilter=
-    $("#typeFilter")?.value||
+  const typeFilter =
+    $("#typeFilter")
+      ?.value ||
     "all";
 
 
-  const insurerFilter=
-    $("#insurerFilter")?.value||
+  const insurerFilter =
+    $("#insurerFilter")
+      ?.value ||
     "all";
 
 
-  const policies=
+  /*
+    Novos filtros de vigência.
+    Serão adicionados no INDEX.HTML.
+  */
+
+  const startDate =
+    $("#policyStartDateFilter")
+      ?.value ||
+    "";
+
+
+  const endDate =
+    $("#policyEndDateFilter")
+      ?.value ||
+    "";
+
+
+  const policies =
     [...state.policies]
       .filter(
-        policy=>{
+        policy => {
 
-          const client=
+          const client =
             clientById(
               policy.clientId
             );
 
 
-          const haystack=[
-            client?.name,
-            policy.number,
-            policy.insurer,
-            policy.type
-          ]
-            .join(" ")
-            .toLowerCase();
+          const searchable =
+            [
+              client?.name,
+              policy.number,
+              policy.insurer,
+              policy.type,
+              policy.feedback
+            ]
+              .join(" ")
+              .toLowerCase();
 
 
-          if(
+          if (
             search &&
-            !haystack.includes(search)
-          ){
+            !searchable.includes(
+              search
+            )
+          ) {
             return false;
           }
 
 
-          if(
-            statusFilter!=="all" &&
-            policy.status!==statusFilter
-          ){
+          if (
+            statusFilter !==
+              "all" &&
+            policy.status !==
+              statusFilter
+          ) {
             return false;
           }
 
 
-          if(
-            typeFilter!=="all" &&
-            policy.type!==typeFilter
-          ){
+          if (
+            typeFilter !==
+              "all" &&
+            policy.type !==
+              typeFilter
+          ) {
             return false;
           }
 
 
-          if(
-            insurerFilter!=="all" &&
-            policy.insurer!==insurerFilter
-          ){
+          if (
+            insurerFilter !==
+              "all" &&
+            policy.insurer !==
+              insurerFilter
+          ) {
             return false;
           }
 
 
-          const d=
+          if (
+            !inDateRange(
+              policy,
+              startDate,
+              endDate
+            )
+          ) {
+            return false;
+          }
+
+
+          const days =
             daysUntil(
               policy.endDate
             );
 
 
-          if(
-            expiryFilter==="expired" &&
-            d>=0
-          ){
+          if (
+            expiryFilter ===
+              "expired" &&
+            days >= 0
+          ) {
             return false;
           }
 
 
-          if(
-            expiryFilter!=="all" &&
-            expiryFilter!=="expired"
-          ){
-
-            const limit=
-              Number(
-                expiryFilter
-              );
-
-
-            if(
-              !(d>=0 && d<=limit)
-            ){
-              return false;
-            }
-
+          if (
+            expiryFilter !==
+              "all" &&
+            expiryFilter !==
+              "expired" &&
+            !(
+              days >= 0 &&
+              days <=
+                Number(
+                  expiryFilter
+                )
+            )
+          ) {
+            return false;
           }
 
 
@@ -1445,180 +2602,214 @@ function renderPolicies(){
         }
       )
       .sort(
-        (a,b)=>
-          new Date(a.endDate)-
+        (a, b) =>
+          new Date(a.endDate) -
           new Date(b.endDate)
       );
 
 
-  const table=
+  const table =
     $("#policiesTable");
 
 
-  if(!table){
+  if (!table) {
     return;
   }
 
 
-  table.innerHTML=
+  table.innerHTML =
     policies.length
-    ?policies.map(
-      policy=>{
 
-        const client=
-          clientById(
-            policy.clientId
-          );
+      ? policies
+          .map(
+            policy => {
 
-
-        const expiry=
-          expiryLabel(
-            policy
-          );
+              const client =
+                clientById(
+                  policy.clientId
+                );
 
 
-        return `
+              const expiry =
+                expiryLabel(
+                  policy
+                );
+
+
+              return `
+                <tr>
+
+                  <td>
+
+                    <div class="client-cell">
+
+                      <div class="avatar">
+                        ${initials(
+                          client?.name
+                        )}
+                      </div>
+
+
+                      <div>
+
+                        <strong>
+                          ${esc(
+                            client?.name ||
+                            "Cliente"
+                          )}
+                        </strong>
+
+                        <small>
+                          ${
+                            esc(
+                              formatPhone(
+                                client?.phone
+                              ) ||
+                              ""
+                            )
+                          }
+                        </small>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <td>
+
+                    <b>
+                      ${esc(
+                        policy.type
+                      )}
+                    </b>
+
+                    <small
+                      style="
+                        display:block;
+                        color:#667085
+                      "
+                    >
+                      ${esc(
+                        policy.number
+                      )}
+                    </small>
+
+                  </td>
+
+
+                  <td>
+                    ${esc(
+                      policy.insurer
+                    )}
+                  </td>
+
+
+                  <td>
+
+                    ${fmtDate(
+                      policy.startDate
+                    )}
+
+                    →
+
+                    ${fmtDate(
+                      policy.endDate
+                    )}
+
+                  </td>
+
+
+                  <td>
+
+                    <span
+                      class="pill ${processClass(
+                        policy.status
+                      )}"
+                    >
+                      ${esc(
+                        policy.status
+                      )}
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <span
+                      class="pill ${expiry.cls}"
+                    >
+                      ${esc(
+                        expiry.text
+                      )}
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <div class="actions">
+
+                      <button
+                        class="action-btn"
+                        onclick="openDetails('${policy.id}')"
+                      >
+                        Ver
+                      </button>
+
+
+                      <button
+                        class="action-btn"
+                        onclick="editPolicy('${policy.id}')"
+                      >
+                        Editar
+                      </button>
+
+
+                      <button
+                        class="action-btn"
+                        onclick="renewPolicy('${policy.id}')"
+                      >
+                        ↻
+                      </button>
+
+
+                      ${
+                        policy.pdfPath
+
+                          ? `
+                              <button
+                                class="action-btn"
+                                onclick="openPdf('${policy.id}')"
+                              >
+                                PDF
+                              </button>
+                            `
+
+                          : ""
+                      }
+
+                    </div>
+
+                  </td>
+
+                </tr>
+              `;
+
+            }
+          )
+          .join("")
+
+      : `
           <tr>
 
-            <td>
+            <td colspan="7">
 
-              <div class="client-cell">
-
-                <div class="avatar">
-                  ${initials(
-                    client?.name
-                  )}
-                </div>
-
-                <div>
-
-                  <strong>
-                    ${esc(
-                      client?.name||
-                      "Cliente"
-                    )}
-                  </strong>
-
-                  <small>
-                    ${
-                      esc(
-                        formatPhone(
-                          client?.phone
-                        )||
-                        ""
-                      )
-                    }
-                  </small>
-
-                </div>
-
-              </div>
-
-            </td>
-
-
-            <td>
-
-              <b>
-                ${esc(policy.type)}
-              </b>
-
-              <small
-                style="
-                  display:block;
-                  color:#667085;
-                "
-              >
-                ${esc(policy.number)}
-              </small>
-
-            </td>
-
-
-            <td>
-              ${esc(policy.insurer)}
-            </td>
-
-
-            <td>
-
-              ${fmtDate(
-                policy.startDate
-              )}
-
-              →
-
-              ${fmtDate(
-                policy.endDate
-              )}
-
-            </td>
-
-
-            <td>
-
-              <span
-                class="pill ${processClass(policy.status)}"
-              >
-                ${esc(policy.status)}
-              </span>
-
-            </td>
-
-
-            <td>
-
-              <span
-                class="pill ${expiry.cls}"
-              >
-                ${expiry.text}
-              </span>
-
-            </td>
-
-
-            <td>
-
-              <div class="actions">
-
-                <button
-                  class="action-btn"
-                  onclick="openDetails('${policy.id}')"
-                >
-                  Ver
-                </button>
-
-
-                <button
-                  class="action-btn"
-                  onclick="editPolicy('${policy.id}')"
-                >
-                  Editar
-                </button>
-
-
-                <button
-                  class="action-btn"
-                  onclick="renewPolicy('${policy.id}')"
-                  title="Renovar"
-                >
-                  ↻
-                </button>
-
-
-                ${
-                  policy.pdfPath
-                  ?`
-                    <button
-                      class="action-btn"
-                      onclick="openPdf('${policy.id}')"
-                    >
-                      PDF
-                    </button>
-                  `
-                  :""
-                }
-
+              <div class="empty">
+                Nenhuma apólice encontrada.
               </div>
 
             </td>
@@ -1626,425 +2817,53 @@ function renderPolicies(){
           </tr>
         `;
 
-      }
-    ).join("")
-    :`
-      <tr>
-
-        <td colspan="7">
-
-          <div class="empty">
-            Nenhuma apólice encontrada.
-          </div>
-
-        </td>
-
-      </tr>
-    `;
-
 }
 
 
+/* ============================================================
+   RENOVAÇÕES — FILTRO DE DATA
+   ============================================================ */
 
-function newClient(){
+function renewalMatchesDateFilter(
+  policy
+) {
 
-  $("#clientForm").reset();
+  const start =
+    $("#renewalStartDateFilter")
+      ?.value ||
+    "";
 
-  $("#clientId").value="";
 
-  $("#clientModalTitle")
-    .textContent=
-    "Novo cliente";
+  const end =
+    $("#renewalEndDateFilter")
+      ?.value ||
+    "";
 
-  openModal(
-    "clientModal"
+
+  return inDateRange(
+    policy,
+    start,
+    end
   );
 
 }
 
 
+/* ============================================================
+   SALVAR FEEDBACK COMERCIAL
+   ============================================================ */
 
-function openClient(id){
+async function savePolicyFeedback(
+  policyId
+) {
 
-  const client=
-    clientById(id);
-
-
-  if(!client){
-    toast(
-      "Cliente não encontrado."
-    );
-
-    return;
-  }
-
-
-  $("#clientId").value=
-    client.id;
-
-
-  $("#clientName").value=
-    client.name||"";
-
-
-  $("#clientBirth").value=
-    client.birthDate||"";
-
-
-  $("#clientPhone").value=
-    formatPhone(
-      client.phone
+  const policy =
+    policyById(
+      policyId
     );
 
 
-  $("#clientDoc").value=
-    client.document||"";
-
-
-  $("#clientEmail").value=
-    client.email||"";
-
-
-  $("#clientNotes").value=
-    client.notes||"";
-
-
-  $("#clientModalTitle")
-    .textContent=
-    "Editar cliente";
-
-
-  openModal(
-    "clientModal"
-  );
-
-}
-
-
-
-async function saveClient(event){
-
-  event.preventDefault();
-
-
-  if(!state.user){
-
-    toast(
-      "Sua sessão expirou. Entre novamente."
-    );
-
-    return;
-
-  }
-
-
-  const name=
-    $("#clientName")
-      .value
-      .trim();
-
-
-  const birthDate=
-    $("#clientBirth")
-      .value;
-
-
-  const phone=
-    cleanPhone(
-      $("#clientPhone").value
-    );
-
-
-  const document=
-    $("#clientDoc")
-      .value
-      .trim();
-
-
-  const email=
-    $("#clientEmail")
-      .value
-      .trim();
-
-
-  const notes=
-    $("#clientNotes")
-      .value
-      .trim();
-
-
-  if(!name){
-
-    toast(
-      "Informe o nome do cliente."
-    );
-
-    return;
-
-  }
-
-
-  if(!birthDate){
-
-    toast(
-      "Informe a data de nascimento."
-    );
-
-    return;
-
-  }
-
-
-  if(
-    !validBrazilPhone(
-      phone
-    )
-  ){
-
-    toast(
-      "Informe um telefone celular válido com DDD."
-    );
-
-    return;
-
-  }
-
-
-  const id=
-    $("#clientId").value||
-    uid();
-
-
-  const old=
-    clientById(id);
-
-
-  const client={
-
-    id,
-
-    name,
-
-    birthDate,
-
-    phone,
-
-    document,
-
-    email,
-
-    notes,
-
-    createdAt:
-      old?.createdAt||
-      new Date().toISOString(),
-
-    updatedAt:
-      new Date().toISOString()
-
-  };
-
-
-  const saveButton=
-    $("#clientForm")
-      .querySelector(
-        'button[type="submit"], button:not([type])'
-      );
-
-
-  if(saveButton){
-
-    saveButton.disabled=true;
-
-    saveButton.dataset.oldText=
-      saveButton.textContent;
-
-    saveButton.textContent=
-      "Salvando...";
-
-  }
-
-
-  try{
-
-    const {
-      data,
-      error
-    }=await sb
-      .from("clients")
-      .upsert(
-        clientToDb(client)
-      )
-      .select()
-      .single();
-
-
-    if(error){
-      throw error;
-    }
-
-
-    const saved=
-      clientFromDb(data);
-
-
-    const index=
-      state.clients.findIndex(
-        item=>
-          item.id===saved.id
-      );
-
-
-    if(index>=0){
-
-      state.clients[index]=
-        saved;
-
-    }else{
-
-      state.clients.push(
-        saved
-      );
-
-    }
-
-
-    closeModal(
-      "clientModal"
-    );
-
-
-    renderAll();
-
-
-    toast(
-      "Cliente salvo com sucesso."
-    );
-
-
-  }catch(error){
-
-    console.error(
-      "Erro ao salvar cliente:",
-      error
-    );
-
-
-    const message=
-      error?.message||
-      "Erro desconhecido";
-
-
-    toast(
-      "Erro ao salvar cliente: "+
-      message
-    );
-
-  }finally{
-
-    if(saveButton){
-
-      saveButton.disabled=false;
-
-      saveButton.textContent=
-        saveButton.dataset.oldText||
-        "Salvar cliente";
-
-    }
-
-  }
-
-}
-
-
-
-function resetPolicyForm(
-  clientId=""
-){
-
-  $("#policyForm").reset();
-
-  $("#policyId").value="";
-
-  $("#policyParentId").value="";
-
-  $("#policyRenewedFrom").value="";
-
-  $("#currentPdfName")
-    .textContent="";
-
-  $("#renewInfo")
-    .classList
-    .add("hidden");
-
-
-  populateSelects();
-
-
-  $("#policyClient").value=
-    clientId;
-
-
-  $("#policyStatus").value=
-    "Pendente";
-
-
-  $("#alert30").checked=true;
-  $("#alert15").checked=true;
-  $("#alert7").checked=true;
-  $("#alert1").checked=true;
-  $("#alertExpired").checked=true;
-
-
-  $("#policyModalTitle")
-    .textContent=
-    "Nova apólice";
-
-}
-
-
-
-function newPolicyFor(
-  clientId=""
-){
-
-  if(
-    !state.clients.length
-  ){
-
-    toast(
-      "Cadastre um cliente antes de criar uma apólice."
-    );
-
-    go(
-      "clientes"
-    );
-
-    return;
-
-  }
-
-
-  resetPolicyForm(
-    clientId
-  );
-
-
-  openModal(
-    "policyModal"
-  );
-
-}
-
-
-
-async function editPolicy(id){
-
-  const policy=
-    policyById(id);
-
-
-  if(!policy){
+  if (!policy) {
 
     toast(
       "Apólice não encontrada."
@@ -2055,656 +2874,249 @@ async function editPolicy(id){
   }
 
 
-  resetPolicyForm(
-    policy.clientId
-  );
-
-
-  $("#policyId").value=
-    policy.id;
-
-
-  $("#policyInsurer").value=
-    policy.insurer;
-
-
-  $("#policyType").value=
-    policy.type;
-
-
-  $("#policyNumber").value=
-    policy.number;
-
-
-  $("#policyStart").value=
-    policy.startDate;
-
-
-  $("#policyEnd").value=
-    policy.endDate;
-
-
-  $("#policyStatus").value=
-    policy.status;
-
-
-  $("#policyNotes").value=
-    policy.notes||"";
-
-
-  $("#alert30").checked=
-    policy.alerts?.[30]!==false;
-
-
-  $("#alert15").checked=
-    policy.alerts?.[15]!==false;
-
-
-  $("#alert7").checked=
-    policy.alerts?.[7]!==false;
-
-
-  $("#alert1").checked=
-    policy.alerts?.[1]!==false;
-
-
-  $("#alertExpired").checked=
-    policy.alerts?.expired!==false;
-
-
-  if(policy.pdfPath){
-
-    $("#currentPdfName")
-      .textContent=
-      "PDF atual: "+
-      decodeURIComponent(
-        policy.pdfPath
-          .split("/")
-          .pop()
-      );
-
-  }
-
-
-  $("#policyModalTitle")
-    .textContent=
-    "Editar apólice";
-
-
-  openModal(
-    "policyModal"
-  );
-
-} function safeFileName(name){
-
-  return String(name||"arquivo.pdf")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g,"")
-    .replace(/[^a-zA-Z0-9._-]/g,"_")
-    .replace(/_+/g,"_");
-
-}
-
-
-async function uploadPolicyPdf(
-  policyId,
-  file
-){
-
-  if(!file){
-    return null;
-  }
-
-
-  if(
-    file.type!=="application/pdf"
-  ){
-
-    throw new Error(
-      "O arquivo precisa ser um PDF."
-    );
-
-  }
-
-
-  const path=
-    `${state.user.id}/${policyId}/${Date.now()}_${safeFileName(file.name)}`;
-
-
-  const {
-    error
-  }=await sb
-    .storage
-    .from("policy-pdfs")
-    .upload(
-      path,
-      file,
-      {
-        cacheControl:"3600",
-        upsert:false,
-        contentType:"application/pdf"
-      }
+  const textarea =
+    document.querySelector(
+      `[data-feedback-id="${policyId}"]`
     );
 
 
-  if(error){
-    throw error;
-  }
-
-
-  return path;
-
-}
-
-
-async function deletePdfPath(
-  path
-){
-
-  if(!path){
+  if (!textarea) {
     return;
   }
 
 
-  const {
-    error
-  }=await sb
-    .storage
-    .from("policy-pdfs")
-    .remove([
-      path
-    ]);
-
-
-  if(error){
-
-    console.warn(
-      "Não foi possível excluir o PDF:",
-      error
-    );
-
-  }
-
-}
-
-
-async function savePolicy(event){
-
-  event.preventDefault();
-
-
-  if(!state.user){
-
-    toast(
-      "Sua sessão expirou. Entre novamente."
-    );
-
-    return null;
-
-  }
-
-
-  const clientId=
-    $("#policyClient").value;
-
-
-  const insurer=
-    $("#policyInsurer").value;
-
-
-  const type=
-    $("#policyType").value;
-
-
-  const number=
-    $("#policyNumber")
-      .value
+  const feedback =
+    textarea.value
       .trim();
 
 
-  const startDate=
-    $("#policyStart").value;
+  const updatedAt =
+    new Date()
+      .toISOString();
 
 
-  const endDate=
-    $("#policyEnd").value;
-
-
-  const status=
-    $("#policyStatus").value;
-
-
-  const notes=
-    $("#policyNotes")
-      .value
-      .trim();
-
-
-  if(!clientId){
-
-    toast(
-      "Selecione o cliente."
-    );
-
-    return null;
-
-  }
-
-
-  if(
-    !insurer ||
-    !type ||
-    !number ||
-    !startDate ||
-    !endDate
-  ){
-
-    toast(
-      "Preencha todos os campos obrigatórios da apólice."
-    );
-
-    return null;
-
-  }
-
-
-  if(
-    new Date(endDate+"T12:00:00") <
-    new Date(startDate+"T12:00:00")
-  ){
-
-    toast(
-      "O fim da vigência não pode ser anterior ao início."
-    );
-
-    return null;
-
-  }
-
-
-  const id=
-    $("#policyId").value||
-    uid();
-
-
-  const old=
-    policyById(id);
-
-
-  const renewedFrom=
-    $("#policyRenewedFrom").value||
-    old?.renewedFrom||
-    null;
-
-
-  const file=
-    $("#policyPdf").files?.[0]||
-    null;
-
-
-  let pdfPath=
-    old?.pdfPath||
-    null;
-
-
-  let newPdfPath=
-    null;
-
-
-  const saveButton=
-    $("#policyForm")
-      .querySelector(
-        'button[type="submit"], button:not([type])'
-      );
-
-
-  if(saveButton){
-
-    saveButton.disabled=true;
-
-    saveButton.dataset.oldText=
-      saveButton.textContent;
-
-    saveButton.textContent=
-      "Salvando...";
-
-  }
-
-
-  try{
-
-    if(file){
-
-      newPdfPath=
-        await uploadPolicyPdf(
-          id,
-          file
-        );
-
-
-      pdfPath=
-        newPdfPath;
-
-    }
-
-
-    const policy={
-
-      id,
-
-      clientId,
-
-      insurer,
-
-      type,
-
-      number,
-
-      startDate,
-
-      endDate,
-
-      status,
-
-      notes,
-
-      alerts:{
-        30:
-          $("#alert30").checked,
-
-        15:
-          $("#alert15").checked,
-
-        7:
-          $("#alert7").checked,
-
-        1:
-          $("#alert1").checked,
-
-        expired:
-          $("#alertExpired").checked
-      },
-
-      pdfPath,
-
-      renewedFrom,
-
-      createdAt:
-        old?.createdAt||
-        new Date().toISOString(),
-
-      updatedAt:
-        new Date().toISOString()
-
-    };
-
+  try {
 
     const {
       data,
       error
-    }=await sb
-      .from("policies")
-      .upsert(
-        policyToDb(policy)
-      )
-      .select()
-      .single();
+    } =
+      await sb
+        .from("policies")
+        .update({
+
+          feedback:
+            feedback ||
+            null,
+
+          feedback_updated_at:
+            feedback
+              ? updatedAt
+              : null,
+
+          updated_at:
+            updatedAt
+
+        })
+        .eq(
+          "id",
+          policyId
+        )
+        .select()
+        .single();
 
 
-    if(error){
+    if (error) {
       throw error;
     }
 
 
-    const saved=
-      policyFromDb(data);
+    const saved =
+      policyFromDb(
+        data
+      );
 
 
-    const index=
+    const index =
       state.policies.findIndex(
-        item=>
-          item.id===saved.id
+        item =>
+          item.id ===
+          policyId
       );
 
 
-    if(index>=0){
-
-      state.policies[index]=
-        saved;
-
-    }else{
-
-      state.policies.push(
-        saved
-      );
-
-    }
-
-
-    if(
-      newPdfPath &&
-      old?.pdfPath &&
-      old.pdfPath!==newPdfPath
-    ){
-
-      await deletePdfPath(
-        old.pdfPath
-      );
-
-    }
-
-
-    if(!old){
-
-      await addEvent(
-        saved.id,
-        "create",
-        "Apólice cadastrada"
-      );
-
-    }else{
-
-      await addEvent(
-        saved.id,
-        "update",
-        "Apólice atualizada"
-      );
-
-    }
-
-
-    closeModal(
-      "policyModal"
-    );
-
-
-    renderAll();
-
-
-    toast(
-      "Apólice salva com sucesso."
-    );
-
-
-    return saved;
-
-
-  }catch(error){
-
-    console.error(
-      "Erro ao salvar apólice:",
-      error
-    );
-
-
-    if(newPdfPath){
-
-      await deletePdfPath(
-        newPdfPath
-      );
-
-    }
-
-
-    toast(
-      "Erro ao salvar apólice: "+
-      (
-        error?.message||
-        "Erro desconhecido"
-      )
-    );
-
-
-    return null;
-
-
-  }finally{
-
-    if(saveButton){
-
-      saveButton.disabled=false;
-
-      saveButton.textContent=
-        saveButton.dataset.oldText||
-        "Salvar apólice";
-
-    }
-
-  }
-
-}
-
-
-
-async function openPdf(id){
-
-  const policy=
-    policyById(id);
-
-
-  if(
-    !policy ||
-    !policy.pdfPath
-  ){
-
-    toast(
-      "Esta apólice não possui PDF."
-    );
-
-    return;
-
-  }
-
-
-  try{
-
-    const {
-      data,
-      error
-    }=await sb
-      .storage
-      .from("policy-pdfs")
-      .createSignedUrl(
-        policy.pdfPath,
-        3600
-      );
-
-
-    if(error){
-      throw error;
-    }
-
-
-    $("#pdfTitle")
-      .textContent=
-      `${policy.type} · ${policy.number}`;
-
-
-    $("#pdfFrame").src=
-      data.signedUrl;
-
-
-    openModal(
-      "pdfModal"
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-
-    toast(
-      "Não foi possível abrir o PDF."
-    );
-
-  }
-
-}
-
-
-
-async function changeStatus(
-  id,
-  newStatus
-){
-
-  const policy=
-    policyById(id);
-
-
-  if(!policy){
-    return;
-  }
-
-
-  try{
-
-    const {
-      data,
-      error
-    }=await sb
-      .from("policies")
-      .update({
-        status:newStatus,
-        updated_at:
-          new Date().toISOString()
-      })
-      .eq(
-        "id",
-        id
-      )
-      .select()
-      .single();
-
-
-    if(error){
-      throw error;
-    }
-
-
-    const saved=
-      policyFromDb(data);
-
-
-    const index=
-      state.policies.findIndex(
-        item=>item.id===id
-      );
-
-
-    if(index>=0){
-
-      state.policies[index]=
+    if (
+      index >= 0
+    ) {
+
+      state.policies[index] =
         saved;
 
     }
+
+
+    saveLocalCache();
 
 
     await addEvent(
-      id,
+      policyId,
+      "feedback",
+      feedback
+        ? "Feedback comercial atualizado."
+        : "Feedback comercial removido."
+    );
+
+
+    renderKanban();
+
+    renderDashboard();
+
+
+    toast(
+      "Feedback salvo com sucesso."
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao salvar feedback:",
+      error
+    );
+
+
+    toast(
+      "Não foi possível salvar o feedback."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   ALTERAR STATUS
+   ============================================================ */
+
+async function changeStatus(
+  policyId,
+  newStatus
+) {
+
+  const allowedStatuses = [
+    "Pendente",
+    "Em andamento",
+    "Ganho",
+    "Perdido"
+  ];
+
+
+  if (
+    !allowedStatuses.includes(
+      newStatus
+    )
+  ) {
+
+    toast(
+      "Status inválido."
+    );
+
+    return;
+
+  }
+
+
+  const policy =
+    policyById(
+      policyId
+    );
+
+
+  if (!policy) {
+
+    toast(
+      "Apólice não encontrada."
+    );
+
+    return;
+
+  }
+
+
+  const oldStatus =
+    policy.status;
+
+
+  if (
+    oldStatus ===
+    newStatus
+  ) {
+    return;
+  }
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await sb
+        .from("policies")
+        .update({
+
+          status:
+            newStatus,
+
+          updated_at:
+            new Date()
+              .toISOString()
+
+        })
+        .eq(
+          "id",
+          policyId
+        )
+        .select()
+        .single();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    const saved =
+      policyFromDb(
+        data
+      );
+
+
+    const index =
+      state.policies.findIndex(
+        item =>
+          item.id ===
+          policyId
+      );
+
+
+    if (
+      index >= 0
+    ) {
+
+      state.policies[index] =
+        saved;
+
+    }
+
+
+    saveLocalCache();
+
+
+    await addEvent(
+      policyId,
       "status",
-      `Status alterado para ${newStatus}`
+      `Status alterado de "${oldStatus}" para "${newStatus}".`
     );
 
 
@@ -2716,9 +3128,12 @@ async function changeStatus(
     );
 
 
-  }catch(error){
+  } catch (error) {
 
-    console.error(error);
+    console.error(
+      "Erro ao alterar status:",
+      error
+    );
 
 
     toast(
@@ -2730,1343 +3145,482 @@ async function changeStatus(
 }
 
 
+/* ============================================================
+   KANBAN
+   PENDENTE / EM ANDAMENTO / GANHO / PERDIDO
+   ============================================================ */
 
-function renewPolicy(id){
+function renderKanban() {
 
-  const old=
-    policyById(id);
-
-
-  if(!old){
-
-    toast(
-      "Apólice não encontrada."
-    );
-
-    return;
-
-  }
+  const kanban =
+    $("#kanban");
 
 
-  resetPolicyForm(
-    old.clientId
-  );
-
-
-  $("#policyRenewedFrom").value=
-    old.id;
-
-
-  $("#policyParentId").value=
-    old.id;
-
-
-  $("#policyInsurer").value=
-    old.insurer;
-
-
-  $("#policyType").value=
-    old.type;
-
-
-  $("#policyNumber").value="";
-
-
-  $("#policyStatus").value=
-    "Pendente";
-
-
-  $("#alert30").checked=
-    old.alerts?.[30]!==false;
-
-
-  $("#alert15").checked=
-    old.alerts?.[15]!==false;
-
-
-  $("#alert7").checked=
-    old.alerts?.[7]!==false;
-
-
-  $("#alert1").checked=
-    old.alerts?.[1]!==false;
-
-
-  $("#alertExpired").checked=
-    old.alerts?.expired!==false;
-
-
-  $("#policyNotes").value=
-    old.notes||"";
-
-
-  $("#policyModalTitle")
-    .textContent=
-    "Renovar apólice";
-
-
-  const client=
-    clientById(
-      old.clientId
-    );
-
-
-  $("#renewInfo")
-    .classList
-    .remove("hidden");
-
-
-  $("#renewInfo")
-    .innerHTML=`
-      <strong>
-        Renovação de apólice
-      </strong>
-
-      <p>
-        Cliente:
-        <b>${esc(client?.name||"Cliente")}</b>
-      </p>
-
-      <p>
-        Apólice anterior:
-        <b>${esc(old.number)}</b>
-      </p>
-
-      <p>
-        Vigência anterior:
-        ${fmtDate(old.startDate)}
-        →
-        ${fmtDate(old.endDate)}
-      </p>
-
-      <p>
-        Uma nova apólice será criada.
-        A anterior continuará salva no histórico.
-      </p>
-    `;
-
-
-  openModal(
-    "policyModal"
-  );
-
-}
-
-
-
-async function finalizeRenewal(
-  oldPolicyId
-){
-
-  const old=
-    policyById(
-      oldPolicyId
-    );
-
-
-  if(!old){
+  if (!kanban) {
     return;
   }
 
 
-  try{
-
-    await addEvent(
-      old.id,
-      "renewal",
-      "Uma nova apólice foi criada a partir desta renovação"
-    );
-
-
-  }catch(error){
-
-    console.error(
-      "Erro ao registrar renovação:",
-      error
-    );
-
-  }
-
-}
-
-
-
-function openDetails(id){
-
-  const policy=
-    policyById(id);
-
-
-  if(!policy){
-
-    toast(
-      "Apólice não encontrada."
-    );
-
-    return;
-
-  }
-
-
-  const client=
-    clientById(
-      policy.clientId
-    );
-
-
-  const expiry=
-    expiryLabel(
-      policy
-    );
-
-
-  const events=
-    state.events
-      .filter(
-        event=>
-          event.policyId===policy.id
-      )
-      .sort(
-        (a,b)=>
-          new Date(b.date)-
-          new Date(a.date)
-      );
-
-
-  $("#detailsTitle")
-    .textContent=
-    `${policy.type} · ${policy.number}`;
-
-
-  $("#detailsSubtitle")
-    .textContent=
-    `${client?.name||"Cliente"} · ${policy.insurer}`;
-
-
-  $("#detailsBody")
-    .innerHTML=`
-
-      <div class="details-grid">
-
-        <div class="detail-box">
-
-          <small>
-            Cliente
-          </small>
-
-          <strong>
-            ${esc(client?.name||"Cliente")}
-          </strong>
-
-          <span>
-            ${esc(formatPhone(client?.phone)||"")}
-          </span>
-
-          <span>
-            ${esc(client?.email||"")}
-          </span>
-
-        </div>
-
-
-        <div class="detail-box">
-
-          <small>
-            Apólice
-          </small>
-
-          <strong>
-            ${esc(policy.number)}
-          </strong>
-
-          <span>
-            ${esc(policy.type)}
-          </span>
-
-          <span>
-            ${esc(policy.insurer)}
-          </span>
-
-        </div>
-
-
-        <div class="detail-box">
-
-          <small>
-            Vigência
-          </small>
-
-          <strong>
-            ${fmtDate(policy.startDate)}
-            →
-            ${fmtDate(policy.endDate)}
-          </strong>
-
-          <span class="pill ${expiry.cls}">
-            ${expiry.text}
-          </span>
-
-        </div>
-
-
-        <div class="detail-box">
-
-          <small>
-            Processo
-          </small>
-
-          <strong>
-            ${esc(policy.status)}
-          </strong>
-
-          <span class="pill ${processClass(policy.status)}">
-            ${esc(policy.status)}
-          </span>
-
-        </div>
-
-      </div>
-
-
-      ${
-        policy.notes
-        ?`
-          <div
-            class="info-box"
-            style="margin-top:16px"
-          >
-
-            <strong>
-              Observações
-            </strong>
-
-            <p>
-              ${esc(policy.notes)}
-            </p>
-
-          </div>
-        `
-        :""
-      }
-
-
-      <div
-        class="actions"
-        style="
-          margin-top:18px;
-          flex-wrap:wrap;
-        "
-      >
-
-        ${
-          policy.status!=="Pendente"
-          ?`
-            <button
-              class="btn btn-secondary"
-              onclick="changeStatus('${policy.id}','Pendente')"
-            >
-              Pendente
-            </button>
-          `
-          :""
-        }
-
-
-        ${
-          policy.status!=="Em andamento"
-          ?`
-            <button
-              class="btn btn-secondary"
-              onclick="changeStatus('${policy.id}','Em andamento')"
-            >
-              Em andamento
-            </button>
-          `
-          :""
-        }
-
-
-        ${
-          policy.status!=="Ganho"
-          ?`
-            <button
-              class="btn btn-secondary"
-              onclick="changeStatus('${policy.id}','Ganho')"
-            >
-              Ganho
-            </button>
-          `
-          :""
-        }
-
-
-        ${
-          policy.pdfPath
-          ?`
-            <button
-              class="btn btn-secondary"
-              onclick="openPdf('${policy.id}')"
-            >
-              📄 Abrir PDF
-            </button>
-          `
-          :""
-        }
-
-
-        <button
-          class="btn btn-secondary"
-          onclick="sendEmail('${policy.id}')"
-        >
-          ✉ Lembrete por e-mail
-        </button>
-
-
-        <button
-          class="btn btn-secondary"
-          onclick="manualWhatsApp('${policy.id}')"
-        >
-          WhatsApp
-        </button>
-
-
-        <button
-          class="btn btn-secondary"
-          onclick="
-            editPolicy('${policy.id}');
-            closeModal('detailsModal');
-          "
-        >
-          Editar
-        </button>
-
-
-        <button
-          class="btn btn-secondary"
-          style="
-            color:#b42318;
-            border-color:#fecdca;
-            background:#fff5f5;
-          "
-          onclick="deletePolicy('${policy.id}')"
-        >
-          🗑 Excluir
-        </button>
-
-
-        <button
-          class="btn btn-primary"
-          onclick="
-            renewPolicy('${policy.id}');
-            closeModal('detailsModal');
-          "
-        >
-          ↻ Renovar apólice
-        </button>
-
-      </div>
-
-
-      <div
-        style="margin-top:24px"
-      >
-
-        <h4>
-          Histórico
-        </h4>
-
-
-        <div
-          class="history-list"
-          style="margin-top:12px"
-        >
-
-          ${
-            events.length
-            ?events.map(
-              event=>`
-
-                <div class="history-item">
-
-                  <div>
-
-                    <strong>
-                      ${esc(event.message)}
-                    </strong>
-
-                    <small>
-                      ${new Date(event.date).toLocaleString("pt-BR")}
-                    </small>
-
-                  </div>
-
-                </div>
-
-              `
-            ).join("")
-            :`
-              <div class="empty">
-                Nenhum evento registrado.
-              </div>
-            `
-          }
-
-        </div>
-
-      </div>
-    `;
-
-
-  openModal(
-    "detailsModal"
-  );
-
-}
-
-
-
-function manualWhatsApp(id){
-
-  const policy=
-    policyById(id);
-
-
-  const client=
-    clientById(
-      policy?.clientId
-    );
-
-
-  if(
-    !policy ||
-    !client
-  ){
-    return;
-  }
-
-
-  const phone=
-    cleanPhone(
-      client.phone
-    );
-
-
-  if(
-    !validBrazilPhone(
-      phone
-    )
-  ){
-
-    toast(
-      "O telefone deste cliente não é válido."
-    );
-
-    return;
-
-  }
-
-
-  const days=
-    daysUntil(
-      policy.endDate
-    );
-
-
-  const deadline=
-    days<0
-    ?`venceu há ${Math.abs(days)} dia(s)`
-    :days===0
-      ?"vence hoje"
-      :`vence em ${days} dia(s)`;
-
-
-  const message=
-    `Olá, ${client.name}! Aqui é da SAVA Seguros. `+
-    `Estamos entrando em contato sobre sua apólice ${policy.number}, `+
-    `do seguro ${policy.type}, que ${deadline} (${fmtDate(policy.endDate)}). `+
-    `Podemos conversar sobre a renovação?`;
-
-
-  window.open(
-    "https://wa.me/55"+
-    phone+
-    "?text="+
-    encodeURIComponent(message),
-    "_blank"
-  );
-
-}
-
-
-
-function ensureDeleteModal(){
-
-  let modal=
-    $("#deleteSystemModal");
-
-
-  if(modal){
-    return modal;
-  }
-
-
-  modal=
-    document.createElement(
-      "div"
-    );
-
-
-  modal.id=
-    "deleteSystemModal";
-
-
-  modal.className=
-    "modal";
-
-
-  modal.innerHTML=`
-
-    <div class="modal-card compact">
-
-      <div class="modal-head">
-
-        <div>
-
-          <h3 id="deleteSystemTitle">
-            Confirmar exclusão
-          </h3>
-
-          <p>
-            Esta ação não poderá ser desfeita.
-          </p>
-
-        </div>
-
-        <button
-          class="close-btn"
-          type="button"
-          id="deleteCancelX"
-        >
-          ×
-        </button>
-
-      </div>
-
-
-      <div
-        id="deleteSystemMessage"
-        style="
-          line-height:1.6;
-          margin-bottom:20px;
-        "
-      ></div>
-
-
-      <div
-        id="deleteSystemActions"
-        class="modal-actions"
-      >
-
-        <button
-          type="button"
-          class="btn btn-secondary"
-          id="deleteCancelBtn"
-        >
-          Cancelar
-        </button>
-
-        <button
-          type="button"
-          class="btn btn-primary"
-          id="deleteConfirmBtn"
-          style="
-            background:#b42318;
-            border-color:#b42318;
-          "
-        >
-          Excluir
-        </button>
-
-      </div>
-
-    </div>
-  `;
-
-
-  document.body.appendChild(
-    modal
-  );
-
-
-  $("#deleteCancelBtn")
-    .addEventListener(
-      "click",
-      ()=>{
-        closeModal(
-          "deleteSystemModal"
-        );
-      }
-    );
-
-
-  $("#deleteCancelX")
-    .addEventListener(
-      "click",
-      ()=>{
-        closeModal(
-          "deleteSystemModal"
-        );
-      }
-    );
-
-
-  modal.addEventListener(
-    "click",
-    event=>{
-
-      if(event.target===modal){
-
-        closeModal(
-          "deleteSystemModal"
-        );
-
-      }
-
-    }
-  );
-
-
-  return modal;
-
-}
-
-
-
-function confirmDelete({
-  title,
-  message,
-  confirmText="Excluir",
-  onConfirm
-}){
-
-  ensureDeleteModal();
-
-
-  $("#deleteSystemTitle")
-    .textContent=
-    title;
-
-
-  $("#deleteSystemMessage")
-    .innerHTML=
-    message;
-
-
-  const button=
-    $("#deleteConfirmBtn");
-
-
-  button.textContent=
-    confirmText;
-
-
-  button.onclick=
-    async()=>{
-
-      button.disabled=true;
-
-      const original=
-        button.textContent;
-
-
-      button.textContent=
-        "Excluindo...";
-
-
-      try{
-
-        await onConfirm();
-
-
-        closeModal(
-          "deleteSystemModal"
-        );
-
-
-      }catch(error){
-
-        console.error(error);
-
-
-        toast(
-          error?.message||
-          "Não foi possível excluir."
-        );
-
-
-      }finally{
-
-        button.disabled=false;
-
-        button.textContent=
-          original;
-
-      }
-
-    };
-
-
-  openModal(
-    "deleteSystemModal"
-  );
-
-}
-
-
-
-function deleteClient(id){
-
-  const client=
-    clientById(id);
-
-
-  if(!client){
-
-    toast(
-      "Cliente não encontrado."
-    );
-
-    return;
-
-  }
-
-
-  const policies=
-    state.policies.filter(
-      policy=>
-        policy.clientId===id
-    );
-
-
-  if(policies.length){
-
-    ensureDeleteModal();
-
-
-    $("#deleteSystemTitle")
-      .textContent=
-      "Não é possível excluir";
-
-
-    $("#deleteSystemMessage")
-      .innerHTML=`
-
-        <p>
-          O cliente
-          <strong>${esc(client.name)}</strong>
-          possui
-          <strong>${policies.length}</strong>
-          apólice(s).
-        </p>
-
-        <p>
-          Para excluir este cliente,
-          exclua primeiro todas as apólices
-          vinculadas a ele.
-        </p>
-      `;
-
-
-    $("#deleteConfirmBtn")
-      .style
-      .display=
-      "none";
-
-
-    $("#deleteCancelBtn")
-      .textContent=
-      "Entendi";
-
-
-    openModal(
-      "deleteSystemModal"
-    );
-
-
-    const cleanup=()=>{
-
-      $("#deleteConfirmBtn")
-        .style
-        .display="";
-
-      $("#deleteCancelBtn")
-        .textContent=
-        "Cancelar";
-
-      $("#deleteCancelBtn")
-        .removeEventListener(
-          "click",
-          cleanup
-        );
-
-    };
-
-
-    $("#deleteCancelBtn")
-      .addEventListener(
-        "click",
-        cleanup
-      );
-
-
-    return;
-
-  }
-
-
-  $("#deleteConfirmBtn") &&
-  (
-    $("#deleteConfirmBtn").style.display=""
-  );
-
-
-  $("#deleteCancelBtn") &&
-  (
-    $("#deleteCancelBtn").textContent="Cancelar"
-  );
-
-
-  confirmDelete({
-
-    title:"Excluir cliente",
-
-    message:`
-      <p>
-        Deseja realmente excluir
-        <strong>${esc(client.name)}</strong>?
-      </p>
-
-      <p>
-        O cadastro será removido permanentemente.
-      </p>
-    `,
-
-    confirmText:"Excluir cliente",
-
-    onConfirm:async()=>{
-
-      const {
-        error
-      }=await sb
-        .from("clients")
-        .delete()
-        .eq(
-          "id",
-          client.id
-        );
-
-
-      if(error){
-        throw error;
-      }
-
-
-      state.clients=
-        state.clients.filter(
-          item=>
-            item.id!==client.id
-        );
-
-
-      renderAll();
-
-
-      toast(
-        "Cliente excluído."
-      );
-
-    }
-
-  });
-
-}
-
-
-
-function deletePolicy(id){
-
-  const policy=
-    policyById(id);
-
-
-  if(!policy){
-
-    toast(
-      "Apólice não encontrada."
-    );
-
-    return;
-
-  }
-
-
-  const client=
-    clientById(
-      policy.clientId
-    );
-
-
-  $("#deleteConfirmBtn") &&
-  (
-    $("#deleteConfirmBtn").style.display=""
-  );
-
-
-  $("#deleteCancelBtn") &&
-  (
-    $("#deleteCancelBtn").textContent="Cancelar"
-  );
-
-
-  confirmDelete({
-
-    title:"Excluir apólice",
-
-    message:`
-
-      <p>
-        Deseja realmente excluir a apólice
-        <strong>${esc(policy.number)}</strong>
-        de
-        <strong>${esc(client?.name||"Cliente")}</strong>?
-      </p>
-
-      <p>
-        O PDF vinculado e o histórico desta
-        apólice também serão removidos.
-      </p>
-
-    `,
-
-    confirmText:"Excluir apólice",
-
-    onConfirm:async()=>{
-
-      if(policy.pdfPath){
-
-        await deletePdfPath(
-          policy.pdfPath
-        );
-
-      }
-
-
-      const {
-        error:eventsError
-      }=await sb
-        .from("events")
-        .delete()
-        .eq(
-          "policy_id",
-          policy.id
-        );
-
-
-      if(eventsError){
-        throw eventsError;
-      }
-
-
-      const {
-        error
-      }=await sb
-        .from("policies")
-        .delete()
-        .eq(
-          "id",
-          policy.id
-        );
-
-
-      if(error){
-        throw error;
-      }
-
-
-      state.events=
-        state.events.filter(
-          event=>
-            event.policyId!==policy.id
-        );
-
-
-      state.policies=
-        state.policies.filter(
-          item=>
-            item.id!==policy.id
-        );
-
-
-      closeModal(
-        "detailsModal"
-      );
-
-
-      renderAll();
-
-
-      toast(
-        "Apólice excluída."
-      );
-
-    }
-
-  });
-
-} function renderKanban(){
-
-  const columns=[
+  const columns = [
     "Pendente",
     "Em andamento",
-    "Ganho"
+    "Ganho",
+    "Perdido"
   ];
 
 
-  $("#kanban").innerHTML=
-    columns.map(
-      status=>{
+  kanban.innerHTML =
+    columns
+      .map(
+        status => {
 
-        const policies=
-          state.policies.filter(
-            policy=>
-              policy.status===status
-          );
-
-
-        const cssClass=
-          status==="Pendente"
-            ?"pendente"
-            :status==="Ganho"
-              ?"ganho"
-              :"andamento";
-
-
-        return `
-          <div class="kanban-col ${cssClass}">
-
-            <h4>
-
-              <span>
-                ${status}
-              </span>
-
-              <span>
-                ${policies.length}
-              </span>
-
-            </h4>
+          const policies =
+            state.policies
+              .filter(
+                policy =>
+                  policy.status ===
+                    status &&
+                  renewalMatchesDateFilter(
+                    policy
+                  )
+              )
+              .sort(
+                (a, b) =>
+                  new Date(a.endDate) -
+                  new Date(b.endDate)
+              );
 
 
-            ${
-              policies.length
-              ?policies.map(
-                policy=>{
-
-                  const client=
-                    clientById(
-                      policy.clientId
-                    );
+          let columnClass =
+            "pendente";
 
 
-                  return `
-                    <div class="kanban-card">
-
-                      <strong>
-                        ${esc(client?.name||"Cliente")}
-                      </strong>
-
-                      <small>
-
-                        ${esc(policy.type)}
-                        ·
-                        ${esc(policy.insurer)}
-
-                        <br>
-
-                        Vence:
-                        ${fmtDate(policy.endDate)}
-
-                      </small>
+          if (
+            status ===
+            "Em andamento"
+          ) {
+            columnClass =
+              "andamento";
+          }
 
 
-                      <select
-                        onchange="changeStatus('${policy.id}',this.value)"
-                      >
+          if (
+            status ===
+            "Ganho"
+          ) {
+            columnClass =
+              "ganho";
+          }
 
-                        <option
-                          ${policy.status==="Pendente"?"selected":""}
-                        >
-                          Pendente
-                        </option>
 
-                        <option
-                          ${policy.status==="Em andamento"?"selected":""}
-                        >
-                          Em andamento
-                        </option>
+          if (
+            status ===
+            "Perdido"
+          ) {
+            columnClass =
+              "perdido";
+          }
 
-                        <option
-                          ${policy.status==="Ganho"?"selected":""}
-                        >
-                          Ganho
-                        </option>
 
-                      </select>
+          return `
+            <div
+              class="kanban-col ${columnClass}"
+            >
 
-                    </div>
-                  `;
+              <h4>
 
-                }
-              ).join("")
-              :`
-                <div class="empty">
-                  Nenhuma apólice.
-                </div>
-              `
-            }
+                <span>
+                  ${esc(status)}
+                </span>
 
-          </div>
-        `;
+                <span>
+                  ${policies.length}
+                </span>
 
-      }
-    ).join("");
+              </h4>
+
+
+              ${
+                policies.length
+
+                  ? policies
+                      .map(
+                        policy => {
+
+                          const client =
+                            clientById(
+                              policy.clientId
+                            );
+
+
+                          const expiry =
+                            expiryLabel(
+                              policy
+                            );
+
+
+                          return `
+                            <div
+                              class="kanban-card"
+                              data-policy-id="${policy.id}"
+                            >
+
+                              <strong>
+                                ${esc(
+                                  client?.name ||
+                                  "Cliente"
+                                )}
+                              </strong>
+
+
+                              <small>
+
+                                ${esc(
+                                  policy.type
+                                )}
+
+                                ·
+
+                                ${esc(
+                                  policy.insurer
+                                )}
+
+                                <br>
+
+                                ${fmtDate(
+                                  policy.startDate
+                                )}
+
+                                →
+
+                                ${fmtDate(
+                                  policy.endDate
+                                )}
+
+                              </small>
+
+
+                              <div
+                                style="
+                                  margin-top:8px;
+                                  margin-bottom:8px
+                                "
+                              >
+
+                                <span
+                                  class="pill ${expiry.cls}"
+                                >
+                                  ${esc(
+                                    expiry.text
+                                  )}
+                                </span>
+
+                              </div>
+
+
+                              <select
+                                onchange="changeStatus('${policy.id}', this.value)"
+                              >
+
+                                <option
+                                  value="Pendente"
+                                  ${
+                                    policy.status ===
+                                    "Pendente"
+                                      ? "selected"
+                                      : ""
+                                  }
+                                >
+                                  Pendente
+                                </option>
+
+
+                                <option
+                                  value="Em andamento"
+                                  ${
+                                    policy.status ===
+                                    "Em andamento"
+                                      ? "selected"
+                                      : ""
+                                  }
+                                >
+                                  Em andamento
+                                </option>
+
+
+                                <option
+                                  value="Ganho"
+                                  ${
+                                    policy.status ===
+                                    "Ganho"
+                                      ? "selected"
+                                      : ""
+                                  }
+                                >
+                                  Ganho
+                                </option>
+
+
+                                <option
+                                  value="Perdido"
+                                  ${
+                                    policy.status ===
+                                    "Perdido"
+                                      ? "selected"
+                                      : ""
+                                  }
+                                >
+                                  Perdido
+                                </option>
+
+                              </select>
+
+
+                              <div
+                                class="kanban-feedback"
+                              >
+
+                                <label>
+                                  Feedback comercial
+                                </label>
+
+
+                                <textarea
+                                  rows="4"
+                                  data-feedback-id="${policy.id}"
+                                  placeholder="Ex: Em cotação, aguardando retorno do cliente."
+                                >${esc(
+                                  policy.feedback ||
+                                  ""
+                                )}</textarea>
+
+
+                                <button
+                                  type="button"
+                                  class="action-btn"
+                                  onclick="savePolicyFeedback('${policy.id}')"
+                                >
+                                  Salvar feedback
+                                </button>
+
+                              </div>
+
+
+                              <div
+                                class="actions"
+                                style="margin-top:10px"
+                              >
+
+                                <button
+                                  class="action-btn"
+                                  onclick="openDetails('${policy.id}')"
+                                >
+                                  Ver detalhes
+                                </button>
+
+
+                                <button
+                                  class="action-btn"
+                                  onclick="editPolicy('${policy.id}')"
+                                >
+                                  Editar
+                                </button>
+
+                              </div>
+
+                            </div>
+                          `;
+
+                        }
+                      )
+                      .join("")
+
+                  : `
+                      <div class="empty">
+                        Nenhuma apólice.
+                      </div>
+                    `
+              }
+
+            </div>
+          `;
+
+        }
+      )
+      .join("");
 
 }
 
 
+/* ============================================================
+   CONFIGURAÇÕES
+   ============================================================ */
 
-function renderConfig(){
+function renderConfig() {
 
-  $("#cfgUser").value=
-    state.user?.email||"";
-
-
-  $("#emailEndpoint").value=
-    state.settings.endpoint||"";
-
-
-  $("#managerEmail").value=
-    state.settings.managerEmail||"";
+  const user =
+    $("#cfgUser");
 
 
-  if($("#languageSelect")){
+  const endpoint =
+    $("#emailEndpoint");
 
-    $("#languageSelect").value=
-      state.settings.language||
-      "pt-BR";
+
+  const manager =
+    $("#managerEmail");
+
+
+  if (user) {
+
+    user.value =
+      state.user?.email ||
+      "";
+
+  }
+
+
+  if (endpoint) {
+
+    endpoint.value =
+      state.settings.endpoint ||
+      "";
+
+  }
+
+
+  if (manager) {
+
+    manager.value =
+      state.settings.managerEmail ||
+      "";
 
   }
 
 }
 
 
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
 
-function go(view){
+function go(view) {
 
   $$(".view")
     .forEach(
-      item=>
-        item.classList.remove(
+      element =>
+        element.classList.remove(
           "active"
         )
     );
 
 
-  const target=
-    $("#"+view);
+  const target =
+    $("#" + view);
 
 
-  if(!target){
+  if (target) {
 
-    console.warn(
-      "Tela não encontrada:",
-      view
+    target.classList.add(
+      "active"
     );
-
-    return;
 
   }
 
 
-  target.classList.add(
-    "active"
-  );
-
-
   $$(".nav-item")
     .forEach(
-      button=>{
+      button => {
 
         button.classList.toggle(
           "active",
-          button.dataset.view===view
+          button.dataset.view ===
+            view
         );
 
       }
     );
 
 
-  const titles={
+  const titles = {
 
-    dashboard:"Dashboard",
+    dashboard:
+      "Dashboard",
 
-    clientes:"Clientes",
+    clientes:
+      "Clientes",
 
-    apolices:"Apólices",
+    apolices:
+      "Apólices",
 
-    renovacoes:"Renovações",
+    renovacoes:
+      "Renovações",
 
-    relatorios:"Relatórios",
+    relatorios:
+      "Relatórios",
 
-    config:"Configurações"
+    config:
+      "Configurações"
 
   };
 
 
-  $("#pageTitle").textContent=
-    titles[view]||
-    "Dashboard";
+  const pageTitle =
+    $("#pageTitle");
 
 
-  if(view==="dashboard"){
+  if (pageTitle) {
+
+    pageTitle.textContent =
+      titles[view] ||
+      "Dashboard";
+
+  }
+
+
+  if (
+    view ===
+    "dashboard"
+  ) {
 
     renderDashboard();
 
   }
 
 
-  if(view==="clientes"){
+  if (
+    view ===
+    "clientes"
+  ) {
 
     renderClients();
 
   }
 
 
-  if(view==="apolices"){
+  if (
+    view ===
+    "apolices"
+  ) {
 
     renderPolicies();
 
   }
 
 
-  if(view==="renovacoes"){
+  if (
+    view ===
+    "renovacoes"
+  ) {
 
     renderKanban();
 
   }
 
 
-  if(view==="config"){
+  if (
+    view ===
+    "config"
+  ) {
 
     renderConfig();
 
@@ -4075,14 +3629,17 @@ function go(view){
 }
 
 
+/* ============================================================
+   MODAIS
+   ============================================================ */
 
-function openModal(id){
+function openModal(id) {
 
-  const modal=
-    $("#"+id);
+  const modal =
+    $("#" + id);
 
 
-  if(!modal){
+  if (!modal) {
 
     console.error(
       "Modal não encontrado:",
@@ -4101,14 +3658,13 @@ function openModal(id){
 }
 
 
+function closeModal(id) {
 
-function closeModal(id){
-
-  const modal=
-    $("#"+id);
+  const modal =
+    $("#" + id);
 
 
-  if(!modal){
+  if (!modal) {
     return;
   }
 
@@ -4118,64 +3674,464 @@ function closeModal(id){
   );
 
 
-  if(id==="pdfModal"){
+  if (
+    id ===
+    "pdfModal"
+  ) {
 
-    $("#pdfFrame").src="";
+    const frame =
+      $("#pdfFrame");
+
+
+    if (frame) {
+
+      frame.src =
+        "";
+
+    }
 
   }
 
 }
 
 
+/* ============================================================
+   NOVO CLIENTE
+   ============================================================ */
 
-function managerEmailBody(policy){
+function newClient() {
 
-  const client=
-    clientById(
-      policy.clientId
-    );
-
-
-  const days=
-    daysUntil(
-      policy.endDate
-    );
+  const form =
+    $("#clientForm");
 
 
-  const deadline=
-    days<0
-      ?`Vencida há ${Math.abs(days)} dia(s)`
-      :days===0
-        ?"Vence hoje"
-        :`Faltam ${days} dia(s)`;
+  if (form) {
+
+    form.reset();
+
+  }
 
 
-  return (
-    `RENOVAÇÃO DE SEGURO — SAVA SEGUROS\n\n`+
-    `Cliente: ${client?.name||"Cliente"}\n`+
-    `Telefone: ${formatPhone(client?.phone)||"Não informado"}\n`+
-    `E-mail do cliente: ${client?.email||"Não informado"}\n`+
-    `Seguradora: ${policy.insurer}\n`+
-    `Seguro: ${policy.type}\n`+
-    `Apólice: ${policy.number||"Sem número"}\n`+
-    `Início: ${fmtDate(policy.startDate)}\n`+
-    `Vencimento: ${fmtDate(policy.endDate)}\n`+
-    `Prazo: ${deadline}\n`+
-    `Status: ${policy.status}\n\n`+
-    `Esta apólice requer acompanhamento de renovação.`
+  $("#clientId").value =
+    "";
+
+
+  /*
+    Documento já começa limpo.
+  */
+
+  if (
+    $("#clientDoc")
+  ) {
+
+    $("#clientDoc").value =
+      "";
+
+  }
+
+
+  $("#clientModalTitle").textContent =
+    "Novo cliente";
+
+
+  openModal(
+    "clientModal"
   );
 
 }
 
 
+/* ============================================================
+   EDITAR CLIENTE
+   ============================================================ */
 
-async function sendEmail(id){
+function openClient(id) {
 
-  const policy=
+  const client =
+    clientById(id);
+
+
+  if (!client) {
+    return;
+  }
+
+
+  $("#clientId").value =
+    client.id;
+
+
+  $("#clientName").value =
+    client.name;
+
+
+  /*
+    Nascimento pode estar vazio.
+  */
+
+  $("#clientBirth").value =
+    client.birthDate ||
+    "";
+
+
+  $("#clientPhone").value =
+    formatPhone(
+      client.phone
+    );
+
+
+  $("#clientDoc").value =
+    formatDocument(
+      client.document ||
+      ""
+    );
+
+
+  $("#clientEmail").value =
+    client.email ||
+    "";
+
+
+  $("#clientNotes").value =
+    client.notes ||
+    "";
+
+
+  $("#clientModalTitle").textContent =
+    "Editar cliente";
+
+
+  openModal(
+    "clientModal"
+  );
+
+}
+
+
+/* ============================================================
+   SALVAR CLIENTE
+
+   IMPORTANTE:
+   DATA DE NASCIMENTO NÃO É MAIS OBRIGATÓRIA.
+   ============================================================ */
+
+async function saveClient(event) {
+
+  event.preventDefault();
+
+
+  const name =
+    $("#clientName")
+      .value
+      .trim();
+
+
+  const phone =
+    cleanPhone(
+      $("#clientPhone").value
+    );
+
+
+  const document =
+    formatDocument(
+      $("#clientDoc")
+        .value
+        .trim()
+    );
+
+
+  const email =
+    $("#clientEmail")
+      .value
+      .trim();
+
+
+  const birthDate =
+    $("#clientBirth")
+      .value ||
+    "";
+
+
+  const notes =
+    $("#clientNotes")
+      .value
+      .trim();
+
+
+  if (!name) {
+
+    toast(
+      "Informe o nome do cliente."
+    );
+
+    return;
+
+  }
+
+
+  /*
+    Telefone continua obrigatório.
+  */
+
+  if (
+    !validBrazilPhone(
+      phone
+    )
+  ) {
+
+    toast(
+      "Informe um telefone celular válido com DDD."
+    );
+
+    return;
+
+  }
+
+
+  const id =
+    $("#clientId").value ||
+    uid();
+
+
+  const old =
+    clientById(id);
+
+
+  const client = {
+
+    id,
+
+    name,
+
+    birthDate,
+
+    phone,
+
+    document,
+
+    email,
+
+    notes,
+
+    createdAt:
+      old?.createdAt ||
+      new Date()
+        .toISOString(),
+
+    updatedAt:
+      new Date()
+        .toISOString()
+
+  };
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await sb
+        .from("clients")
+        .upsert(
+          clientToDb(
+            client
+          )
+        )
+        .select()
+        .single();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    const saved =
+      clientFromDb(
+        data
+      );
+
+
+    const index =
+      state.clients.findIndex(
+        item =>
+          item.id ===
+          saved.id
+      );
+
+
+    if (
+      index >= 0
+    ) {
+
+      state.clients[index] =
+        saved;
+
+    } else {
+
+      state.clients.push(
+        saved
+      );
+
+    }
+
+
+    saveLocalCache();
+
+
+    closeModal(
+      "clientModal"
+    );
+
+
+    renderAll();
+
+
+    toast(
+      "Cliente salvo na nuvem."
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao salvar cliente:",
+      error
+    );
+
+
+    toast(
+      "Não foi possível salvar o cliente."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   FORMATAÇÃO AUTOMÁTICA DE CPF/CNPJ
+   ============================================================ */
+
+function handleDocumentInput(
+  event
+) {
+
+  event.target.value =
+    formatDocument(
+      event.target.value
+    );
+
+}
+
+
+
+
+
+/* ============================================================
+   RESETAR FORMULÁRIO DE APÓLICE
+   ============================================================ */
+
+function resetPolicyForm(clientId = "") {
+
+  const form =
+    $("#policyForm");
+
+
+  if (form) {
+    form.reset();
+  }
+
+
+  if ($("#policyId")) {
+    $("#policyId").value = "";
+  }
+
+
+  if ($("#policyParentId")) {
+    $("#policyParentId").value = "";
+  }
+
+
+  if ($("#policyRenewedFrom")) {
+    $("#policyRenewedFrom").value = "";
+  }
+
+
+  if ($("#currentPdfName")) {
+    $("#currentPdfName").textContent = "";
+  }
+
+
+  if ($("#renewInfo")) {
+    $("#renewInfo").classList.add(
+      "hidden"
+    );
+  }
+
+
+  populateSelects();
+
+
+  if ($("#policyClient")) {
+    $("#policyClient").value =
+      clientId || "";
+  }
+
+
+  if ($("#policyStatus")) {
+    $("#policyStatus").value =
+      "Pendente";
+  }
+
+
+  /*
+    Campo novo de feedback.
+    Será colocado no index.html.
+  */
+
+  if ($("#policyFeedback")) {
+    $("#policyFeedback").value = "";
+  }
+
+
+  if ($("#policyModalTitle")) {
+    $("#policyModalTitle").textContent =
+      "Nova apólice";
+  }
+
+}
+
+
+/* ============================================================
+   NOVA APÓLICE
+   ============================================================ */
+
+function newPolicyFor(clientId = "") {
+
+  resetPolicyForm(
+    clientId
+  );
+
+
+  openModal(
+    "policyModal"
+  );
+
+}
+
+
+/* ============================================================
+   EDITAR APÓLICE
+   ============================================================ */
+
+async function editPolicy(id) {
+
+  const policy =
     policyById(id);
 
 
-  if(!policy){
+  if (!policy) {
 
     toast(
       "Apólice não encontrada."
@@ -4186,11 +4142,1833 @@ async function sendEmail(id){
   }
 
 
-  const to=
-    state.settings.managerEmail;
+  resetPolicyForm(
+    policy.clientId
+  );
 
 
-  if(!to){
+  $("#policyId").value =
+    policy.id;
+
+
+  $("#policyInsurer").value =
+    policy.insurer;
+
+
+  $("#policyType").value =
+    policy.type;
+
+
+  $("#policyNumber").value =
+    policy.number || "";
+
+
+  $("#policyStart").value =
+    policy.startDate || "";
+
+
+  $("#policyEnd").value =
+    policy.endDate || "";
+
+
+  $("#policyStatus").value =
+    policy.status || "Pendente";
+
+
+  $("#policyNotes").value =
+    policy.notes || "";
+
+
+  /*
+    NOVO:
+    Feedback comercial.
+  */
+
+  if ($("#policyFeedback")) {
+
+    $("#policyFeedback").value =
+      policy.feedback || "";
+
+  }
+
+
+  if ($("#alert30")) {
+    $("#alert30").checked =
+      policy.alerts?.[30] !== false;
+  }
+
+
+  if ($("#alert15")) {
+    $("#alert15").checked =
+      policy.alerts?.[15] !== false;
+  }
+
+
+  if ($("#alert7")) {
+    $("#alert7").checked =
+      policy.alerts?.[7] !== false;
+  }
+
+
+  if ($("#alert1")) {
+    $("#alert1").checked =
+      policy.alerts?.[1] !== false;
+  }
+
+
+  if ($("#alertExpired")) {
+    $("#alertExpired").checked =
+      policy.alerts?.expired !== false;
+  }
+
+
+  if (
+    policy.pdfPath &&
+    $("#currentPdfName")
+  ) {
+
+    $("#currentPdfName").textContent =
+      "PDF atual: " +
+      decodeURIComponent(
+        policy.pdfPath
+          .split("/")
+          .pop()
+      );
+
+  }
+
+
+  $("#policyModalTitle").textContent =
+    "Editar apólice";
+
+
+  openModal(
+    "policyModal"
+  );
+
+}
+
+
+/* ============================================================
+   NOME SEGURO PARA ARQUIVO
+   ============================================================ */
+
+function safeFileName(name) {
+
+  return String(
+    name || "arquivo"
+  )
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    )
+    .replace(
+      /[^a-zA-Z0-9._-]/g,
+      "-"
+    )
+    .replace(
+      /-+/g,
+      "-"
+    );
+
+}
+
+
+/* ============================================================
+   UPLOAD DO PDF DA APÓLICE
+   ============================================================ */
+
+async function uploadPolicyPdf(
+  policyId,
+  file
+) {
+
+  if (!file) {
+    return null;
+  }
+
+
+  if (
+    file.type !==
+    "application/pdf"
+  ) {
+
+    throw new Error(
+      "O anexo precisa ser PDF."
+    );
+
+  }
+
+
+  const path =
+    `${state.user.id}/${policyId}/${Date.now()}-${safeFileName(file.name)}`;
+
+
+  const {
+    error
+  } =
+    await sb
+      .storage
+      .from(
+        "policy-pdfs"
+      )
+      .upload(
+        path,
+        file,
+        {
+
+          cacheControl:
+            "3600",
+
+          contentType:
+            "application/pdf",
+
+          upsert:
+            false
+
+        }
+      );
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  return path;
+
+}
+
+
+/* ============================================================
+   SALVAR APÓLICE
+   ============================================================ */
+
+async function savePolicy(event) {
+
+  event.preventDefault();
+
+
+  const clientId =
+    $("#policyClient")
+      .value;
+
+
+  if (!clientId) {
+
+    toast(
+      "Selecione o cliente."
+    );
+
+    return null;
+
+  }
+
+
+  const startDate =
+    $("#policyStart")
+      .value;
+
+
+  const endDate =
+    $("#policyEnd")
+      .value;
+
+
+  if (
+    startDate &&
+    endDate &&
+    startDate > endDate
+  ) {
+
+    toast(
+      "O fim da vigência não pode ser anterior ao início."
+    );
+
+    return null;
+
+  }
+
+
+  const oldId =
+    $("#policyId")
+      .value;
+
+
+  const existing =
+    oldId
+      ? policyById(
+          oldId
+        )
+      : null;
+
+
+  const id =
+    oldId ||
+    uid();
+
+
+  const pdfInput =
+    $("#policyPdf");
+
+
+  const file =
+    pdfInput
+      ?.files?.[0] ||
+    null;
+
+
+  let pdfPath =
+    existing?.pdfPath ||
+    null;
+
+
+  let newPdfPath =
+    null;
+
+
+  /*
+    Feedback comercial separado
+    das observações normais.
+  */
+
+  const feedback =
+    $("#policyFeedback")
+      ?.value
+      ?.trim() ||
+    "";
+
+
+  try {
+
+    /* ========================================================
+       UPLOAD DO NOVO PDF, SE HOUVER
+       ======================================================== */
+
+    if (file) {
+
+      newPdfPath =
+        await uploadPolicyPdf(
+          id,
+          file
+        );
+
+
+      pdfPath =
+        newPdfPath;
+
+    }
+
+
+    /* ========================================================
+       OBJETO DA APÓLICE
+       ======================================================== */
+
+    const policy = {
+
+      id,
+
+      clientId,
+
+      insurer:
+        $("#policyInsurer")
+          .value,
+
+      type:
+        $("#policyType")
+          .value,
+
+      number:
+        $("#policyNumber")
+          .value
+          .trim(),
+
+      startDate,
+
+      endDate,
+
+      status:
+        $("#policyStatus")
+          .value ||
+        "Pendente",
+
+      notes:
+        $("#policyNotes")
+          .value
+          .trim(),
+
+      feedback,
+
+      feedbackUpdatedAt:
+        feedback
+          ? new Date()
+              .toISOString()
+          : null,
+
+      alerts: {
+
+        30:
+          $("#alert30")
+            ?.checked !== false,
+
+        15:
+          $("#alert15")
+            ?.checked !== false,
+
+        7:
+          $("#alert7")
+            ?.checked !== false,
+
+        1:
+          $("#alert1")
+            ?.checked !== false,
+
+        expired:
+          $("#alertExpired")
+            ?.checked !== false
+
+      },
+
+      pdfPath,
+
+      renewedFrom:
+        $("#policyRenewedFrom")
+          ?.value ||
+        existing?.renewedFrom ||
+        null,
+
+      createdAt:
+        existing?.createdAt ||
+        new Date()
+          .toISOString(),
+
+      updatedAt:
+        new Date()
+          .toISOString()
+
+    };
+
+
+    /* ========================================================
+       SALVAR NO SUPABASE
+       ======================================================== */
+
+    const {
+      data,
+      error
+    } =
+      await sb
+        .from(
+          "policies"
+        )
+        .upsert(
+          policyToDb(
+            policy
+          )
+        )
+        .select()
+        .single();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    /*
+      Se colocou PDF novo e existia
+      PDF antigo, remove o antigo.
+    */
+
+    if (
+      newPdfPath &&
+      existing?.pdfPath &&
+      existing.pdfPath !==
+        newPdfPath
+    ) {
+
+      const {
+        error: removeError
+      } =
+        await sb
+          .storage
+          .from(
+            "policy-pdfs"
+          )
+          .remove([
+            existing.pdfPath
+          ]);
+
+
+      if (removeError) {
+
+        console.warn(
+          "Não foi possível remover o PDF antigo:",
+          removeError
+        );
+
+      }
+
+    }
+
+
+    const saved =
+      policyFromDb(
+        data
+      );
+
+
+    const index =
+      state.policies.findIndex(
+        item =>
+          item.id ===
+          saved.id
+      );
+
+
+    if (
+      index >= 0
+    ) {
+
+      state.policies[index] =
+        saved;
+
+    } else {
+
+      state.policies.push(
+        saved
+      );
+
+    }
+
+
+    /* ========================================================
+       HISTÓRICO
+       ======================================================== */
+
+    try {
+
+      await addEvent(
+
+        saved.id,
+
+        existing
+          ? "update"
+          : "create",
+
+        existing
+          ? "Apólice atualizada."
+          : "Apólice cadastrada."
+
+      );
+
+    } catch (eventError) {
+
+      console.warn(
+        "Apólice salva, mas não foi possível registrar histórico:",
+        eventError
+      );
+
+    }
+
+
+    saveLocalCache();
+
+
+    closeModal(
+      "policyModal"
+    );
+
+
+    renderAll();
+
+
+    toast(
+      existing
+        ? "Apólice atualizada com sucesso."
+        : "Apólice cadastrada com sucesso."
+    );
+
+
+    return saved;
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao salvar apólice:",
+      error
+    );
+
+
+    /*
+      Se o PDF novo subiu,
+      mas a apólice falhou,
+      tenta remover o arquivo órfão.
+    */
+
+    if (newPdfPath) {
+
+      try {
+
+        await sb
+          .storage
+          .from(
+            "policy-pdfs"
+          )
+          .remove([
+            newPdfPath
+          ]);
+
+      } catch (
+        cleanupError
+      ) {
+
+        console.warn(
+          cleanupError
+        );
+
+      }
+
+    }
+
+
+    toast(
+      "Não foi possível salvar a apólice."
+    );
+
+
+    return null;
+
+  }
+
+}
+
+
+/* ============================================================
+   ABRIR PDF
+   ============================================================ */
+
+async function openPdf(id) {
+
+  const policy =
+    policyById(id);
+
+
+  if (
+    !policy ||
+    !policy.pdfPath
+  ) {
+
+    toast(
+      "Esta apólice não possui PDF."
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await sb
+        .storage
+        .from(
+          "policy-pdfs"
+        )
+        .createSignedUrl(
+          policy.pdfPath,
+          60 * 10
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    const frame =
+      $("#pdfFrame");
+
+
+    if (!frame) {
+
+      window.open(
+        data.signedUrl,
+        "_blank"
+      );
+
+      return;
+
+    }
+
+
+    frame.src =
+      data.signedUrl;
+
+
+    openModal(
+      "pdfModal"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao abrir PDF:",
+      error
+    );
+
+
+    toast(
+      "Não foi possível abrir o PDF."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   DETALHES DA APÓLICE
+   ============================================================ */
+
+function openDetails(id) {
+
+  const policy =
+    policyById(id);
+
+
+  if (!policy) {
+
+    toast(
+      "Apólice não encontrada."
+    );
+
+    return;
+
+  }
+
+
+  const client =
+    clientById(
+      policy.clientId
+    );
+
+
+  const expiry =
+    expiryLabel(
+      policy
+    );
+
+
+  const body =
+    $("#detailsBody");
+
+
+  if (!body) {
+    return;
+  }
+
+
+  body.innerHTML = `
+
+    <div class="detail-grid">
+
+      <div class="detail-item">
+
+        <small>
+          Cliente
+        </small>
+
+        <strong>
+          ${esc(
+            client?.name ||
+            "Cliente"
+          )}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <small>
+          Telefone
+        </small>
+
+        <strong>
+          ${esc(
+            formatPhone(
+              client?.phone
+            ) ||
+            "Não informado"
+          )}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <small>
+          CPF/CNPJ
+        </small>
+
+        <strong>
+          ${esc(
+            formatDocument(
+              client?.document ||
+              ""
+            ) ||
+            "Não informado"
+          )}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <small>
+          E-mail
+        </small>
+
+        <strong>
+          ${esc(
+            client?.email ||
+            "Não informado"
+          )}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <small>
+          Seguro
+        </small>
+
+        <strong>
+          ${esc(
+            policy.type
+          )}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <small>
+          Seguradora
+        </small>
+
+        <strong>
+          ${esc(
+            policy.insurer
+          )}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <small>
+          Número da apólice
+        </small>
+
+        <strong>
+          ${esc(
+            policy.number ||
+            "Não informado"
+          )}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <small>
+          Início da vigência
+        </small>
+
+        <strong>
+          ${fmtDate(
+            policy.startDate
+          )}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <small>
+          Fim da vigência
+        </small>
+
+        <strong>
+          ${fmtDate(
+            policy.endDate
+          )}
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <small>
+          Vencimento
+        </small>
+
+        <strong>
+          <span
+            class="pill ${expiry.cls}"
+          >
+            ${esc(
+              expiry.text
+            )}
+          </span>
+        </strong>
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <small>
+          Processo
+        </small>
+
+        <strong>
+          <span
+            class="pill ${processClass(
+              policy.status
+            )}"
+          >
+            ${esc(
+              policy.status
+            )}
+          </span>
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="detail-section"
+      style="margin-top:18px"
+    >
+
+      <h4>
+        Feedback comercial
+      </h4>
+
+      <p
+        style="
+          white-space:pre-wrap;
+        "
+      >
+        ${esc(
+          policy.feedback ||
+          "Sem feedback informado."
+        )}
+      </p>
+
+    </div>
+
+
+    <div
+      class="detail-section"
+      style="margin-top:18px"
+    >
+
+      <h4>
+        Observações
+      </h4>
+
+      <p
+        style="
+          white-space:pre-wrap;
+        "
+      >
+        ${esc(
+          policy.notes ||
+          "Sem observações."
+        )}
+      </p>
+
+    </div>
+
+
+    <div
+      class="actions"
+      style="
+        margin-top:20px;
+        flex-wrap:wrap;
+      "
+    >
+
+      <button
+        class="action-btn"
+        onclick="
+          closeModal('detailsModal');
+          editPolicy('${policy.id}');
+        "
+      >
+        Editar
+      </button>
+
+
+      <button
+        class="action-btn"
+        onclick="
+          changeStatus(
+            '${policy.id}',
+            'Pendente'
+          )
+        "
+      >
+        Pendente
+      </button>
+
+
+      <button
+        class="action-btn"
+        onclick="
+          changeStatus(
+            '${policy.id}',
+            'Em andamento'
+          )
+        "
+      >
+        Em andamento
+      </button>
+
+
+      <button
+        class="action-btn"
+        onclick="
+          changeStatus(
+            '${policy.id}',
+            'Ganho'
+          )
+        "
+      >
+        Ganho
+      </button>
+
+
+      <button
+        class="action-btn"
+        onclick="
+          changeStatus(
+            '${policy.id}',
+            'Perdido'
+          )
+        "
+      >
+        Perdido
+      </button>
+
+
+      <button
+        class="action-btn"
+        onclick="
+          manualWhatsApp(
+            '${policy.id}'
+          )
+        "
+      >
+        WhatsApp
+      </button>
+
+
+      <button
+        class="action-btn"
+        onclick="
+          sendEmail(
+            '${policy.id}'
+          )
+        "
+      >
+        E-mail
+      </button>
+
+
+      ${
+        policy.pdfPath
+
+          ? `
+              <button
+                class="action-btn"
+                onclick="
+                  openPdf(
+                    '${policy.id}'
+                  )
+                "
+              >
+                Abrir PDF
+              </button>
+            `
+
+          : ""
+      }
+
+
+      <button
+        class="action-btn"
+        onclick="
+          closeModal('detailsModal');
+          renewPolicy('${policy.id}');
+        "
+      >
+        Renovar
+      </button>
+
+
+      <button
+        class="action-btn"
+        style="
+          color:#b42318;
+          border-color:#fecdca;
+          background:#fff5f5;
+        "
+        onclick="
+          deletePolicy(
+            '${policy.id}'
+          )
+        "
+      >
+        Excluir
+      </button>
+
+    </div>
+
+  `;
+
+
+  openModal(
+    "detailsModal"
+  );
+
+}
+
+
+/* ============================================================
+   RENOVAR APÓLICE
+   ============================================================ */
+
+function renewPolicy(id) {
+
+  const oldPolicy =
+    policyById(id);
+
+
+  if (!oldPolicy) {
+
+    toast(
+      "Apólice não encontrada."
+    );
+
+    return;
+
+  }
+
+
+  resetPolicyForm(
+    oldPolicy.clientId
+  );
+
+
+  if ($("#policyRenewedFrom")) {
+
+    $("#policyRenewedFrom").value =
+      oldPolicy.id;
+
+  }
+
+
+  if ($("#policyInsurer")) {
+
+    $("#policyInsurer").value =
+      oldPolicy.insurer;
+
+  }
+
+
+  if ($("#policyType")) {
+
+    $("#policyType").value =
+      oldPolicy.type;
+
+  }
+
+
+  /*
+    Número fica vazio porque
+    a nova renovação pode gerar
+    uma nova apólice.
+  */
+
+  if ($("#policyNumber")) {
+
+    $("#policyNumber").value =
+      "";
+
+  }
+
+
+  /*
+    Feedback da apólice antiga
+    não é copiado automaticamente.
+    A renovação começa com feedback novo.
+  */
+
+  if ($("#policyFeedback")) {
+
+    $("#policyFeedback").value =
+      "";
+
+  }
+
+
+  if ($("#renewInfo")) {
+
+    $("#renewInfo").classList.remove(
+      "hidden"
+    );
+
+
+    $("#renewInfo").innerHTML = `
+      Renovando a apólice
+      <strong>
+        ${esc(
+          oldPolicy.number ||
+          oldPolicy.type
+        )}
+      </strong>
+      com vencimento em
+      <strong>
+        ${fmtDate(
+          oldPolicy.endDate
+        )}
+      </strong>.
+    `;
+
+  }
+
+
+  if ($("#policyModalTitle")) {
+
+    $("#policyModalTitle").textContent =
+      "Renovar apólice";
+
+  }
+
+
+  openModal(
+    "policyModal"
+  );
+
+}
+
+
+/* ============================================================
+   FINALIZAR RENOVAÇÃO
+   ============================================================ */
+
+async function finalizeRenewal(
+  oldPolicyId
+) {
+
+  const oldPolicy =
+    policyById(
+      oldPolicyId
+    );
+
+
+  if (!oldPolicy) {
+    return;
+  }
+
+
+  /*
+    Ao gerar a nova apólice,
+    a anterior fica como GANHO.
+  */
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await sb
+        .from(
+          "policies"
+        )
+        .update({
+
+          status:
+            "Ganho",
+
+          updated_at:
+            new Date()
+              .toISOString()
+
+        })
+        .eq(
+          "id",
+          oldPolicyId
+        )
+        .select()
+        .single();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    const updated =
+      policyFromDb(
+        data
+      );
+
+
+    const index =
+      state.policies.findIndex(
+        item =>
+          item.id ===
+          oldPolicyId
+      );
+
+
+    if (
+      index >= 0
+    ) {
+
+      state.policies[index] =
+        updated;
+
+    }
+
+
+    try {
+
+      await addEvent(
+
+        oldPolicyId,
+
+        "renewal",
+
+        "Renovação concluída e nova apólice cadastrada."
+
+      );
+
+    } catch (
+      eventError
+    ) {
+
+      console.warn(
+        eventError
+      );
+
+    }
+
+
+    saveLocalCache();
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao finalizar renovação:",
+      error
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   CONFIRMAÇÃO PROFISSIONAL DE EXCLUSÃO
+   ============================================================ */
+
+function deleteConfirm(
+  title,
+  message
+) {
+
+  return Promise.resolve(
+    window.confirm(
+      `${title}\n\n${message}`
+    )
+  );
+
+}
+
+
+function deleteAlert(
+  title,
+  message
+) {
+
+  window.alert(
+    `${title}\n\n${message}`
+  );
+
+
+  return Promise.resolve();
+
+}
+
+
+/* ============================================================
+   EXCLUIR APÓLICE
+   ============================================================ */
+
+async function deletePolicy(id) {
+
+  const policy =
+    policyById(id);
+
+
+  if (!policy) {
+
+    toast(
+      "Apólice não encontrada."
+    );
+
+    return;
+
+  }
+
+
+  const client =
+    clientById(
+      policy.clientId
+    );
+
+
+  const confirmed =
+    await deleteConfirm(
+
+      "Excluir apólice?",
+
+      `Você está prestes a excluir a apólice de ${client?.name || "Cliente"}.\n\nEssa ação não poderá ser desfeita.`
+
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    /*
+      Remove PDF primeiro,
+      caso exista.
+    */
+
+    if (
+      policy.pdfPath
+    ) {
+
+      const {
+        error: pdfError
+      } =
+        await sb
+          .storage
+          .from(
+            "policy-pdfs"
+          )
+          .remove([
+            policy.pdfPath
+          ]);
+
+
+      if (pdfError) {
+
+        console.warn(
+          "Não foi possível remover o PDF:",
+          pdfError
+        );
+
+      }
+
+    }
+
+
+    const {
+      error
+    } =
+      await sb
+        .from(
+          "policies"
+        )
+        .delete()
+        .eq(
+          "id",
+          id
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    state.policies =
+      state.policies.filter(
+        item =>
+          item.id !== id
+      );
+
+
+    state.events =
+      state.events.filter(
+        item =>
+          item.policyId !== id
+      );
+
+
+    saveLocalCache();
+
+
+    closeModal(
+      "detailsModal"
+    );
+
+
+    renderAll();
+
+
+    toast(
+      "Apólice excluída com sucesso."
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao excluir apólice:",
+      error
+    );
+
+
+    toast(
+      "Não foi possível excluir a apólice."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   EXCLUIR CLIENTE
+   ============================================================ */
+
+async function deleteClient(id) {
+
+  const client =
+    clientById(id);
+
+
+  if (!client) {
+
+    toast(
+      "Cliente não encontrado."
+    );
+
+    return;
+
+  }
+
+
+  const policies =
+    state.policies.filter(
+      policy =>
+        policy.clientId === id
+    );
+
+
+  if (
+    policies.length > 0
+  ) {
+
+    await deleteAlert(
+
+      "Não foi possível excluir",
+
+      `${client.name} possui ${policies.length} apólice${policies.length === 1 ? "" : "s"} cadastrada${policies.length === 1 ? "" : "s"}.\n\nPara excluir este cliente, remova primeiro todas as apólices vinculadas a ele.`
+
+    );
+
+
+    return;
+
+  }
+
+
+  const confirmed =
+    await deleteConfirm(
+
+      "Excluir cliente?",
+
+      `Você está prestes a excluir o cliente ${client.name}.\n\nEssa ação não poderá ser desfeita.`
+
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    const {
+      error
+    } =
+      await sb
+        .from(
+          "clients"
+        )
+        .delete()
+        .eq(
+          "id",
+          id
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    state.clients =
+      state.clients.filter(
+        item =>
+          item.id !== id
+      );
+
+
+    saveLocalCache();
+
+
+    closeModal(
+      "clientModal"
+    );
+
+
+    renderAll();
+
+
+    toast(
+      "Cliente excluído com sucesso."
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao excluir cliente:",
+      error
+    );
+
+
+    toast(
+      "Não foi possível excluir o cliente."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   WHATSAPP MANUAL
+   ============================================================ */
+
+function manualWhatsApp(id) {
+
+  const policy =
+    policyById(id);
+
+
+  const client =
+    clientById(
+      policy?.clientId
+    );
+
+
+  if (
+    !policy ||
+    !client
+  ) {
+    return;
+  }
+
+
+  const days =
+    daysUntil(
+      policy.endDate
+    );
+
+
+  const deadline =
+    days < 0
+
+      ? `venceu há ${Math.abs(days)} dia(s)`
+
+      : days === 0
+
+        ? "vence hoje"
+
+        : `vence em ${days} dia(s)`;
+
+
+  const message =
+    `Olá, ${client.name}! ` +
+    `Aqui é da SAVA Seguros. ` +
+    `Estamos entrando em contato sobre sua apólice ` +
+    `${policy.number || ""}, ` +
+    `do seguro ${policy.type}, ` +
+    `que ${deadline} (${fmtDate(policy.endDate)}). ` +
+    `Podemos conversar sobre a renovação?`;
+
+
+  const phone =
+    cleanPhone(
+      client.phone
+    );
+
+
+  window.open(
+
+    "https://wa.me/55" +
+      phone +
+      "?text=" +
+      encodeURIComponent(
+        message
+      ),
+
+    "_blank"
+
+  );
+
+}
+
+
+/* ============================================================
+   CORPO DO E-MAIL DO GESTOR
+   ============================================================ */
+
+function managerEmailBody(policy) {
+
+  const client =
+    clientById(
+      policy.clientId
+    );
+
+
+  const days =
+    daysUntil(
+      policy.endDate
+    );
+
+
+  const deadline =
+    days < 0
+
+      ? `Vencida há ${Math.abs(days)} dia(s)`
+
+      : days === 0
+
+        ? "Vence hoje"
+
+        : `Faltam ${days} dia(s)`;
+
+
+  return (
+
+    `RENOVAÇÃO DE SEGURO — SAVA SEGUROS\n\n` +
+
+    `Cliente: ${client?.name || "Cliente"}\n` +
+
+    `Telefone: ${formatPhone(client?.phone) || "Não informado"}\n` +
+
+    `E-mail do cliente: ${client?.email || "Não informado"}\n` +
+
+    `Seguradora: ${policy.insurer}\n` +
+
+    `Seguro: ${policy.type}\n` +
+
+    `Apólice: ${policy.number || "Sem número"}\n` +
+
+    `Início: ${fmtDate(policy.startDate)}\n` +
+
+    `Vencimento: ${fmtDate(policy.endDate)}\n` +
+
+    `Prazo: ${deadline}\n` +
+
+    `Status: ${policy.status}\n` +
+
+    `Feedback: ${policy.feedback || "Sem feedback informado."}\n\n` +
+
+    `Esta apólice requer acompanhamento de renovação.`
+
+  );
+
+}
+
+
+/* ============================================================
+   ENVIAR E-MAIL
+   MANTÉM A AUTOMAÇÃO QUE JÁ FUNCIONAVA
+   ============================================================ */
+
+async function sendEmail(id) {
+
+  const policy =
+    policyById(id);
+
+
+  if (!policy) {
+
+    toast(
+      "Apólice não encontrada."
+    );
+
+    return;
+
+  }
+
+
+  const to =
+    state.settings
+      .managerEmail;
+
+
+  if (!to) {
 
     toast(
       "Configure o e-mail do gestor em Configurações."
@@ -4201,12 +5979,28 @@ async function sendEmail(id){
   }
 
 
-  if(!state.settings.endpoint){
+  /*
+    Se não tiver endpoint,
+    abre o programa de e-mail.
+  */
 
-    window.location.href=
-      `mailto:${encodeURIComponent(to)}`+
-      `?subject=${encodeURIComponent("Renovação próxima - SAVA Seguros")}`+
-      `&body=${encodeURIComponent(managerEmailBody(policy))}`;
+  if (
+    !state.settings.endpoint
+  ) {
+
+    window.location.href =
+
+      `mailto:${encodeURIComponent(to)}` +
+
+      `?subject=${encodeURIComponent(
+        "Renovação próxima - SAVA Seguros"
+      )}` +
+
+      `&body=${encodeURIComponent(
+        managerEmailBody(
+          policy
+        )
+      )}`;
 
 
     return;
@@ -4214,41 +6008,61 @@ async function sendEmail(id){
   }
 
 
-  try{
+  try {
 
-    const response=
+    const response =
       await fetch(
-        state.settings.endpoint,
-        {
-          method:"POST",
 
-          headers:{
+        state.settings.endpoint,
+
+        {
+
+          method:
+            "POST",
+
+          headers: {
+
             "Content-Type":
               "text/plain;charset=utf-8"
+
           },
 
-          body:JSON.stringify({
-            action:"sendEmail",
-            to,
-            subject:
-              "Renovação próxima - SAVA Seguros",
-            body:
-              managerEmailBody(policy),
-            policyId:
-              policy.id
-          })
+          body:
+            JSON.stringify({
+
+              action:
+                "sendEmail",
+
+              to,
+
+              subject:
+                "Renovação próxima - SAVA Seguros",
+
+              body:
+                managerEmailBody(
+                  policy
+                ),
+
+              policyId:
+                policy.id
+
+            })
+
         }
+
       );
 
 
-    const json=
+    const result =
       await response.json();
 
 
-    if(!json.ok){
+    if (
+      !result.ok
+    ) {
 
       throw new Error(
-        json.error||
+        result.error ||
         "Falha no envio"
       );
 
@@ -4256,9 +6070,13 @@ async function sendEmail(id){
 
 
     await addEvent(
+
       policy.id,
+
       "email",
-      "Lembrete de e-mail enviado ao gestor"
+
+      "Lembrete de e-mail enviado ao gestor."
+
     );
 
 
@@ -4267,10 +6085,10 @@ async function sendEmail(id){
     );
 
 
-  }catch(error){
+  } catch (error) {
 
     console.error(
-      "Erro ao enviar e-mail:",
+      "Erro no envio do e-mail:",
       error
     );
 
@@ -4284,38 +6102,40 @@ async function sendEmail(id){
 }
 
 
+/* ============================================================
+   VERIFICAR AUTOMAÇÃO DE E-MAIL
+   ============================================================ */
 
-function checkAutomation(){
+function checkAutomation() {
 
-  const configured=
+  const configured =
     !!state.settings.endpoint &&
     !!state.settings.managerEmail;
 
 
-  const badge=
+  const badge =
     $("#emailAutomationBadge");
 
 
-  if(!badge){
-    return;
+  if (badge) {
+
+    badge.textContent =
+      `● E-mail automático: ${
+        configured
+          ? "ativo"
+          : "não configurado"
+      }`;
+
+
+    badge.style.color =
+      configured
+        ? "#087443"
+        : "#b54708";
+
   }
 
 
-  badge.textContent=
-    `● E-mail automático: ${
-      configured
-        ?"ativo"
-        :"não configurado"
-    }`;
-
-
-  badge.style.color=
-    configured
-      ?"#087443"
-      :"#b54708";
-
-
-  if(configured){
+  if (configured) {
 
     autoEmailScan();
 
@@ -4324,68 +6144,83 @@ function checkAutomation(){
 }
 
 
+/* ============================================================
+   ESCANEAMENTO AUTOMÁTICO DE E-MAIL
+   ============================================================ */
 
-async function autoEmailScan(){
+async function autoEmailScan() {
 
-  const todayIso=
+  const todayIso =
     iso(
       new Date()
     );
 
 
-  const sentToday=
+  const sentToday =
     state.events
       .filter(
-        event=>
-          event.type==="email" &&
-          event.date?.slice(0,10)===
-          todayIso
+        event =>
+          event.type ===
+            "email" &&
+          event.date
+            ?.slice(
+              0,
+              10
+            ) === todayIso
       )
       .map(
-        event=>
+        event =>
           event.policyId
       );
 
 
-  for(
-    const policy of state.policies
-  ){
+  for (
+    const policy
+    of state.policies
+  ) {
 
-    const days=
+    const days =
       daysUntil(
         policy.endDate
       );
 
 
-    const mark=
-      [30,15,7,1].includes(days)
-        ?days
-        :(
-          days<0 &&
-          days>=-1
-            ?"expired"
-            :null
-        );
+    const mark =
+      [30, 15, 7, 1]
+        .includes(days)
+
+        ? days
+
+        : (
+            days < 0 &&
+            days >= -1
+
+              ? "expired"
+
+              : null
+          );
 
 
-    if(mark===null){
+    if (
+      mark === null
+    ) {
       continue;
     }
 
 
-    if(
+    if (
       sentToday.includes(
         policy.id
       )
-    ){
+    ) {
       continue;
     }
 
 
-    if(
-      policy.alerts?.[mark]===
+    if (
+      policy.alerts?.[mark] ===
       false
-    ){
+    ) {
       continue;
     }
 
@@ -4399,174 +6234,647 @@ async function autoEmailScan(){
 }
 
 
+/* ============================================================
+   RELATÓRIO COMERCIAL DE RENOVAÇÕES
+   USA O FEEDBACK REAL DIGITADO
+   NÃO INVENTA INFORMAÇÕES
+   ============================================================ */
 
-function generateReport(){
+function generateCommercialReport() {
 
-  const total=
+  const start =
+    $("#renewalStartDateFilter")
+      ?.value ||
+    "";
+
+
+  const end =
+    $("#renewalEndDateFilter")
+      ?.value ||
+    "";
+
+
+  const policies =
+    [...state.policies]
+      .filter(
+        policy =>
+          inDateRange(
+            policy,
+            start,
+            end
+          )
+      )
+      .sort(
+        (a, b) => {
+
+          const statusOrder = {
+
+            "Pendente": 1,
+
+            "Em andamento": 2,
+
+            "Ganho": 3,
+
+            "Perdido": 4
+
+          };
+
+
+          const order =
+            (
+              statusOrder[a.status] ||
+              99
+            ) -
+            (
+              statusOrder[b.status] ||
+              99
+            );
+
+
+          if (order !== 0) {
+            return order;
+          }
+
+
+          return (
+            new Date(a.endDate) -
+            new Date(b.endDate)
+          );
+
+        }
+      );
+
+
+  const now =
+    new Date();
+
+
+  const month =
+    now
+      .toLocaleDateString(
+        "pt-BR",
+        {
+          month:
+            "long"
+        }
+      )
+      .toUpperCase();
+
+
+  const date =
+    now
+      .toLocaleDateString(
+        "pt-BR",
+        {
+          day:
+            "2-digit",
+
+          month:
+            "2-digit"
+        }
+      );
+
+
+  let text =
+    `📊 FEEDBACK COMERCIAL — ${month} — ${date}\n\n`;
+
+
+  const groups = [
+
+    {
+      status:
+        "Pendente",
+
+      icon:
+        "🟡"
+    },
+
+    {
+      status:
+        "Em andamento",
+
+      icon:
+        "🔵"
+    },
+
+    {
+      status:
+        "Ganho",
+
+      icon:
+        "🟢"
+    },
+
+    {
+      status:
+        "Perdido",
+
+      icon:
+        "🔴"
+    }
+
+  ];
+
+
+  groups.forEach(
+    group => {
+
+      const groupPolicies =
+        policies.filter(
+          policy =>
+            policy.status ===
+            group.status
+        );
+
+
+      if (
+        !groupPolicies.length
+      ) {
+        return;
+      }
+
+
+      text +=
+        `${group.icon} ${group.status.toUpperCase()} — ${groupPolicies.length}\n\n`;
+
+
+      groupPolicies.forEach(
+        policy => {
+
+          const client =
+            clientById(
+              policy.clientId
+            );
+
+
+          text +=
+            `${(client?.name || "CLIENTE").toUpperCase()} – ${String(policy.type || "SEGURO").toUpperCase()}:\n`;
+
+
+          text +=
+            `${policy.feedback || "Sem feedback informado."}\n`;
+
+
+          text +=
+            `Seguradora: ${policy.insurer || "Não informada"}\n`;
+
+
+          text +=
+            `Vigência: ${fmtDate(policy.startDate)} a ${fmtDate(policy.endDate)}\n\n`;
+
+        }
+      );
+
+    }
+  );
+
+
+  if (
+    !policies.length
+  ) {
+
+    text +=
+      "Nenhuma renovação encontrada para o período selecionado.";
+
+  }
+
+
+  return text.trim();
+
+}
+
+
+/* ============================================================
+   EXIBIR RELATÓRIO COMERCIAL
+   ============================================================ */
+
+function showCommercialReport() {
+
+  const report =
+    generateCommercialReport();
+
+
+  const area =
+    $("#commercialReportArea");
+
+
+  if (area) {
+
+    area.textContent =
+      report;
+
+  }
+
+
+  return report;
+
+}
+
+
+
+
+
+/* ============================================================
+   RELATÓRIO INTELIGENTE GERAL
+   ============================================================ */
+
+function generateReport() {
+
+  const total =
     state.policies.length;
 
 
-  const expired=
+  const expired =
     state.policies.filter(
-      policy=>
+      policy =>
         daysUntil(
           policy.endDate
-        )<0
+        ) < 0
     ).length;
 
 
-  const d7=
+  const next7 =
     state.policies.filter(
-      policy=>{
+      policy => {
 
-        const days=
+        const days =
           daysUntil(
             policy.endDate
           );
 
-        return days>=0 &&
-               days<=7;
+        return (
+          days >= 0 &&
+          days <= 7
+        );
 
       }
     ).length;
 
 
-  const pending=
+  const next15 =
     state.policies.filter(
-      policy=>
-        policy.status===
+      policy => {
+
+        const days =
+          daysUntil(
+            policy.endDate
+          );
+
+        return (
+          days >= 0 &&
+          days <= 15
+        );
+
+      }
+    ).length;
+
+
+  const next30 =
+    state.policies.filter(
+      policy => {
+
+        const days =
+          daysUntil(
+            policy.endDate
+          );
+
+        return (
+          days >= 0 &&
+          days <= 30
+        );
+
+      }
+    ).length;
+
+
+  const pending =
+    state.policies.filter(
+      policy =>
+        policy.status ===
         "Pendente"
     ).length;
 
 
-  const inProgress=
+  const progress =
     state.policies.filter(
-      policy=>
-        policy.status===
+      policy =>
+        policy.status ===
         "Em andamento"
     ).length;
 
 
-  const won=
+  const won =
     state.policies.filter(
-      policy=>
-        policy.status===
+      policy =>
+        policy.status ===
         "Ganho"
     ).length;
 
 
-  const risks=
+  const lost =
+    state.policies.filter(
+      policy =>
+        policy.status ===
+        "Perdido"
+    ).length;
+
+
+  const withoutFeedback =
+    state.policies.filter(
+      policy =>
+        !String(
+          policy.feedback ||
+          ""
+        ).trim()
+    ).length;
+
+
+  const priority =
     [...state.policies]
       .filter(
-        policy=>
-          daysUntil(
-            policy.endDate
-          )<=30 &&
-          policy.status!=="Ganho"
+        policy => {
+
+          const days =
+            daysUntil(
+              policy.endDate
+            );
+
+
+          return (
+            days <= 30 &&
+            policy.status !==
+              "Ganho" &&
+            policy.status !==
+              "Perdido"
+          );
+
+        }
       )
       .sort(
-        (a,b)=>
-          daysUntil(a.endDate)-
-          daysUntil(b.endDate)
+        (a, b) =>
+          daysUntil(
+            a.endDate
+          ) -
+          daysUntil(
+            b.endDate
+          )
       )
-      .slice(0,5);
+      .slice(
+        0,
+        10
+      );
+
+
+  let priorityHtml =
+    "";
+
+
+  if (
+    priority.length
+  ) {
+
+    priorityHtml =
+      priority
+        .map(
+          policy => {
+
+            const client =
+              clientById(
+                policy.clientId
+              );
+
+
+            const expiry =
+              expiryLabel(
+                policy
+              );
+
+
+            return `
+              <li>
+
+                <b>
+                  ${esc(
+                    client?.name ||
+                    "Cliente"
+                  )}
+                </b>
+
+                —
+                ${esc(
+                  policy.type
+                )}
+
+                ·
+                ${esc(
+                  policy.insurer
+                )}
+
+                —
+                ${esc(
+                  expiry.text
+                )}
+
+                —
+                Processo:
+                <b>
+                  ${esc(
+                    policy.status
+                  )}
+                </b>
+
+                ${
+                  policy.feedback
+
+                    ? `
+                        <br>
+                        <small>
+                          Feedback:
+                          ${esc(
+                            policy.feedback
+                          )}
+                        </small>
+                      `
+
+                    : ""
+                }
+
+              </li>
+            `;
+
+          }
+        )
+        .join("");
+
+  } else {
+
+    priorityHtml =
+      `
+        <li>
+          Nenhuma prioridade crítica
+          identificada no momento.
+        </li>
+      `;
+
+  }
 
 
   return `
+
     <h3>
       Relatório inteligente da carteira
     </h3>
 
+
     <p>
       Gerado em
-      ${new Date().toLocaleString("pt-BR")}.
+      ${new Date().toLocaleString(
+        "pt-BR"
+      )}.
     </p>
 
 
     <div class="report-grid">
 
       <div class="report-box">
-        <strong>${total}</strong>
-        <small>apólices</small>
+
+        <strong>
+          ${total}
+        </strong>
+
+        <small>
+          apólices
+        </small>
+
       </div>
 
-      <div class="report-box">
-        <strong>${d7}</strong>
-        <small>vencem em até 7 dias</small>
-      </div>
 
       <div class="report-box">
-        <strong>${expired}</strong>
-        <small>vencidas</small>
+
+        <strong>
+          ${next7}
+        </strong>
+
+        <small>
+          vencem em até 7 dias
+        </small>
+
       </div>
 
-      <div class="report-box">
-        <strong>${pending}</strong>
-        <small>pendentes</small>
-      </div>
 
       <div class="report-box">
-        <strong>${inProgress}</strong>
-        <small>em andamento</small>
+
+        <strong>
+          ${next15}
+        </strong>
+
+        <small>
+          vencem em até 15 dias
+        </small>
+
       </div>
 
+
       <div class="report-box">
-        <strong>${won}</strong>
-        <small>ganhas</small>
+
+        <strong>
+          ${next30}
+        </strong>
+
+        <small>
+          vencem em até 30 dias
+        </small>
+
+      </div>
+
+
+      <div class="report-box">
+
+        <strong>
+          ${expired}
+        </strong>
+
+        <small>
+          vencidas
+        </small>
+
+      </div>
+
+
+      <div class="report-box">
+
+        <strong>
+          ${pending}
+        </strong>
+
+        <small>
+          pendentes
+        </small>
+
+      </div>
+
+
+      <div class="report-box">
+
+        <strong>
+          ${progress}
+        </strong>
+
+        <small>
+          em andamento
+        </small>
+
+      </div>
+
+
+      <div class="report-box">
+
+        <strong>
+          ${won}
+        </strong>
+
+        <small>
+          ganhas
+        </small>
+
+      </div>
+
+
+      <div class="report-box">
+
+        <strong>
+          ${lost}
+        </strong>
+
+        <small>
+          perdidas
+        </small>
+
+      </div>
+
+
+      <div class="report-box">
+
+        <strong>
+          ${withoutFeedback}
+        </strong>
+
+        <small>
+          sem feedback comercial
+        </small>
+
       </div>
 
     </div>
 
 
     <h4>
-      Prioridades
+      Prioridades da carteira
     </h4>
 
 
     <ul>
-
-      ${
-        risks.length
-        ?risks.map(
-          policy=>`
-
-            <li>
-
-              <b>
-                ${esc(
-                  clientById(
-                    policy.clientId
-                  )?.name||
-                  "Cliente"
-                )}
-              </b>
-
-              —
-
-              ${esc(policy.type)},
-
-              ${esc(policy.insurer)}
-
-              —
-
-              ${expiryLabel(policy).text}
-
-              —
-
-              processo:
-              ${esc(policy.status)}
-
-            </li>
-
-          `
-        ).join("")
-        :`
-          <li>
-            Nenhum risco crítico identificado.
-          </li>
-        `
-      }
-
+      ${priorityHtml}
     </ul>
 
 
@@ -4582,46 +6890,89 @@ function generateReport(){
 
       ${
         expired
-        ?"Existem apólices vencidas que devem ser tratadas imediatamente. "
-        :""
+
+          ? `Existem <b>${expired}</b> apólice(s) vencida(s) que ainda constam na carteira. `
+
+          : "Não existem apólices vencidas no momento. "
       }
 
+
       ${
-        d7
-        ?"Há apólices nos próximos 7 dias e elas devem ficar no topo da rotina comercial. "
-        :""
+        next7
+
+          ? `<b>${next7}</b> apólice(s) vencem nos próximos 7 dias. `
+
+          : ""
       }
+
 
       ${
         pending
-        ?"Há renovações ainda pendentes. "
-        :""
+
+          ? `<b>${pending}</b> processo(s) estão pendentes. `
+
+          : ""
       }
 
-      ${
-        inProgress
-        ?"Existem negociações em andamento que podem virar ganhos. "
-        :""
-      }
 
       ${
-        !expired &&
-        !d7 &&
-        !pending
-        ?"A carteira está sem sinais críticos pelos indicadores atuais."
-        :""
+        progress
+
+          ? `<b>${progress}</b> processo(s) estão em andamento. `
+
+          : ""
+      }
+
+
+      ${
+        won
+
+          ? `<b>${won}</b> processo(s) foram ganhos. `
+
+          : ""
+      }
+
+
+      ${
+        lost
+
+          ? `<b>${lost}</b> processo(s) estão marcados como perdidos. `
+
+          : ""
+      }
+
+
+      ${
+        withoutFeedback
+
+          ? `<b>${withoutFeedback}</b> apólice(s) ainda não possuem feedback comercial registrado.`
+
+          : "Todas as apólices possuem feedback comercial registrado."
       }
 
     </p>
+
   `;
 
 }
 
 
+/* ============================================================
+   MOSTRAR RELATÓRIO
+   ============================================================ */
 
-function showReport(){
+function showReport() {
 
-  $("#reportArea").innerHTML=
+  const area =
+    $("#reportArea");
+
+
+  if (!area) {
+    return;
+  }
+
+
+  area.innerHTML =
     generateReport();
 
 
@@ -4632,329 +6983,1369 @@ function showReport(){
 }
 
 
+/* ============================================================
+   NORMALIZAR TEXTO PARA PERGUNTAS
+   ============================================================ */
 
-async function login(event){
+function normalizeText(value) {
 
-  event.preventDefault();
+  return String(
+    value ||
+    ""
+  )
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    )
+    .toLowerCase()
+    .trim();
 
-
-  const email=
-    $("#loginUser")
-      .value
-      .trim();
-
-
-  const password=
-    $("#loginPass")
-      .value;
-
-
-  $("#loginError").textContent="";
-
-
-  const {
-    data,
-    error
-  }=await sb.auth.signInWithPassword({
-    email,
-    password
-  });
+}
 
 
-  if(error){
+/* ============================================================
+   EXTRAIR NÚMERO DE UMA PERGUNTA
+   ============================================================ */
 
-    console.error(
-      error
+function extractNumberFromQuestion(
+  question
+) {
+
+  const match =
+    String(question)
+      .match(
+        /\d+/
+      );
+
+
+  return match
+    ? Number(
+        match[0]
+      )
+    : null;
+
+}
+
+
+/* ============================================================
+   FORMATAR APÓLICE PARA RESPOSTA
+   ============================================================ */
+
+function policyAnswerLine(
+  policy
+) {
+
+  const client =
+    clientById(
+      policy.clientId
     );
 
 
-    $("#loginError").textContent=
-      "E-mail ou senha incorretos.";
+  const expiry =
+    expiryLabel(
+      policy
+    );
 
 
-    return;
-
-  }
-
-
-  state.user=
-    data.user;
-
-
-  showApp();
+  let line =
+    `${client?.name || "Cliente"} — ` +
+    `${policy.type} — ` +
+    `${policy.insurer} — ` +
+    `${expiry.text} — ` +
+    `${policy.status}`;
 
 
-  await loadCloudData();
+  if (
+    policy.feedback
+  ) {
 
-}
-
-
-
-async function logout(){
-
-  await sb.auth.signOut();
-
-
-  state.user=null;
-
-  state.clients=[];
-
-  state.policies=[];
-
-  state.events=[];
-
-
-  showLogin();
-
-}
-
-
-
-async function forgotPassword(){
-
-  const email=
-    $("#loginUser")
-      .value
-      .trim();
-
-
-  if(!email){
-
-    $("#loginError").textContent=
-      "Digite seu e-mail primeiro.";
-
-
-    return;
+    line +=
+      ` — Feedback: ${policy.feedback}`;
 
   }
 
 
-  const redirectTo=
-    window.location.origin+
-    window.location.pathname;
+  return line;
+
+}
 
 
-  const {
-    error
-  }=await sb.auth
-    .resetPasswordForEmail(
-      email,
-      {
-        redirectTo
+/* ============================================================
+   ASSISTENTE DO RELATÓRIO
+   RESPONDE USANDO SOMENTE OS DADOS DO CRM
+   ============================================================ */
+
+function answerReportQuestion(
+  question
+) {
+
+  const raw =
+    String(
+      question ||
+      ""
+    ).trim();
+
+
+  const q =
+    normalizeText(
+      raw
+    );
+
+
+  if (!q) {
+
+    return (
+      "Digite uma pergunta sobre os dados da carteira."
+    );
+
+  }
+
+
+  /* ==========================================================
+     TOTAL
+     ========================================================== */
+
+  if (
+    q.includes(
+      "quantas apolices"
+    ) ||
+    q.includes(
+      "quantos seguros"
+    ) ||
+    q === "total" ||
+    q.includes(
+      "total de apolices"
+    )
+  ) {
+
+    return (
+      `A carteira possui ${state.policies.length} apólice(s) cadastrada(s).`
+    );
+
+  }
+
+
+  /* ==========================================================
+     VENCIDAS
+     ========================================================== */
+
+  if (
+    q.includes(
+      "vencida"
+    ) ||
+    q.includes(
+      "vencidas"
+    )
+  ) {
+
+    const policies =
+      state.policies
+        .filter(
+          policy =>
+            daysUntil(
+              policy.endDate
+            ) < 0
+        )
+        .sort(
+          (a, b) =>
+            daysUntil(
+              a.endDate
+            ) -
+            daysUntil(
+              b.endDate
+            )
+        );
+
+
+    if (
+      !policies.length
+    ) {
+
+      return (
+        "Não existem apólices vencidas na carteira."
+      );
+
+    }
+
+
+    return (
+      `Existem ${policies.length} apólice(s) vencida(s):\n\n` +
+      policies
+        .map(
+          policy =>
+            "• " +
+            policyAnswerLine(
+              policy
+            )
+        )
+        .join("\n")
+    );
+
+  }
+
+
+  /* ==========================================================
+     PRÓXIMOS X DIAS
+     ========================================================== */
+
+  if (
+    q.includes(
+      "proxim"
+    ) ||
+    q.includes(
+      "vencem"
+    ) ||
+    q.includes(
+      "vencer"
+    )
+  ) {
+
+    let days =
+      extractNumberFromQuestion(
+        q
+      );
+
+
+    if (
+      !days
+    ) {
+
+      days =
+        30;
+
+    }
+
+
+    const policies =
+      state.policies
+        .filter(
+          policy => {
+
+            const difference =
+              daysUntil(
+                policy.endDate
+              );
+
+
+            return (
+              difference >= 0 &&
+              difference <= days
+            );
+
+          }
+        )
+        .sort(
+          (a, b) =>
+            daysUntil(
+              a.endDate
+            ) -
+            daysUntil(
+              b.endDate
+            )
+        );
+
+
+    if (
+      !policies.length
+    ) {
+
+      return (
+        `Nenhuma apólice vence nos próximos ${days} dias.`
+      );
+
+    }
+
+
+    return (
+      `${policies.length} apólice(s) vencem nos próximos ${days} dias:\n\n` +
+      policies
+        .map(
+          policy =>
+            "• " +
+            policyAnswerLine(
+              policy
+            )
+        )
+        .join("\n")
+    );
+
+  }
+
+
+  /* ==========================================================
+     STATUS
+     ========================================================== */
+
+  const statusSearch = [
+
+    {
+      words: [
+        "pendente",
+        "pendentes"
+      ],
+
+      status:
+        "Pendente"
+    },
+
+    {
+      words: [
+        "andamento",
+        "em andamento"
+      ],
+
+      status:
+        "Em andamento"
+    },
+
+    {
+      words: [
+        "ganho",
+        "ganhos",
+        "ganha",
+        "ganhas"
+      ],
+
+      status:
+        "Ganho"
+    },
+
+    {
+      words: [
+        "perdido",
+        "perdidos",
+        "perdida",
+        "perdidas"
+      ],
+
+      status:
+        "Perdido"
+    }
+
+  ];
+
+
+  for (
+    const item
+    of statusSearch
+  ) {
+
+    if (
+      item.words.some(
+        word =>
+          q.includes(
+            normalizeText(
+              word
+            )
+          )
+      )
+    ) {
+
+      const policies =
+        state.policies.filter(
+          policy =>
+            policy.status ===
+            item.status
+        );
+
+
+      if (
+        !policies.length
+      ) {
+
+        return (
+          `Nenhuma apólice está com status "${item.status}".`
+        );
+
+      }
+
+
+      return (
+        `${policies.length} apólice(s) estão com status "${item.status}":\n\n` +
+        policies
+          .map(
+            policy =>
+              "• " +
+              policyAnswerLine(
+                policy
+              )
+          )
+          .join("\n")
+      );
+
+    }
+
+  }
+
+
+  /* ==========================================================
+     SEM FEEDBACK
+     ========================================================== */
+
+  if (
+    q.includes(
+      "sem feedback"
+    ) ||
+    q.includes(
+      "falta feedback"
+    )
+  ) {
+
+    const policies =
+      state.policies.filter(
+        policy =>
+          !String(
+            policy.feedback ||
+            ""
+          ).trim()
+      );
+
+
+    if (
+      !policies.length
+    ) {
+
+      return (
+        "Todas as apólices possuem feedback comercial."
+      );
+
+    }
+
+
+    return (
+      `${policies.length} apólice(s) estão sem feedback comercial:\n\n` +
+      policies
+        .map(
+          policy =>
+            "• " +
+            policyAnswerLine(
+              policy
+            )
+        )
+        .join("\n")
+    );
+
+  }
+
+
+  /* ==========================================================
+     BUSCAR CLIENTE
+     ========================================================== */
+
+  const matchingClients =
+    state.clients.filter(
+      client => {
+
+        const name =
+          normalizeText(
+            client.name
+          );
+
+
+        return (
+          name &&
+          (
+            q.includes(name) ||
+            name
+              .split(" ")
+              .filter(
+                part =>
+                  part.length >= 4
+              )
+              .some(
+                part =>
+                  q.includes(
+                    part
+                  )
+              )
+          )
+        );
+
       }
     );
 
 
-  if(error){
+  if (
+    matchingClients.length
+  ) {
 
-    console.error(error);
-
-
-    $("#loginError").textContent=
-      "Não foi possível enviar o link de recuperação.";
-
-
-    return;
-
-  }
+    const client =
+      matchingClients[0];
 
 
-  $("#loginError").textContent=
-    "Link de recuperação enviado para o seu e-mail.";
-
-}
-
-
-
-async function saveRecoveredPassword(){
-
-  const password=
-    $("#recoveryPass").value;
+    const policies =
+      state.policies.filter(
+        policy =>
+          policy.clientId ===
+          client.id
+      );
 
 
-  const confirmation=
-    $("#recoveryPassConfirm").value;
+    if (
+      !policies.length
+    ) {
+
+      return (
+        `${client.name} está cadastrado(a), mas não possui apólices vinculadas.`
+      );
+
+    }
 
 
-  $("#recoveryError").textContent="";
-
-
-  if(password.length<6){
-
-    $("#recoveryError").textContent=
-      "A senha precisa ter pelo menos 6 caracteres.";
-
-
-    return;
+    return (
+      `${client.name} possui ${policies.length} apólice(s):\n\n` +
+      policies
+        .map(
+          policy =>
+            "• " +
+            policyAnswerLine(
+              policy
+            )
+        )
+        .join("\n")
+    );
 
   }
 
 
-  if(
-    password!==confirmation
-  ){
+  /* ==========================================================
+     BUSCAR SEGURADORA
+     ========================================================== */
 
-    $("#recoveryError").textContent=
-      "As senhas não coincidem.";
+  const matchingInsurer =
+    INSURERS.find(
+      insurer =>
+        q.includes(
+          normalizeText(
+            insurer
+          )
+        )
+    );
 
 
-    return;
+  if (
+    matchingInsurer
+  ) {
+
+    const policies =
+      state.policies.filter(
+        policy =>
+          normalizeText(
+            policy.insurer
+          ) ===
+          normalizeText(
+            matchingInsurer
+          )
+      );
+
+
+    if (
+      !policies.length
+    ) {
+
+      return (
+        `Não encontrei apólices da seguradora ${matchingInsurer}.`
+      );
+
+    }
+
+
+    return (
+      `Encontrei ${policies.length} apólice(s) da ${matchingInsurer}:\n\n` +
+      policies
+        .map(
+          policy =>
+            "• " +
+            policyAnswerLine(
+              policy
+            )
+        )
+        .join("\n")
+    );
 
   }
 
 
-  const {
-    error
-  }=await sb.auth.updateUser({
-    password
-  });
+  /* ==========================================================
+     BUSCAR TIPO DE SEGURO
+     ========================================================== */
+
+  const matchingType =
+    TYPES.find(
+      type =>
+        q.includes(
+          normalizeText(
+            type
+          )
+        )
+    );
 
 
-  if(error){
+  if (
+    matchingType
+  ) {
 
-    console.error(error);
+    const policies =
+      state.policies.filter(
+        policy =>
+          normalizeText(
+            policy.type
+          ) ===
+          normalizeText(
+            matchingType
+          )
+      );
 
 
-    $("#recoveryError").textContent=
-      "Não foi possível alterar a senha.";
+    if (
+      !policies.length
+    ) {
+
+      return (
+        `Não encontrei apólices do tipo ${matchingType}.`
+      );
+
+    }
 
 
-    return;
+    return (
+      `Encontrei ${policies.length} apólice(s) do tipo ${matchingType}:\n\n` +
+      policies
+        .map(
+          policy =>
+            "• " +
+            policyAnswerLine(
+              policy
+            )
+        )
+        .join("\n")
+    );
 
   }
 
 
-  $("#recoveryError").textContent=
-    "Senha alterada com sucesso.";
+  /* ==========================================================
+     FEEDBACK / NEGOCIAÇÃO
+     ========================================================== */
+
+  if (
+    q.includes(
+      "feedback"
+    ) ||
+    q.includes(
+      "negociacao"
+    ) ||
+    q.includes(
+      "cotacao"
+    )
+  ) {
+
+    const policies =
+      state.policies.filter(
+        policy =>
+          String(
+            policy.feedback ||
+            ""
+          ).trim()
+      );
 
 
-  setTimeout(
-    async()=>{
+    if (
+      !policies.length
+    ) {
 
-      await sb.auth.signOut();
+      return (
+        "Ainda não existem feedbacks comerciais registrados."
+      );
+
+    }
 
 
-      location.href=
-        window.location.origin+
-        window.location.pathname;
+    return (
+      `Existem ${policies.length} apólice(s) com feedback comercial:\n\n` +
+      policies
+        .map(
+          policy =>
+            "• " +
+            policyAnswerLine(
+              policy
+            )
+        )
+        .join("\n")
+    );
 
-    },
-    1200
+  }
+
+
+  /* ==========================================================
+     RESUMO
+     ========================================================== */
+
+  if (
+    q.includes(
+      "resumo"
+    ) ||
+    q.includes(
+      "situacao"
+    ) ||
+    q.includes(
+      "carteira"
+    )
+  ) {
+
+    const pending =
+      state.policies.filter(
+        policy =>
+          policy.status ===
+          "Pendente"
+      ).length;
+
+
+    const progress =
+      state.policies.filter(
+        policy =>
+          policy.status ===
+          "Em andamento"
+      ).length;
+
+
+    const won =
+      state.policies.filter(
+        policy =>
+          policy.status ===
+          "Ganho"
+      ).length;
+
+
+    const lost =
+      state.policies.filter(
+        policy =>
+          policy.status ===
+          "Perdido"
+      ).length;
+
+
+    const expired =
+      state.policies.filter(
+        policy =>
+          daysUntil(
+            policy.endDate
+          ) < 0
+      ).length;
+
+
+    return (
+      `Resumo atual da carteira:\n\n` +
+      `• ${state.clients.length} cliente(s)\n` +
+      `• ${state.policies.length} apólice(s)\n` +
+      `• ${pending} pendente(s)\n` +
+      `• ${progress} em andamento\n` +
+      `• ${won} ganha(s)\n` +
+      `• ${lost} perdida(s)\n` +
+      `• ${expired} vencida(s)`
+    );
+
+  }
+
+
+  return (
+    "Não consegui identificar exatamente o que você quer consultar. " +
+    "Você pode perguntar, por exemplo: " +
+    "\"quais vencem nos próximos 7 dias?\", " +
+    "\"quais estão pendentes?\", " +
+    "\"quais estão sem feedback?\", " +
+    "\"como está o cliente João?\" ou " +
+    "\"quantas apólices temos na Tokio Marine?\"."
   );
 
 }
 
 
+/* ============================================================
+   MOSTRAR RESPOSTA DO ASSISTENTE
+   ============================================================ */
 
-async function changePassword(){
+function askReportAssistant() {
 
-  const password=
-    $("#cfgPass").value;
-
-
-  const confirmation=
-    $("#cfgPassConfirm").value;
+  const input =
+    $("#reportQuestion");
 
 
-  if(!password){
+  const output =
+    $("#reportAnswer");
 
-    toast(
-      "Digite a nova senha."
-    );
 
+  if (
+    !input ||
+    !output
+  ) {
     return;
-
   }
 
 
-  if(password.length<6){
-
-    toast(
-      "A senha precisa ter pelo menos 6 caracteres."
-    );
-
-    return;
-
-  }
-
-
-  if(
-    password!==confirmation
-  ){
-
-    toast(
-      "As senhas não coincidem."
-    );
-
-    return;
-
-  }
-
-
-  const {
-    error
-  }=await sb.auth.updateUser({
-    password
-  });
-
-
-  if(error){
-
-    console.error(error);
-
-
-    toast(
-      "Não foi possível alterar a senha."
+  const answer =
+    answerReportQuestion(
+      input.value
     );
 
 
-    return;
-
-  }
-
-
-  $("#cfgPass").value="";
-
-  $("#cfgPassConfirm").value="";
-
-
-  toast(
-    "Senha alterada com sucesso."
-  );
+  output.textContent =
+    answer;
 
 }
 
 
+/* ============================================================
+   IMPORTAÇÃO DO AGGER
+   ============================================================ */
 
-function openLegacyDB(){
 
-  return new Promise(
-    (
-      resolve,
-      reject
-    )=>{
+/* ============================================================
+   NORMALIZAR CABEÇALHO DO EXCEL
+   ============================================================ */
 
-      const request=
-        indexedDB.open(
-          "savaCRMv2",
-          1
+function normalizeHeader(value) {
+
+  return normalizeText(
+    value
+  )
+    .replace(
+      /[^a-z0-9]+/g,
+      " "
+    )
+    .trim();
+
+}
+
+
+/* ============================================================
+   BUSCAR VALOR EM COLUNAS DIFERENTES
+   ============================================================ */
+
+function getExcelValue(
+  row,
+  aliases
+) {
+
+  const entries =
+    Object.entries(
+      row || {}
+    );
+
+
+  for (
+    const alias
+    of aliases
+  ) {
+
+    const normalizedAlias =
+      normalizeHeader(
+        alias
+      );
+
+
+    const found =
+      entries.find(
+        ([key]) =>
+          normalizeHeader(
+            key
+          ) ===
+          normalizedAlias
+      );
+
+
+    if (
+      found &&
+      found[1] !==
+        undefined &&
+      found[1] !==
+        null &&
+      String(
+        found[1]
+      ).trim() !==
+        ""
+    ) {
+
+      return found[1];
+
+    }
+
+  }
+
+
+  return "";
+
+}
+
+
+/* ============================================================
+   CONVERTER DATA DO EXCEL
+   ============================================================ */
+
+function excelDateToIso(value) {
+
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+    return "";
+  }
+
+
+  /*
+    SheetJS pode retornar
+    número serial do Excel.
+  */
+
+  if (
+    typeof value ===
+    "number"
+  ) {
+
+    if (
+      window.XLSX?.SSF
+        ?.parse_date_code
+    ) {
+
+      const parsed =
+        XLSX.SSF
+          .parse_date_code(
+            value
+          );
+
+
+      if (parsed) {
+
+        return (
+          `${String(parsed.y).padStart(4, "0")}-` +
+          `${String(parsed.m).padStart(2, "0")}-` +
+          `${String(parsed.d).padStart(2, "0")}`
         );
 
+      }
 
-      request.onsuccess=
-        ()=>resolve(
-          request.result
+    }
+
+  }
+
+
+  const text =
+    String(value)
+      .trim();
+
+
+  /*
+    DD/MM/AAAA
+  */
+
+  let match =
+    text.match(
+      /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+    );
+
+
+  if (match) {
+
+    return (
+      `${match[3]}-` +
+      `${match[2].padStart(2, "0")}-` +
+      `${match[1].padStart(2, "0")}`
+    );
+
+  }
+
+
+  /*
+    AAAA-MM-DD
+  */
+
+  match =
+    text.match(
+      /^(\d{4})-(\d{1,2})-(\d{1,2})/
+    );
+
+
+  if (match) {
+
+    return (
+      `${match[1]}-` +
+      `${match[2].padStart(2, "0")}-` +
+      `${match[3].padStart(2, "0")}`
+    );
+
+  }
+
+
+  const date =
+    new Date(
+      text
+    );
+
+
+  if (
+    !Number.isNaN(
+      date.getTime()
+    )
+  ) {
+
+    return iso(
+      date
+    );
+
+  }
+
+
+  return "";
+
+}
+
+
+/* ============================================================
+   LER LINHA EXPORTADA PELO AGGER
+
+
+   ============================================================ */
+
+function parseAggerRow(row) {
+
+  const clientName =
+    String(
+      getExcelValue(
+        row,
+        [
+          "Cliente",
+          "Nome Cliente",
+          "Nome do Cliente",
+          "Segurado",
+          "Nome Segurado",
+          "Nome do Segurado",
+          "Razão Social",
+          "Razao Social"
+        ]
+      ) ||
+      ""
+    ).trim();
+
+
+  const document =
+    String(
+      getExcelValue(
+        row,
+        [
+          "CPF/CNPJ",
+          "CPF CNPJ",
+          "CPF",
+          "CNPJ",
+          "Documento"
+        ]
+      ) ||
+      ""
+    ).trim();
+
+
+  const phone =
+    cleanPhone(
+      getExcelValue(
+        row,
+        [
+          "Telefone",
+          "Celular",
+          "WhatsApp",
+          "Whatsapp",
+          "Fone",
+          "Telefone Celular"
+        ]
+      )
+    );
+
+
+  const email =
+    String(
+      getExcelValue(
+        row,
+        [
+          "Email",
+          "E-mail",
+          "E mail"
+        ]
+      ) ||
+      ""
+    ).trim();
+
+
+  const birthDate =
+    excelDateToIso(
+      getExcelValue(
+        row,
+        [
+          "Data Nascimento",
+          "Data de Nascimento",
+          "Nascimento"
+        ]
+      )
+    );
+
+
+  const insurer =
+    String(
+      getExcelValue(
+        row,
+        [
+          "Seguradora",
+          "Companhia",
+          "Cia",
+          "Cia Seguradora"
+        ]
+      ) ||
+      "Outra"
+    ).trim();
+
+
+  const type =
+    String(
+      getExcelValue(
+        row,
+        [
+          "Ramo",
+          "Tipo",
+          "Tipo Seguro",
+          "Tipo de Seguro",
+          "Produto"
+        ]
+      ) ||
+      "Outro"
+    ).trim();
+
+
+  const number =
+    String(
+      getExcelValue(
+        row,
+        [
+          "Apólice",
+          "Apolice",
+          "Nº Apólice",
+          "N Apólice",
+          "Numero Apolice",
+          "Número Apólice",
+          "Numero da Apolice",
+          "Número da Apólice"
+        ]
+      ) ||
+      ""
+    ).trim();
+
+
+  const startDate =
+    excelDateToIso(
+      getExcelValue(
+        row,
+        [
+          "Início Vigência",
+          "Inicio Vigencia",
+          "Início de Vigência",
+          "Inicio de Vigencia",
+          "Vigência Inicial",
+          "Vigencia Inicial",
+          "Data Inicial"
+        ]
+      )
+    );
+
+
+  const endDate =
+    excelDateToIso(
+      getExcelValue(
+        row,
+        [
+          "Fim Vigência",
+          "Fim Vigencia",
+          "Fim de Vigência",
+          "Vigência Final",
+          "Vigencia Final",
+          "Data Final",
+          "Vencimento",
+          "Data Vencimento"
+        ]
+      )
+    );
+
+
+  return {
+
+    clientName,
+
+    document:
+      formatDocument(
+        document
+      ),
+
+    phone,
+
+    email,
+
+    birthDate,
+
+    insurer,
+
+    type,
+
+    number,
+
+    startDate,
+
+    endDate
+
+  };
+
+}
+
+
+/* ============================================================
+   VERIFICAR CLIENTE EXISTENTE
+   ============================================================ */
+
+function findImportedClient(
+  imported
+) {
+
+  const document =
+    onlyNumbers(
+      imported.document
+    );
+
+
+  /*
+    Primeiro tenta CPF/CNPJ.
+  */
+
+  if (document) {
+
+    const byDocument =
+      state.clients.find(
+        client =>
+          onlyNumbers(
+            client.document
+          ) === document
+      );
+
+
+    if (byDocument) {
+      return byDocument;
+    }
+
+  }
+
+
+  /*
+    Depois tenta nome.
+  */
+
+  const name =
+    normalizeText(
+      imported.clientName
+    );
+
+
+  if (name) {
+
+    const byName =
+      state.clients.find(
+        client =>
+          normalizeText(
+            client.name
+          ) === name
+      );
+
+
+    if (byName) {
+      return byName;
+    }
+
+  }
+
+
+  return null;
+
+}
+
+
+/* ============================================================
+   VERIFICAR APÓLICE DUPLICADA
+   ============================================================ */
+
+function importedPolicyExists(
+  clientId,
+  imported
+) {
+
+  return state.policies.some(
+    policy => {
+
+      if (
+        policy.clientId !==
+        clientId
+      ) {
+        return false;
+      }
+
+
+      /*
+        Se houver número da apólice,
+        ele é o identificador principal.
+      */
+
+      if (
+        imported.number &&
+        policy.number
+      ) {
+
+        return (
+          normalizeText(
+            policy.number
+          ) ===
+          normalizeText(
+            imported.number
+          )
         );
 
-
-      request.onerror=
-        ()=>reject(
-          request.error
-        );
+      }
 
 
-      request.onupgradeneeded=
-        ()=>{};
+      /*
+        Sem número:
+        compara cliente + seguradora +
+        tipo + vencimento.
+      */
+
+      return (
+
+        normalizeText(
+          policy.insurer
+        ) ===
+        normalizeText(
+          imported.insurer
+        ) &&
+
+        normalizeText(
+          policy.type
+        ) ===
+        normalizeText(
+          imported.type
+        ) &&
+
+        (
+          policy.endDate ||
+          ""
+        ) ===
+        (
+          imported.endDate ||
+          ""
+        )
+
+      );
 
     }
   );
@@ -4962,1725 +8353,869 @@ function openLegacyDB(){
 }
 
 
+/* ============================================================
+   CRIAR CLIENTE IMPORTADO
+   ============================================================ */
 
-function legacyGetAll(
-  db,
-  store
-){
+async function createImportedClient(
+  imported
+) {
+
+  const client = {
+
+    id:
+      uid(),
+
+    name:
+      imported.clientName,
+
+    birthDate:
+      imported.birthDate ||
+      "",
+
+    phone:
+      imported.phone ||
+      "",
+
+    document:
+      imported.document ||
+      "",
+
+    email:
+      imported.email ||
+      "",
+
+    notes:
+      "Importado do Agger",
+
+    createdAt:
+      new Date()
+        .toISOString(),
+
+    updatedAt:
+      new Date()
+        .toISOString()
+
+  };
+
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from(
+        "clients"
+      )
+      .insert(
+        clientToDb(
+          client
+        )
+      )
+      .select()
+      .single();
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  const saved =
+    clientFromDb(
+      data
+    );
+
+
+  state.clients.push(
+    saved
+  );
+
+
+  return saved;
+
+}
+
+
+/* ============================================================
+   CRIAR APÓLICE IMPORTADA
+   ============================================================ */
+
+async function createImportedPolicy(
+  client,
+  imported
+) {
+
+  const policy = {
+
+    id:
+      uid(),
+
+    clientId:
+      client.id,
+
+    insurer:
+      imported.insurer ||
+      "Outra",
+
+    type:
+      imported.type ||
+      "Outro",
+
+    number:
+      imported.number ||
+      "",
+
+    startDate:
+      imported.startDate ||
+      "",
+
+    endDate:
+      imported.endDate ||
+      "",
+
+    status:
+      "Pendente",
+
+    notes:
+      "Importado do Agger",
+
+    feedback:
+      "",
+
+    feedbackUpdatedAt:
+      null,
+
+    alerts: {
+
+      30: true,
+
+      15: true,
+
+      7: true,
+
+      1: true,
+
+      expired: true
+
+    },
+
+    pdfPath:
+      null,
+
+    renewedFrom:
+      null,
+
+    createdAt:
+      new Date()
+        .toISOString(),
+
+    updatedAt:
+      new Date()
+        .toISOString()
+
+  };
+
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from(
+        "policies"
+      )
+      .insert(
+        policyToDb(
+          policy
+        )
+      )
+      .select()
+      .single();
+
+
+  if (error) {
+    throw error;
+  }
+
+
+  const saved =
+    policyFromDb(
+      data
+    );
+
+
+  state.policies.push(
+    saved
+  );
+
+
+  return saved;
+
+}
+
+
+/* ============================================================
+   CARREGAR BIBLIOTECA XLSX
+   ============================================================ */
+
+function loadSheetJs() {
 
   return new Promise(
     (
       resolve,
       reject
-    )=>{
+    ) => {
 
-      if(
-        !db.objectStoreNames.contains(
-          store
-        )
-      ){
+      /*
+        Se já carregou,
+        não carrega novamente.
+      */
 
-        resolve([]);
+      if (
+        window.XLSX
+      ) {
+
+        resolve(
+          window.XLSX
+        );
 
         return;
 
       }
 
 
-      const request=
-        db.transaction(
-          store,
-          "readonly"
-        )
-        .objectStore(
-          store
-        )
-        .getAll();
-
-
-      request.onsuccess=
-        ()=>resolve(
-          request.result||[]
+      const existing =
+        document.querySelector(
+          'script[data-sava-xlsx="1"]'
         );
 
 
-      request.onerror=
-        ()=>reject(
-          request.error
-        );
-
-    }
-  );
-
-}
-
-
-
-function isUuid(value){
-
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-    String(value||"")
-  );
-
-}
-
-
-
-async function migrateLocalData(){
-
-  const status=
-    $("#migrationStatus");
-
-
-  if(
-    localStorage.getItem(
-      `savaSupabaseMigrated_${state.user.id}`
-    )==="1"
-  ){
-
-    const repeat=
-      confirm(
-        "Este dispositivo já foi marcado como migrado. Deseja executar a migração novamente?"
-      );
-
-
-    if(!repeat){
-      return;
-    }
-
-  }
-
-
-  const confirmed=
-    confirm(
-      "Migrar os clientes, apólices, histórico, configurações e PDFs salvos neste navegador para o Supabase?\n\nFaça isso no computador onde estão os dados antigos."
-    );
-
-
-  if(!confirmed){
-    return;
-  }
-
-
-  status.textContent=
-    "Lendo banco antigo...";
-
-
-  try{
-
-    const db=
-      await openLegacyDB();
-
-
-    const [
-      oldClients,
-      oldPolicies,
-      oldEvents,
-      oldSettings,
-      oldPdfs
-    ]=await Promise.all([
-
-      legacyGetAll(
-        db,
-        "clients"
-      ),
-
-      legacyGetAll(
-        db,
-        "policies"
-      ),
-
-      legacyGetAll(
-        db,
-        "events"
-      ),
-
-      legacyGetAll(
-        db,
-        "settings"
-      ),
-
-      legacyGetAll(
-        db,
-        "pdfs"
-      )
-
-    ]);
-
-
-    if(
-      !oldClients.length &&
-      !oldPolicies.length
-    ){
-
-      status.textContent=
-        "Nenhum cliente ou apólice antiga encontrada neste dispositivo.";
-
-
-      return;
-
-    }
-
-
-    const clientIds=
-      new Map();
-
-
-    const policyIds=
-      new Map();
-
-
-    oldClients.forEach(
-      client=>
-        clientIds.set(
-          client.id,
-          isUuid(client.id)
-            ?client.id
-            :uid()
-        )
-    );
-
-
-    oldPolicies.forEach(
-      policy=>
-        policyIds.set(
-          policy.id,
-          isUuid(policy.id)
-            ?policy.id
-            :uid()
-        )
-    );
-
-
-    status.textContent=
-      "Enviando clientes...";
-
-
-    for(
-      const client of oldClients
-    ){
-
-      const row={
-
-        id:
-          clientIds.get(
-            client.id
-          ),
-
-        user_id:
-          state.user.id,
-
-        name:
-          client.name||
-          "Cliente sem nome",
-
-        birth_date:
-          client.birthDate||
-          null,
-
-        phone:
-          cleanPhone(
-            client.phone
-          ),
-
-        document:
-          client.document||
-          null,
-
-        email:
-          client.email||
-          null,
-
-        notes:
-          client.notes||
-          null,
-
-        created_at:
-          client.createdAt||
-          new Date().toISOString(),
-
-        updated_at:
-          client.updatedAt||
-          new Date().toISOString()
-
-      };
-
-
-      const {
-        error
-      }=await sb
-        .from("clients")
-        .upsert(row);
-
-
-      if(error){
-        throw error;
-      }
-
-    }
-
-
-    const pdfMap=
-      new Map(
-        oldPdfs.map(
-          item=>[
-            item.id,
-            item
-          ]
-        )
-      );
-
-
-    status.textContent=
-      "Enviando apólices e PDFs...";
-
-
-    for(
-      const policy of oldPolicies
-    ){
-
-      const newId=
-        policyIds.get(
-          policy.id
-        );
-
-
-      let pdfPath=null;
-
-
-      if(
-        policy.pdfId &&
-        pdfMap.has(
-          policy.pdfId
-        )
-      ){
-
-        const record=
-          pdfMap.get(
-            policy.pdfId
-          );
-
-
-        if(record?.blob){
-
-          pdfPath=
-            `${state.user.id}/${newId}/migrado-${Date.now()}-${safeFileName(record.name||"apolice.pdf")}`;
-
-
-          const {
-            error
-          }=await sb
-            .storage
-            .from("policy-pdfs")
-            .upload(
-              pdfPath,
-              record.blob,
-              {
-                contentType:
-                  record.type||
-                  "application/pdf",
-                upsert:true
-              }
-            );
-
-
-          if(error){
-            throw error;
+      if (existing) {
+
+        existing.addEventListener(
+          "load",
+          () =>
+            resolve(
+              window.XLSX
+            ),
+          {
+            once: true
           }
-
-        }
-
-      }
-
-
-      const row={
-
-        id:newId,
-
-        user_id:
-          state.user.id,
-
-        client_id:
-          clientIds.get(
-            policy.clientId
-          ),
-
-        insurer:
-          policy.insurer||
-          "Outra",
-
-        type:
-          policy.type||
-          "Outro",
-
-        number:
-          policy.number||
-          null,
-
-        start_date:
-          policy.startDate||
-          null,
-
-        end_date:
-          policy.endDate||
-          null,
-
-        status:
-          [
-            "Pendente",
-            "Em andamento",
-            "Ganho"
-          ].includes(
-            policy.status
-          )
-            ?policy.status
-            :"Pendente",
-
-        notes:
-          policy.notes||
-          null,
-
-        alert_30:
-          policy.alerts?.[30]!==false,
-
-        alert_15:
-          policy.alerts?.[15]!==false,
-
-        alert_7:
-          policy.alerts?.[7]!==false,
-
-        alert_1:
-          policy.alerts?.[1]!==false,
-
-        alert_expired:
-          policy.alerts?.expired!==false,
-
-        pdf_path:
-          pdfPath,
-
-        renewed_from:
-          policy.renewedFrom
-            ?policyIds.get(
-              policy.renewedFrom
-            )||null
-            :null,
-
-        created_at:
-          policy.createdAt||
-          new Date().toISOString(),
-
-        updated_at:
-          policy.updatedAt||
-          new Date().toISOString()
-
-      };
-
-
-      const {
-        error
-      }=await sb
-        .from("policies")
-        .upsert(row);
-
-
-      if(error){
-        throw error;
-      }
-
-    }
-
-
-    status.textContent=
-      "Enviando histórico...";
-
-
-    for(
-      const event of oldEvents
-    ){
-
-      const mappedPolicy=
-        policyIds.get(
-          event.policyId
         );
 
 
-      if(!mappedPolicy){
-        continue;
+        existing.addEventListener(
+          "error",
+          reject,
+          {
+            once: true
+          }
+        );
+
+
+        return;
+
       }
 
 
-      const row={
-
-        id:
-          isUuid(event.id)
-            ?event.id
-            :uid(),
-
-        user_id:
-          state.user.id,
-
-        policy_id:
-          mappedPolicy,
-
-        type:
-          event.type||
-          "history",
-
-        message:
-          event.message||
-          "Evento migrado",
-
-        created_at:
-          event.date||
-          new Date().toISOString()
-
-      };
+      const script =
+        document.createElement(
+          "script"
+        );
 
 
-      const {
-        error
-      }=await sb
-        .from("events")
-        .upsert(row);
+      script.src =
+        "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
 
 
-      if(error){
-        throw error;
-      }
-
-    }
+      script.dataset.savaXlsx =
+        "1";
 
 
-    const oldMain=
-      oldSettings.find(
-        item=>
-          item.id==="main"
-      )||
-      oldSettings[0];
+      script.onload =
+        () =>
+          resolve(
+            window.XLSX
+          );
 
 
-    if(oldMain){
-
-      state.settings.endpoint=
-        oldMain.endpoint||
-        state.settings.endpoint;
-
-
-      state.settings.managerEmail=
-        oldMain.managerEmail||
-        state.settings.managerEmail;
+      script.onerror =
+        () =>
+          reject(
+            new Error(
+              "Não foi possível carregar o leitor de Excel."
+            )
+          );
 
 
-      state.settings.language=
-        oldMain.language||
-        "pt-BR";
-
-
-      await saveSettings();
-
-    }
-
-
-    localStorage.setItem(
-      `savaSupabaseMigrated_${state.user.id}`,
-      "1"
-    );
-
-
-    await loadCloudData();
-
-
-    status.textContent=
-      `Migração concluída: ${oldClients.length} cliente(s) e ${oldPolicies.length} apólice(s).`;
-
-
-    toast(
-      "Dados antigos migrados para a nuvem."
-    );
-
-
-  }catch(error){
-
-    console.error(
-      error
-    );
-
-
-    status.textContent=
-      "Falha na migração. Tente novamente.";
-
-
-    toast(
-      "Não foi possível concluir a migração."
-    );
-
-  }
-
-}
-
-
-
-async function blobToBase64(blob){
-
-  const buffer=
-    await blob.arrayBuffer();
-
-
-  const bytes=
-    new Uint8Array(
-      buffer
-    );
-
-
-  let binary="";
-
-
-  const chunk=
-    0x8000;
-
-
-  for(
-    let i=0;
-    i<bytes.length;
-    i+=chunk
-  ){
-
-    binary+=
-      String.fromCharCode(
-        ...bytes.subarray(
-          i,
-          i+chunk
-        )
+      document.head.appendChild(
+        script
       );
 
-  }
-
-
-  return btoa(
-    binary
+    }
   );
 
 }
 
 
+/* ============================================================
+   LER ARQUIVO EXCEL
+   ============================================================ */
 
-async function exportBackup(){
+async function readAggerExcel(
+  file
+) {
 
-  try{
+  await loadSheetJs();
 
-    toast(
-      "Preparando backup..."
+
+  const buffer =
+    await file.arrayBuffer();
+
+
+  const workbook =
+    XLSX.read(
+      buffer,
+      {
+        type:
+          "array",
+
+        cellDates:
+          false
+      }
     );
 
 
-    const pdfs=[];
+  const firstSheetName =
+    workbook.SheetNames[0];
 
 
-    for(
-      const policy of
-      state.policies.filter(
-        item=>item.pdfPath
-      )
-    ){
+  if (!firstSheetName) {
 
-      const {
-        data,
-        error
-      }=await sb
-        .storage
-        .from("policy-pdfs")
-        .download(
-          policy.pdfPath
-        );
+    throw new Error(
+      "A planilha não possui abas."
+    );
+
+  }
 
 
-      if(error){
-
-        console.warn(
-          error
-        );
-
-
-        continue;
-
-      }
+  const sheet =
+    workbook.Sheets[
+      firstSheetName
+    ];
 
 
-      pdfs.push({
-
-        policyId:
-          policy.id,
-
-        path:
-          policy.pdfPath,
-
-        name:
-          policy.pdfPath
-            .split("/")
-            .pop(),
-
-        type:
-          data.type||
-          "application/pdf",
-
-        blobBase64:
-          await blobToBase64(
-            data
-          )
-
-      });
-
-    }
-
-
-    const backup={
-
-      version:3,
-
-      exportedAt:
-        new Date().toISOString(),
-
-      clients:
-        state.clients,
-
-      policies:
-        state.policies,
-
-      events:
-        state.events,
-
-      settings:
-        state.settings,
-
-      pdfs
-
-    };
-
-
-    const blob=
-      new Blob(
-        [
-          JSON.stringify(
-            backup
-          )
-        ],
+  const rows =
+    XLSX.utils
+      .sheet_to_json(
+        sheet,
         {
-          type:"application/json"
+
+          defval:
+            "",
+
+          raw:
+            true
+
         }
       );
 
 
-    const link=
-      document.createElement(
-        "a"
-      );
-
-
-    link.href=
-      URL.createObjectURL(
-        blob
-      );
-
-
-    link.download=
-      `backup-sava-cloud-${iso(new Date())}.json`;
-
-
-    link.click();
-
-
-    URL.revokeObjectURL(
-      link.href
-    );
-
-
-    toast(
-      "Backup exportado."
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-
-    toast(
-      "Não foi possível exportar o backup."
-    );
-
-  }
+  return rows;
 
 }
 
 
+/* ============================================================
+   PRÉ-VISUALIZAR IMPORTAÇÃO
+   ============================================================ */
 
-async function importBackup(event){
+async function previewAggerImport(
+  file
+) {
 
-  const file=
-    event.target.files[0];
+  const rows =
+    await readAggerExcel(
+      file
+    );
 
 
-  if(!file){
-    return;
-  }
-
-
-  try{
-
-    const data=
-      JSON.parse(
-        await file.text()
+  const parsed =
+    rows
+      .map(
+        parseAggerRow
+      )
+      .filter(
+        row =>
+          row.clientName
       );
 
 
-    if(!data.version){
+  const preview =
+    $("#aggerPreview");
 
-      throw new Error(
-        "Backup inválido"
-      );
+
+  if (preview) {
+
+    if (
+      !parsed.length
+    ) {
+
+      preview.innerHTML = `
+        <div class="empty">
+          Nenhum cliente válido foi
+          identificado na planilha.
+        </div>
+      `;
+
+      return parsed;
 
     }
 
 
-    if(
-      !confirm(
-        "Importar este backup para o banco online?"
-      )
-    ){
+    preview.innerHTML = `
 
-      event.target.value="";
+      <div class="report-grid">
+
+        <div class="report-box">
+
+          <strong>
+            ${rows.length}
+          </strong>
+
+          <small>
+            linhas lidas
+          </small>
+
+        </div>
+
+
+        <div class="report-box">
+
+          <strong>
+            ${parsed.length}
+          </strong>
+
+          <small>
+            linhas reconhecidas
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div
+        style="
+          margin-top:14px;
+          overflow:auto;
+          max-height:330px;
+        "
+      >
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Cliente
+              </th>
+
+              <th>
+                Seguro
+              </th>
+
+              <th>
+                Seguradora
+              </th>
+
+              <th>
+                Apólice
+              </th>
+
+              <th>
+                Vigência
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            ${
+              parsed
+                .slice(
+                  0,
+                  30
+                )
+                .map(
+                  row => `
+                    <tr>
+
+                      <td>
+                        ${esc(
+                          row.clientName
+                        )}
+                      </td>
+
+                      <td>
+                        ${esc(
+                          row.type
+                        )}
+                      </td>
+
+                      <td>
+                        ${esc(
+                          row.insurer
+                        )}
+                      </td>
+
+                      <td>
+                        ${esc(
+                          row.number ||
+                          "—"
+                        )}
+                      </td>
+
+                      <td>
+
+                        ${
+                          row.startDate
+                            ? fmtDate(
+                                row.startDate
+                              )
+                            : "—"
+                        }
+
+                        →
+
+                        ${
+                          row.endDate
+                            ? fmtDate(
+                                row.endDate
+                              )
+                            : "—"
+                        }
+
+                      </td>
+
+                    </tr>
+                  `
+                )
+                .join("")
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      ${
+        parsed.length > 30
+
+          ? `
+              <small>
+                Exibindo as primeiras
+                30 linhas de
+                ${parsed.length}.
+              </small>
+            `
+
+          : ""
+      }
+
+    `;
+
+  }
+
+
+  return parsed;
+
+}
+
+
+/* ============================================================
+   IMPORTAR EXCEL DO AGGER
+   ============================================================ */
+
+async function importAggerExcel(
+  event
+) {
+
+  const input =
+    event?.target ||
+    $("#aggerFile");
+
+
+  const file =
+    input
+      ?.files?.[0];
+
+
+  if (!file) {
+    return;
+  }
+
+
+  const status =
+    $("#aggerImportStatus");
+
+
+  try {
+
+    if (status) {
+
+      status.textContent =
+        "Lendo a planilha...";
+
+    }
+
+
+    const rows =
+      await previewAggerImport(
+        file
+      );
+
+
+    if (
+      !rows.length
+    ) {
+
+      if (status) {
+
+        status.textContent =
+          "Nenhum registro válido encontrado.";
+
+      }
+
 
       return;
 
     }
 
 
-    const clientIds=
-      new Map();
+    const confirmed =
+      window.confirm(
 
+        `Foram encontradas ${rows.length} linha(s) válidas.\n\nDeseja importar os dados para o CRM?`
 
-    const policyIds=
-      new Map();
-
-
-    (data.clients||[])
-      .forEach(
-        client=>
-          clientIds.set(
-            client.id,
-            isUuid(client.id)
-              ?client.id
-              :uid()
-          )
       );
 
 
-    (data.policies||[])
-      .forEach(
-        policy=>
-          policyIds.set(
-            policy.id,
-            isUuid(policy.id)
-              ?policy.id
-              :uid()
-          )
-      );
+    if (!confirmed) {
 
+      if (status) {
 
-    for(
-      const client of
-      data.clients||[]
-    ){
+        status.textContent =
+          "Importação cancelada.";
 
-      const row={
-
-        id:
-          clientIds.get(
-            client.id
-          ),
-
-        user_id:
-          state.user.id,
-
-        name:
-          client.name,
-
-        birth_date:
-          client.birthDate||
-          null,
-
-        phone:
-          cleanPhone(
-            client.phone
-          ),
-
-        document:
-          client.document||
-          null,
-
-        email:
-          client.email||
-          null,
-
-        notes:
-          client.notes||
-          null,
-
-        created_at:
-          client.createdAt||
-          new Date().toISOString(),
-
-        updated_at:
-          new Date().toISOString()
-
-      };
-
-
-      const {
-        error
-      }=await sb
-        .from("clients")
-        .upsert(row);
-
-
-      if(error){
-        throw error;
       }
+
+
+      return;
 
     }
 
 
-    const backupPdfByPolicy=
-      new Map(
-        (data.pdfs||[])
-          .map(
-            item=>[
-              item.policyId,
-              item
-            ]
-          )
-      );
+    let createdClients =
+      0;
 
 
-    for(
-      const policy of
-      data.policies||[]
-    ){
-
-      const newId=
-        policyIds.get(
-          policy.id
-        );
+    let createdPolicies =
+      0;
 
 
-      const pdf=
-        backupPdfByPolicy.get(
-          policy.id
-        );
+    let duplicatedPolicies =
+      0;
 
 
-      let pdfPath=null;
+    let ignoredRows =
+      0;
 
 
-      if(pdf?.blobBase64){
-
-        const binary=
-          atob(
-            pdf.blobBase64
-          );
+    let processed =
+      0;
 
 
-        const array=
-          new Uint8Array(
-            binary.length
-          );
+    for (
+      const imported
+      of rows
+    ) {
+
+      processed++;
 
 
-        for(
-          let i=0;
-          i<binary.length;
-          i++
-        ){
+      if (status) {
 
-          array[i]=
-            binary.charCodeAt(i);
-
-        }
-
-
-        const blob=
-          new Blob(
-            [array],
-            {
-              type:
-                pdf.type||
-                "application/pdf"
-            }
-          );
-
-
-        pdfPath=
-          `${state.user.id}/${newId}/backup-${Date.now()}-${safeFileName(pdf.name||"apolice.pdf")}`;
-
-
-        const {
-          error
-        }=await sb
-          .storage
-          .from("policy-pdfs")
-          .upload(
-            pdfPath,
-            blob,
-            {
-              contentType:
-                blob.type,
-              upsert:true
-            }
-          );
-
-
-        if(error){
-          throw error;
-        }
+        status.textContent =
+          `Importando ${processed} de ${rows.length}...`;
 
       }
 
 
-      const row={
+      /*
+        Sem nome não importa.
+      */
 
-        id:newId,
+      if (
+        !imported.clientName
+      ) {
 
-        user_id:
-          state.user.id,
+        ignoredRows++;
 
-        client_id:
-          clientIds.get(
-            policy.clientId
-          ),
-
-        insurer:
-          policy.insurer,
-
-        type:
-          policy.type,
-
-        number:
-          policy.number||
-          null,
-
-        start_date:
-          policy.startDate||
-          null,
-
-        end_date:
-          policy.endDate||
-          null,
-
-        status:
-          policy.status||
-          "Pendente",
-
-        notes:
-          policy.notes||
-          null,
-
-        alert_30:
-          policy.alerts?.[30]!==false,
-
-        alert_15:
-          policy.alerts?.[15]!==false,
-
-        alert_7:
-          policy.alerts?.[7]!==false,
-
-        alert_1:
-          policy.alerts?.[1]!==false,
-
-        alert_expired:
-          policy.alerts?.expired!==false,
-
-        pdf_path:
-          pdfPath,
-
-        renewed_from:
-          policy.renewedFrom
-            ?policyIds.get(
-              policy.renewedFrom
-            )||null
-            :null,
-
-        created_at:
-          policy.createdAt||
-          new Date().toISOString(),
-
-        updated_at:
-          new Date().toISOString()
-
-      };
-
-
-      const {
-        error
-      }=await sb
-        .from("policies")
-        .upsert(row);
-
-
-      if(error){
-        throw error;
-      }
-
-    }
-
-
-    for(
-      const eventData of
-      data.events||[]
-    ){
-
-      const mappedPolicy=
-        policyIds.get(
-          eventData.policyId
-        );
-
-
-      if(!mappedPolicy){
         continue;
+
       }
 
 
-      const row={
-
-        id:
-          isUuid(eventData.id)
-            ?eventData.id
-            :uid(),
-
-        user_id:
-          state.user.id,
-
-        policy_id:
-          mappedPolicy,
-
-        type:
-          eventData.type||
-          "history",
-
-        message:
-          eventData.message||
-          "Evento importado",
-
-        created_at:
-          eventData.date||
-          new Date().toISOString()
-
-      };
+      let client =
+        findImportedClient(
+          imported
+        );
 
 
-      const {
-        error
-      }=await sb
-        .from("events")
-        .upsert(row);
+      if (!client) {
+
+        client =
+          await createImportedClient(
+            imported
+          );
 
 
-      if(error){
-        throw error;
+        createdClients++;
+
       }
 
-    }
 
+      /*
+        Evita duplicar apólice.
+      */
 
-    if(data.settings){
-
-      state.settings={
-
-        endpoint:
-          data.settings.endpoint||
-          "",
-
-        managerEmail:
-          data.settings.managerEmail||
-          "",
-
-        language:
-          data.settings.language||
-          "pt-BR"
-
-      };
-
-
-      await saveSettings();
-
-    }
-
-
-    await loadCloudData();
-
-
-    toast(
-      "Backup restaurado na nuvem."
-    );
-
-
-  }catch(error){
-
-    console.error(
-      error
-    );
-
-
-    toast(
-      "Backup inválido ou não foi possível importar."
-    );
-
-  }
-
-
-  event.target.value="";
-
-}
-
-
-
-async function clearAll(){
-
-  if(
-    !confirm(
-      "Apagar todos os clientes, apólices, histórico e PDFs da nuvem? Essa ação não pode ser desfeita."
-    )
-  ){
-
-    return;
-
-  }
-
-
-  try{
-
-    const paths=
-      state.policies
-        .map(
-          policy=>
-            policy.pdfPath
+      if (
+        importedPolicyExists(
+          client.id,
+          imported
         )
-        .filter(Boolean);
+      ) {
 
+        duplicatedPolicies++;
 
-    if(paths.length){
-
-      const {
-        error
-      }=await sb
-        .storage
-        .from("policy-pdfs")
-        .remove(
-          paths
-        );
-
-
-      if(error){
-
-        console.warn(
-          error
-        );
+        continue;
 
       }
 
-    }
 
-
-    const {
-      error
-    }=await sb
-      .from("clients")
-      .delete()
-      .eq(
-        "user_id",
-        state.user.id
+      await createImportedPolicy(
+        client,
+        imported
       );
 
 
-    if(error){
-      throw error;
+      createdPolicies++;
+
     }
 
 
-    state.clients=[];
-
-    state.policies=[];
-
-    state.events=[];
+    saveLocalCache();
 
 
     renderAll();
 
 
-    toast(
-      "Dados da nuvem apagados."
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-
-    toast(
-      "Não foi possível apagar todos os dados."
-    );
-
-  }
-
-}
-
-
-
-function setupEvents(){
-
-  $$("[data-view]")
-    .forEach(
-      button=>
-        button.addEventListener(
-          "click",
-          ()=>go(
-            button.dataset.view
-          )
-        )
-    );
-
-
-  $$("[data-close]")
-    .forEach(
-      button=>
-        button.addEventListener(
-          "click",
-          ()=>closeModal(
-            button.dataset.close
-          )
-        )
-    );
-
-
-  $$(".modal")
-    .forEach(
-      modal=>
-        modal.addEventListener(
-          "click",
-          event=>{
-
-            if(
-              event.target===modal
-            ){
-
-              modal.classList.remove(
-                "open"
-              );
-
-            }
-
-          }
-        )
-    );
-
-
-  $("#loginForm")
-    .addEventListener(
-      "submit",
-      login
-    );
-
-
-  $("#forgotPasswordBtn")
-    .addEventListener(
-      "click",
-      forgotPassword
-    );
-
-
-  $("#recoverySaveBtn")
-    .addEventListener(
-      "click",
-      saveRecoveredPassword
-    );
-
-
-  $("#logoutBtn")
-    .addEventListener(
-      "click",
-      logout
-    );
-
-
-  $("#newPolicyBtn")
-    .addEventListener(
-      "click",
-      ()=>newPolicyFor()
-    );
-
-
-  $("#newPolicyBtn2")
-    .addEventListener(
-      "click",
-      ()=>newPolicyFor()
-    );
-
-
-  $("#newClientBtn")
-    .addEventListener(
-      "click",
-      newClient
-    );
-
-
-  $("#dashboardRefresh")
-    .addEventListener(
-      "click",
-      loadCloudData
-    );
-
-
-  $("#clientForm")
-    .addEventListener(
-      "submit",
-      saveClient
-    );
-
-
-  $("#policyForm")
-    .addEventListener(
-      "submit",
-      async event=>{
-
-        const oldPolicy=
-          $("#policyRenewedFrom")
-            .value;
-
-
-        const saved=
-          await savePolicy(
-            event
-          );
-
-
-        if(
-          saved &&
-          oldPolicy
-        ){
-
-          await finalizeRenewal(
-            oldPolicy
-          );
-
-
-          renderAll();
-
-        }
-
-      }
-    );
-
-
-  $("#clientSearch")
-    .addEventListener(
-      "input",
-      renderClients
-    );
-
-
-  $("#policySearch")
-    .addEventListener(
-      "input",
-      renderPolicies
-    );
-
-
-  $("#clientFilter")
-    .addEventListener(
-      "change",
-      renderClients
-    );
-
-
-  [
-    "statusFilter",
-    "expiryFilter",
-    "typeFilter",
-    "insurerFilter"
-  ].forEach(
-    id=>
-      $("#"+id)
-        .addEventListener(
-          "change",
-          renderPolicies
-        )
-  );
-
-
-  $("#saveAccount")
-    .addEventListener(
-      "click",
-      changePassword
-    );
-
-
-  $("#saveEmail")
-    .addEventListener(
-      "click",
-      async()=>{
-
-        state.settings.endpoint=
-          $("#emailEndpoint")
-            .value
-            .trim();
-
-
-        state.settings.managerEmail=
-          $("#managerEmail")
-            .value
-            .trim();
-
-
-        try{
-
-          await saveSettings();
-
-
-          checkAutomation();
-
-
-          toast(
-            "Configuração de e-mail salva na nuvem."
-          );
-
-
-        }catch(error){
-
-          console.error(
-            error
-          );
-
-
-          toast(
-            "Não foi possível salvar a configuração."
-          );
-
-        }
-
-      }
-    );
-
-
-  $("#saveLanguage")
-    .addEventListener(
-      "click",
-      async()=>{
-
-        state.settings.language=
-          $("#languageSelect").value||
-          "pt-BR";
-
-
-        try{
-
-          await saveSettings();
-
-
-          toast(
-            "Idioma salvo."
-          );
-
-
-        }catch(error){
-
-          console.error(
-            error
-          );
-
-
-          toast(
-            "Não foi possível salvar o idioma."
-          );
-
-        }
-
-      }
-    );
-
-
-  $("#generateReportBtn")
-    .addEventListener(
-      "click",
-      showReport
-    );
-
-
-  $("#settingsReport")
-    .addEventListener(
-      "click",
-      ()=>{
-
-        $("#settingsReportOutput")
-          .innerHTML=
-          generateReport();
-
-      }
-    );
-
-
-  $("#migrateLocalBtn")
-    .addEventListener(
-      "click",
-      migrateLocalData
-    );
-
-
-  $("#exportData")
-    .addEventListener(
-      "click",
-      exportBackup
-    );
-
-
-  $("#importData")
-    .addEventListener(
-      "change",
-      importBackup
-    );
-
-
-  $("#clearData")
-    .addEventListener(
-      "click",
-      clearAll
-    );
-
-}
-
-
-
-async function init(){
-
-  setupEvents();
-
-
-  sb.auth.onAuthStateChange(
-    (
-      event,
-      session
-    )=>{
-
-      if(
-        event==="PASSWORD_RECOVERY"
-      ){
-
-        state.user=
-          session?.user||
-          null;
-
-
-        showRecovery();
-
-      }
+    if (status) {
+
+      status.textContent =
+        `Importação concluída. ` +
+        `${createdClients} cliente(s) criado(s), ` +
+        `${createdPolicies} apólice(s) criada(s), ` +
+        `${duplicatedPolicies} duplicada(s) ignorada(s)` +
+        (
+          ignoredRows
+            ? ` e ${ignoredRows} linha(s) inválida(s).`
+            : "."
+        );
 
     }
-  );
 
 
-  const {
-    data:{
-      session
-    },
-    error
-  }=await sb.auth.getSession();
+    toast(
+      "Importação do Agger concluída."
+    );
 
 
-  if(error){
+  } catch (error) {
 
     console.error(
+      "Erro ao importar Agger:",
       error
     );
 
 
-    showLogin();
+    if (status) {
+
+      status.textContent =
+        "Não foi possível importar a planilha.";
+
+    }
 
 
-    return;
-
-  }
-
-
-  if(
-    session?.user
-  ){
-
-    state.user=
-      session.user;
-
-
-    showApp();
-
-
-    await loadCloudData();
-
-
-  }else{
-
-    showLogin();
+    toast(
+      "Erro ao importar o Excel do Agger."
+    );
 
   }
 
 }
 
 
+/* ============================================================
+   LIMPAR SELEÇÃO DO AGGER
+   ============================================================ */
 
-init();
+function clearAggerImport() {
 
-
-
-window.openDetails=
-  openDetails;
-
-
-window.editPolicy=
-  editPolicy;
+  const input =
+    $("#aggerFile");
 
 
-window.renewPolicy=
-  renewPolicy;
+  const preview =
+    $("#aggerPreview");
 
 
-window.openPdf=
-  openPdf;
+  const status =
+    $("#aggerImportStatus");
 
 
-window.newPolicyFor=
-  newPolicyFor;
+  if (input) {
+
+    input.value =
+      "";
+
+  }
 
 
-window.openClient=
-  openClient;
+  if (preview) {
+
+    preview.innerHTML =
+      "";
+
+  }
 
 
-window.changeStatus=
-  changeStatus;
+  if (status) {
+
+    status.textContent =
+      "";
+
+  }
+
+}
 
 
-window.manualWhatsApp=
-  manualWhatsApp;
-
-
-window.sendEmail=
-  sendEmail;
-
-
-window.deletePolicy=
-  deletePolicy;
-
-
-window.deleteClient=
-  deleteClient;
-
-
-window.closeModal=
-  closeModal;

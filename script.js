@@ -11548,9 +11548,8 @@ async function init() {
    FUNÇÕES GLOBAIS
    Necessárias para os botões gerados dinamicamente
    ============================================================ */
-
 window.editClient =
-  editClient;
+  openClient;
 
 window.deleteClient =
   deleteClient;

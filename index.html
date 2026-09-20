@@ -1,17 +1,28 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>SAVA Seguros | Central de Renovações</title>
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    SAVA Seguros | Central de Renovações
+  </title>
 
   <meta
     name="description"
     content="CRM de seguros e central de renovações da SAVA Seguros"
   >
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
 
   <link
     rel="preconnect"
@@ -24,9 +35,13 @@
     rel="stylesheet"
   >
 
-  <link rel="stylesheet" href="style.css">
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
 
   <style>
+
     .auth-link{
       margin-top:12px;
       background:none;
@@ -34,18 +49,18 @@
       color:#155eef;
       font:inherit;
       font-weight:600;
-      cursor:pointer
+      cursor:pointer;
     }
 
     .auth-link:hover{
-      text-decoration:underline
+      text-decoration:underline;
     }
 
     .auth-note{
       display:block;
       margin-top:14px;
       color:#667085;
-      line-height:1.5
+      line-height:1.5;
     }
 
     .migration-box{
@@ -53,14 +68,59 @@
       padding:12px;
       border:1px solid #eaecf0;
       border-radius:10px;
-      background:#f9fafb
+      background:#f9fafb;
     }
+
+    .date-filter-group{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .date-filter-group input{
+      min-width:150px;
+    }
+
+    .commercial-report-area{
+      white-space:pre-wrap;
+      font-family:inherit;
+      line-height:1.6;
+      margin-bottom:18px;
+    }
+
+    .report-assistant{
+      margin-top:20px;
+    }
+
+    .report-assistant .analysis-box{
+      white-space:pre-wrap;
+      margin-top:12px;
+    }
+
+    .agger-box{
+      margin-top:12px;
+    }
+
+    .agger-preview{
+      margin-top:14px;
+    }
+
+    .agger-preview table{
+      width:100%;
+    }
+
   </style>
+
 </head>
+
 
 <body>
 
-  <!-- LOGIN -->
+
+  <!-- =======================================================
+       LOGIN
+       ======================================================= -->
 
   <div
     id="loginScreen"
@@ -86,9 +146,11 @@
         apólices e renovações.
       </p>
 
+
       <form id="loginForm">
 
         <label>
+
           E-mail
 
           <input
@@ -98,9 +160,12 @@
             required
             placeholder="seuemail@empresa.com"
           >
+
         </label>
 
+
         <label>
+
           Senha
 
           <input
@@ -110,7 +175,9 @@
             required
             placeholder="Senha"
           >
+
         </label>
+
 
         <button
           class="btn btn-primary btn-block"
@@ -118,6 +185,7 @@
         >
           Entrar no sistema
         </button>
+
 
         <button
           id="forgotPasswordBtn"
@@ -127,6 +195,7 @@
           Esqueci minha senha
         </button>
 
+
         <div
           id="loginError"
           class="form-error"
@@ -135,7 +204,7 @@
       </form>
 
 
-      <!-- RECUPERAÇÃO -->
+      <!-- RECUPERAÇÃO DE SENHA -->
 
       <div
         id="recoveryPanel"
@@ -150,7 +219,9 @@
           Digite a nova senha da sua conta.
         </p>
 
+
         <label>
+
           Nova senha
 
           <input
@@ -159,9 +230,12 @@
             autocomplete="new-password"
             placeholder="Mínimo de 6 caracteres"
           >
+
         </label>
 
+
         <label>
+
           Confirmar nova senha
 
           <input
@@ -170,7 +244,9 @@
             autocomplete="new-password"
             placeholder="Repita a nova senha"
           >
+
         </label>
+
 
         <button
           id="recoverySaveBtn"
@@ -180,12 +256,14 @@
           Salvar nova senha
         </button>
 
+
         <div
           id="recoveryError"
           class="form-error"
         ></div>
 
       </div>
+
 
       <small class="auth-note">
         Login protegido pelo Supabase Auth.
@@ -196,14 +274,23 @@
   </div>
 
 
-  <!-- APP -->
+
+  <!-- =======================================================
+       APLICAÇÃO
+       ======================================================= -->
 
   <div
     id="app"
     class="app hidden"
   >
 
+
+    <!-- =====================================================
+         MENU LATERAL
+         ===================================================== -->
+
     <aside class="sidebar">
+
 
       <div class="sidebar-brand">
 
@@ -218,44 +305,55 @@
 
       </div>
 
+
       <nav>
 
         <button
           class="nav-item active"
           data-view="dashboard"
         >
-          ⌂ <span>Dashboard</span>
+          ⌂
+          <span>Dashboard</span>
         </button>
+
 
         <button
           class="nav-item"
           data-view="clientes"
         >
-          ♙ <span>Clientes</span>
+          ♙
+          <span>Clientes</span>
         </button>
+
 
         <button
           class="nav-item"
           data-view="apolices"
         >
-          ▣ <span>Apólices</span>
+          ▣
+          <span>Apólices</span>
         </button>
+
 
         <button
           class="nav-item"
           data-view="renovacoes"
         >
-          ↻ <span>Renovações</span>
+          ↻
+          <span>Renovações</span>
         </button>
+
 
         <button
           class="nav-item"
           data-view="relatorios"
         >
-          ▤ <span>Relatórios</span>
+          ▤
+          <span>Relatórios</span>
         </button>
 
       </nav>
+
 
       <div class="sidebar-bottom">
 
@@ -263,14 +361,17 @@
           class="nav-item"
           data-view="config"
         >
-          ⚙ <span>Configurações</span>
+          ⚙
+          <span>Configurações</span>
         </button>
+
 
         <button
           id="logoutBtn"
           class="nav-item danger"
         >
-          ⇥ <span>Sair</span>
+          ⇥
+          <span>Sair</span>
         </button>
 
       </div>
@@ -278,9 +379,17 @@
     </aside>
 
 
+
+    <!-- =====================================================
+         CONTEÚDO PRINCIPAL
+         ===================================================== -->
+
     <main class="main">
 
-      <!-- TOPO -->
+
+      <!-- ===================================================
+           TOPO
+           =================================================== -->
 
       <header class="topbar">
 
@@ -296,6 +405,7 @@
 
         </div>
 
+
         <div class="top-actions">
 
           <span
@@ -305,12 +415,14 @@
             ● E-mail automático: configurando
           </span>
 
+
           <button
             id="newPolicyBtn"
             class="btn btn-primary"
           >
             ＋ Nova apólice
           </button>
+
 
           <button
             class="icon-btn"
@@ -325,12 +437,16 @@
       </header>
 
 
-      <!-- DASHBOARD -->
+
+      <!-- ===================================================
+           DASHBOARD
+           =================================================== -->
 
       <section
         id="dashboard"
         class="view active"
       >
+
 
         <div class="welcome-row">
 
@@ -347,6 +463,7 @@
 
           </div>
 
+
           <button
             id="dashboardRefresh"
             class="btn btn-secondary"
@@ -357,7 +474,9 @@
         </div>
 
 
+
         <div class="stats-grid">
+
 
           <article class="stat-card">
 
@@ -382,6 +501,7 @@
             </div>
 
           </article>
+
 
 
           <article class="stat-card">
@@ -409,6 +529,7 @@
           </article>
 
 
+
           <article class="stat-card">
 
             <div class="stat-icon red">
@@ -432,6 +553,7 @@
             </div>
 
           </article>
+
 
 
           <article class="stat-card">
@@ -461,7 +583,9 @@
         </div>
 
 
+
         <div class="dashboard-grid">
+
 
           <article class="panel large">
 
@@ -479,6 +603,7 @@
 
               </div>
 
+
               <button
                 class="link-btn"
                 data-view="apolices"
@@ -488,12 +613,14 @@
 
             </div>
 
+
             <div
               id="upcomingList"
               class="upcoming-list"
             ></div>
 
           </article>
+
 
 
           <article class="panel">
@@ -514,6 +641,7 @@
 
             </div>
 
+
             <div
               id="processSummary"
               class="process-summary"
@@ -522,6 +650,7 @@
           </article>
 
         </div>
+
 
 
         <article class="panel">
@@ -542,6 +671,7 @@
 
           </div>
 
+
           <div
             id="insurerSummary"
             class="insurer-summary"
@@ -552,12 +682,16 @@
       </section>
 
 
-      <!-- CLIENTES -->
+
+      <!-- ===================================================
+           CLIENTES
+           =================================================== -->
 
       <section
         id="clientes"
         class="view"
       >
+
 
         <div class="section-head">
 
@@ -574,6 +708,7 @@
 
           </div>
 
+
           <button
             class="btn btn-primary"
             id="newClientBtn"
@@ -584,12 +719,15 @@
         </div>
 
 
+
         <div class="toolbar">
+
 
           <input
             id="clientSearch"
             placeholder="Buscar cliente, CPF ou telefone..."
           >
+
 
           <select id="clientFilter">
 
@@ -607,7 +745,24 @@
 
           </select>
 
+
+          <!-- NOVO: FILTROS DE VIGÊNCIA -->
+
+          <input
+            id="clientStartDateFilter"
+            type="date"
+            title="Início da vigência"
+          >
+
+
+          <input
+            id="clientEndDateFilter"
+            type="date"
+            title="Fim da vigência"
+          >
+
         </div>
+
 
         <div
           id="clientsGrid"
@@ -617,12 +772,16 @@
       </section>
 
 
-      <!-- APÓLICES -->
+
+      <!-- ===================================================
+           APÓLICES
+           =================================================== -->
 
       <section
         id="apolices"
         class="view"
       >
+
 
         <div class="section-head">
 
@@ -639,6 +798,7 @@
 
           </div>
 
+
           <button
             class="btn btn-primary"
             id="newPolicyBtn2"
@@ -649,12 +809,15 @@
         </div>
 
 
+
         <div class="toolbar">
+
 
           <input
             id="policySearch"
             placeholder="Buscar cliente, apólice, seguradora..."
           >
+
 
           <select id="statusFilter">
 
@@ -670,15 +833,16 @@
               Em andamento
             </option>
 
-        <option>
-         Ganho
-       </option>
+            <option>
+              Ganho
+            </option>
 
-       <option>
-        Perdido
-        </option>
+            <option>
+              Perdido
+            </option>
 
           </select>
+
 
 
           <select id="expiryFilter">
@@ -706,6 +870,7 @@
           </select>
 
 
+
           <select id="typeFilter">
 
             <option value="all">
@@ -713,6 +878,7 @@
             </option>
 
           </select>
+
 
 
           <select id="insurerFilter">
@@ -723,7 +889,24 @@
 
           </select>
 
+
+          <!-- NOVO: VIGÊNCIA -->
+
+          <input
+            id="policyStartDateFilter"
+            type="date"
+            title="Início da vigência"
+          >
+
+
+          <input
+            id="policyEndDateFilter"
+            type="date"
+            title="Fim da vigência"
+          >
+
         </div>
+
 
 
         <div class="table-wrap">
@@ -735,16 +918,23 @@
               <tr>
 
                 <th>Cliente</th>
+
                 <th>Seguro</th>
+
                 <th>Seguradora</th>
+
                 <th>Vigência</th>
+
                 <th>Processo</th>
+
                 <th>Vencimento</th>
+
                 <th>Ações</th>
 
               </tr>
 
             </thead>
+
 
             <tbody id="policiesTable"></tbody>
 
@@ -755,12 +945,16 @@
       </section>
 
 
-      <!-- RENOVAÇÕES -->
+
+      <!-- ===================================================
+           RENOVAÇÕES
+           =================================================== -->
 
       <section
         id="renovacoes"
         class="view"
       >
+
 
         <div class="section-head">
 
@@ -779,31 +973,77 @@
 
         </div>
 
-     <div class="button-row" style="margin-bottom:15px">
 
-  <button
-    id="generateCommercialReport"
-    class="btn btn-primary"
-  >
-    📊 Gerar Feedback Comercial
-  </button>
 
-</div>
+        <!-- FILTROS DE RENOVAÇÃO -->
 
-<div
-  class="kanban"
-  id="kanban"
-></div>
+        <div class="toolbar">
+
+
+          <input
+            id="renewalStartDateFilter"
+            type="date"
+            title="Início da vigência"
+          >
+
+
+          <input
+            id="renewalEndDateFilter"
+            type="date"
+            title="Fim da vigência"
+          >
+
+
+          <button
+            id="clearRenewalDates"
+            class="btn btn-secondary"
+            type="button"
+          >
+            Limpar período
+          </button>
+
+
+          <button
+            id="generateCommercialReport"
+            class="btn btn-primary"
+            type="button"
+          >
+            📊 Gerar Feedback Comercial
+          </button>
+
+        </div>
+
+
+
+        <!-- RELATÓRIO COMERCIAL -->
+
+        <pre
+          id="commercialReportArea"
+          class="report-area commercial-report-area"
+        ></pre>
+
+
+
+        <!-- KANBAN -->
+
+        <div
+          class="kanban"
+          id="kanban"
+        ></div>
 
       </section>
 
 
-      <!-- RELATÓRIOS -->
+
+      <!-- ===================================================
+           RELATÓRIOS
+           =================================================== -->
 
       <section
         id="relatorios"
         class="view"
       >
+
 
         <div class="section-head">
 
@@ -820,6 +1060,7 @@
 
           </div>
 
+
           <button
             class="btn btn-primary"
             id="generateReportBtn"
@@ -829,20 +1070,76 @@
 
         </div>
 
+
+
         <div
           id="reportArea"
           class="report-area"
         ></div>
 
+
+
+        <!-- NOVO: CONSULTA INTELIGENTE -->
+
+        <article class="panel report-assistant">
+
+          <div class="panel-head">
+
+            <div>
+
+              <h3>
+                🤖 Consultar dados do CRM
+              </h3>
+
+              <p>
+                Faça perguntas usando os dados
+                cadastrados no sistema.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="toolbar">
+
+            <input
+              id="reportQuestion"
+              placeholder="Ex: Quais apólices vencem nos próximos 7 dias?"
+            >
+
+
+            <button
+              id="askReportBtn"
+              class="btn btn-primary"
+              type="button"
+            >
+              Perguntar
+            </button>
+
+          </div>
+
+
+          <pre
+            id="reportAnswer"
+            class="analysis-box"
+          ></pre>
+
+        </article>
+
       </section>
 
 
-      <!-- CONFIGURAÇÕES -->
+
+      <!-- ===================================================
+           CONFIGURAÇÕES
+           =================================================== -->
 
       <section
         id="config"
         class="view"
       >
+
 
         <div class="section-head">
 
@@ -861,7 +1158,9 @@
         </div>
 
 
+
         <div class="settings-grid">
+
 
           <!-- CONTA -->
 
@@ -871,7 +1170,9 @@
               ⚙ Conta e segurança
             </h4>
 
+
             <label>
+
               E-mail da conta
 
               <input
@@ -879,9 +1180,12 @@
                 type="email"
                 readonly
               >
+
             </label>
 
+
             <label>
+
               Nova senha
 
               <input
@@ -890,9 +1194,12 @@
                 autocomplete="new-password"
                 placeholder="Deixe vazio para manter"
               >
+
             </label>
 
+
             <label>
+
               Confirmar nova senha
 
               <input
@@ -901,7 +1208,9 @@
                 autocomplete="new-password"
                 placeholder="Repita a nova senha"
               >
+
             </label>
+
 
             <button
               class="btn btn-primary"
@@ -911,6 +1220,7 @@
             </button>
 
           </article>
+
 
 
           <!-- E-MAIL -->
@@ -927,16 +1237,21 @@
               configurado abaixo.
             </p>
 
+
             <label>
+
               Endpoint do Google Apps Script
 
               <input
                 id="emailEndpoint"
                 placeholder="https://script.google.com/macros/s/.../exec"
               >
+
             </label>
 
+
             <label>
+
               E-mail do gestor
 
               <input
@@ -944,7 +1259,9 @@
                 type="email"
                 placeholder="gestor@empresa.com"
               >
+
             </label>
+
 
             <button
               class="btn btn-primary"
@@ -953,12 +1270,14 @@
               Salvar automação
             </button>
 
+
             <div
               id="emailTestResult"
               class="mini-note"
             ></div>
 
           </article>
+
 
 
           <!-- IDIOMA -->
@@ -973,6 +1292,7 @@
               Idioma atual
             </p>
 
+
             <select id="languageSelect">
 
               <option value="pt-BR">
@@ -980,6 +1300,7 @@
               </option>
 
             </select>
+
 
             <button
               class="btn btn-secondary"
@@ -989,6 +1310,7 @@
             </button>
 
           </article>
+
 
 
           <!-- BANCO -->
@@ -1001,9 +1323,10 @@
 
             <p>
               Clientes, apólices, histórico e PDFs
-              agora ficam no Supabase e aparecem em
+              ficam no Supabase e aparecem em
               todos os seus dispositivos.
             </p>
+
 
             <div class="migration-box">
 
@@ -1017,12 +1340,14 @@
                 no navegador antigo.
               </p>
 
+
               <button
                 class="btn btn-secondary"
                 id="migrateLocalBtn"
               >
                 Migrar dados deste dispositivo
               </button>
+
 
               <div
                 id="migrationStatus"
@@ -1032,6 +1357,57 @@
             </div>
 
           </article>
+
+
+
+          <!-- =================================================
+               NOVO: IMPORTAÇÃO DO AGGER
+               ================================================= -->
+
+          <article class="settings-card full">
+
+            <h4>
+              📊 Importar renovações do Agger
+            </h4>
+
+            <p>
+              Exporte a planilha do Agger e importe aqui.
+              O CRM tentará identificar automaticamente
+              cliente, seguradora, tipo de seguro,
+              número da apólice e vigência.
+            </p>
+
+
+            <div class="agger-box">
+
+              <label>
+
+                Arquivo Excel do Agger
+
+                <input
+                  id="aggerFile"
+                  type="file"
+                  accept=".xlsx,.xls"
+                >
+
+              </label>
+
+
+              <div
+                id="aggerImportStatus"
+                class="mini-note"
+              ></div>
+
+
+              <div
+                id="aggerPreview"
+                class="agger-preview"
+              ></div>
+
+            </div>
+
+          </article>
+
 
 
           <!-- BACKUP -->
@@ -1047,6 +1423,7 @@
               PDFs também entram no backup.
             </p>
 
+
             <div class="button-row">
 
               <button
@@ -1056,9 +1433,11 @@
                 Exportar backup
               </button>
 
+
               <label
                 class="btn btn-secondary file-btn"
               >
+
                 Importar backup
 
                 <input
@@ -1072,6 +1451,7 @@
 
             </div>
 
+
             <button
               class="btn btn-danger-outline"
               id="clearData"
@@ -1080,6 +1460,7 @@
             </button>
 
           </article>
+
 
 
           <!-- IA -->
@@ -1092,8 +1473,9 @@
 
             <p>
               A análise é feita localmente no navegador
-              e não envia seus dados para uma IA externa.
+              usando os dados cadastrados no CRM.
             </p>
+
 
             <button
               class="btn btn-primary"
@@ -1102,6 +1484,7 @@
               Gerar análise agora
             </button>
 
+
             <div
               id="settingsReportOutput"
               class="analysis-box"
@@ -1109,16 +1492,21 @@
 
           </article>
 
+
         </div>
 
       </section>
+
 
     </main>
 
   </div>
 
 
-  <!-- MODAL CLIENTE -->
+
+  <!-- =======================================================
+       MODAL CLIENTE
+       ======================================================= -->
 
   <div
     class="modal"
@@ -1126,6 +1514,7 @@
   >
 
     <div class="modal-card compact">
+
 
       <div class="modal-head">
 
@@ -1141,9 +1530,11 @@
 
         </div>
 
+
         <button
           class="close-btn"
           data-close="clientModal"
+          type="button"
         >
           ×
         </button>
@@ -1151,15 +1542,19 @@
       </div>
 
 
+
       <form
         id="clientForm"
         class="form-grid"
       >
 
+
         <input
           type="hidden"
           id="clientId"
         >
+
+
 
         <label class="span-2">
 
@@ -1172,16 +1567,21 @@
 
         </label>
 
-<label>
 
-  Data de nascimento
 
-  <input
-    id="clientBirth"
-    type="date"
-  >
+        <!-- DATA DE NASCIMENTO AGORA É OPCIONAL -->
 
-</label>
+        <label>
+
+          Data de nascimento
+
+          <input
+            id="clientBirth"
+            type="date"
+          >
+
+        </label>
+
 
 
         <label>
@@ -1192,6 +1592,7 @@
             id="clientPhone"
             type="tel"
             inputmode="numeric"
+            maxlength="15"
             placeholder="(27) 99999-9999"
             required
           >
@@ -1199,16 +1600,22 @@
         </label>
 
 
+
+        <!-- CPF/CNPJ COM MÁSCARA PELO JS -->
+
         <label>
 
           CPF/CNPJ
 
           <input
             id="clientDoc"
-            placeholder="Opcional"
+            inputmode="numeric"
+            maxlength="18"
+            placeholder="CPF ou CNPJ"
           >
 
         </label>
+
 
 
         <label>
@@ -1224,6 +1631,7 @@
         </label>
 
 
+
         <label class="span-2">
 
           Observações
@@ -1234,6 +1642,7 @@
           ></textarea>
 
         </label>
+
 
 
         <div
@@ -1248,8 +1657,10 @@
             Cancelar
           </button>
 
+
           <button
             class="btn btn-primary"
+            type="submit"
           >
             Salvar cliente
           </button>
@@ -1263,7 +1674,10 @@
   </div>
 
 
-  <!-- MODAL APÓLICE -->
+
+  <!-- =======================================================
+       MODAL APÓLICE
+       ======================================================= -->
 
   <div
     class="modal"
@@ -1271,6 +1685,7 @@
   >
 
     <div class="modal-card wide">
+
 
       <div class="modal-head">
 
@@ -1287,9 +1702,11 @@
 
         </div>
 
+
         <button
           class="close-btn"
           data-close="policyModal"
+          type="button"
         >
           ×
         </button>
@@ -1297,20 +1714,24 @@
       </div>
 
 
+
       <form
         id="policyForm"
         class="form-grid"
       >
+
 
         <input
           type="hidden"
           id="policyId"
         >
 
+
         <input
           type="hidden"
           id="policyParentId"
         >
+
 
         <input
           type="hidden"
@@ -1318,9 +1739,11 @@
         >
 
 
+
         <div class="form-section-title span-2">
           Cliente segurado
         </div>
+
 
 
         <label class="span-2">
@@ -1335,9 +1758,11 @@
         </label>
 
 
+
         <div class="form-section-title span-2">
           Dados da apólice
         </div>
+
 
 
         <label>
@@ -1352,6 +1777,7 @@
         </label>
 
 
+
         <label>
 
           Tipo de seguro*
@@ -1364,6 +1790,7 @@
         </label>
 
 
+
         <label>
 
           Número da apólice*
@@ -1374,6 +1801,7 @@
           >
 
         </label>
+
 
 
         <label>
@@ -1389,6 +1817,7 @@
         </label>
 
 
+
         <label>
 
           Fim da vigência*
@@ -1400,6 +1829,7 @@
           >
 
         </label>
+
 
 
         <label>
@@ -1419,12 +1849,15 @@
             <option>
               Ganho
             </option>
-           <option>
-            Perdido
+
+            <option>
+              Perdido
             </option>
+
           </select>
 
         </label>
+
 
 
         <label class="span-2">
@@ -1445,6 +1878,7 @@
         </label>
 
 
+
         <label class="span-2">
 
           Observações
@@ -1455,77 +1889,108 @@
           ></textarea>
 
         </label>
-<label class="span-2">
 
-  Feedback Comercial
 
-  <textarea
-    id="policyFeedback"
-    rows="5"
-    placeholder="Ex: Falta cotar com Porto. Cliente pediu retorno dia 25. Aguardando proposta."
-  ></textarea>
 
-</label>
+        <!-- NOVO: FEEDBACK COMERCIAL -->
+
+        <label class="span-2">
+
+          Feedback Comercial
+
+          <textarea
+            id="policyFeedback"
+            rows="5"
+            placeholder="Ex: Falta cotar com Porto. Cliente pediu retorno dia 25. Aguardando proposta."
+          ></textarea>
+
+        </label>
+
+
 
         <div class="form-section-title span-2">
           Lembretes automáticos
         </div>
 
 
+
         <div class="checks span-2">
 
+
           <label>
+
             <input
               id="alert30"
               type="checkbox"
               checked
             >
+
             30 dias
+
           </label>
 
+
           <label>
+
             <input
               id="alert15"
               type="checkbox"
               checked
             >
+
             15 dias
+
           </label>
 
+
           <label>
+
             <input
               id="alert7"
               type="checkbox"
               checked
             >
+
             7 dias
+
           </label>
 
+
           <label>
+
             <input
               id="alert1"
               type="checkbox"
               checked
             >
+
             1 dia
+
           </label>
 
+
           <label>
+
             <input
               id="alertExpired"
               type="checkbox"
               checked
             >
+
             Pós-vencimento
+
           </label>
 
+
         </div>
+
 
 
         <div
           id="renewInfo"
           class="info-box span-2 hidden"
         ></div>
+
 
 
         <div
@@ -1540,13 +2005,16 @@
             Cancelar
           </button>
 
+
           <button
             class="btn btn-primary"
+            type="submit"
           >
             Salvar apólice
           </button>
 
         </div>
+
 
       </form>
 
@@ -1555,7 +2023,10 @@
   </div>
 
 
-  <!-- DETALHES -->
+
+  <!-- =======================================================
+       DETALHES DA APÓLICE
+       ======================================================= -->
 
   <div
     class="modal"
@@ -1563,6 +2034,7 @@
   >
 
     <div class="modal-card wide">
+
 
       <div class="modal-head">
 
@@ -1576,23 +2048,30 @@
 
         </div>
 
+
         <button
           class="close-btn"
           data-close="detailsModal"
+          type="button"
         >
           ×
         </button>
 
       </div>
 
+
       <div id="detailsBody"></div>
+
 
     </div>
 
   </div>
 
 
-  <!-- PDF -->
+
+  <!-- =======================================================
+       PDF
+       ======================================================= -->
 
   <div
     class="modal"
@@ -1600,6 +2079,7 @@
   >
 
     <div class="modal-card pdf-card">
+
 
       <div class="modal-head">
 
@@ -1613,24 +2093,33 @@
 
         </div>
 
+
         <button
           class="close-btn"
           data-close="pdfModal"
+          type="button"
         >
           ×
         </button>
 
       </div>
 
+
       <iframe
         id="pdfFrame"
         title="PDF da apólice"
       ></iframe>
 
+
     </div>
 
   </div>
 
+
+
+  <!-- =======================================================
+       TOAST
+       ======================================================= -->
 
   <div
     id="toast"
@@ -1638,13 +2127,24 @@
   ></div>
 
 
-  <!-- SUPABASE -->
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- =======================================================
+       SUPABASE
+       ======================================================= -->
 
-  <!-- SAVA CRM -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+
+  <!-- =======================================================
+       SAVA CRM
+       ======================================================= -->
 
   <script src="script.js"></script>
 
+
 </body>
+
 </html>

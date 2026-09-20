@@ -11603,6 +11603,247 @@ document.addEventListener(
   init
 );
 
+/* ============================================================
+   DESFAZER ÚLTIMA IMPORTAÇÃO DO AGGER
+   ============================================================ */
 
+const SAVA_LAST_AGGER_IMPORT =
+  "sava_last_agger_import";
+
+
+function saveLastAggerImport(data) {
+
+  localStorage.setItem(
+    SAVA_LAST_AGGER_IMPORT,
+    JSON.stringify({
+      createdAt: new Date().toISOString(),
+      clientIds: data.clientIds || [],
+      policyIds: data.policyIds || []
+    })
+  );
+
+}
+
+
+function getLastAggerImport() {
+
+  try {
+
+    const raw =
+      localStorage.getItem(
+        SAVA_LAST_AGGER_IMPORT
+      );
+
+    return raw
+      ? JSON.parse(raw)
+      : null;
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao ler última importação:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+async function undoLastAggerImport() {
+
+  const last =
+    getLastAggerImport();
+
+  if (
+    !last ||
+    (
+      !last.clientIds?.length &&
+      !last.policyIds?.length
+    )
+  ) {
+
+    alert(
+      "Não existe uma importação recente registrada para desfazer."
+    );
+
+    return;
+
+  }
+
+
+  const quantity =
+    last.policyIds?.length || 0;
+
+
+  const confirmed =
+    confirm(
+      `A última importação adicionou ${quantity} apólice(s).\n\nDeseja desfazer essa importação?\n\nSomente os registros criados por ela serão removidos.`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    /*
+      PRIMEIRO APAGA AS APÓLICES
+    */
+
+    if (
+      last.policyIds?.length
+    ) {
+
+      const {
+        error
+      } =
+        await sb
+          .from("policies")
+          .delete()
+          .in(
+            "id",
+            last.policyIds
+          )
+          .eq(
+            "user_id",
+            state.user.id
+          );
+
+      if (error) {
+        throw error;
+      }
+
+    }
+
+
+    /*
+      DEPOIS REMOVE APENAS CLIENTES
+      QUE FORAM CRIADOS NA IMPORTAÇÃO
+      E QUE FICARAM SEM APÓLICES.
+    */
+
+    if (
+      last.clientIds?.length
+    ) {
+
+      for (
+        const clientId
+        of last.clientIds
+      ) {
+
+        const {
+          data: remainingPolicies,
+          error: checkError
+        } =
+          await sb
+            .from("policies")
+            .select(
+              "id"
+            )
+            .eq(
+              "client_id",
+              clientId
+            )
+            .eq(
+              "user_id",
+              state.user.id
+            )
+            .limit(1);
+
+
+        if (checkError) {
+          throw checkError;
+        }
+
+
+        if (
+          !remainingPolicies?.length
+        ) {
+
+          const {
+            error: deleteClientError
+          } =
+            await sb
+              .from("clients")
+              .delete()
+              .eq(
+                "id",
+                clientId
+              )
+              .eq(
+                "user_id",
+                state.user.id
+              );
+
+
+          if (
+            deleteClientError
+          ) {
+            throw deleteClientError;
+          }
+
+        }
+
+      }
+
+    }
+
+
+    localStorage.removeItem(
+      SAVA_LAST_AGGER_IMPORT
+    );
+
+
+    await loadCloudData();
+
+    renderAll();
+
+
+    const status =
+      $("#aggerImportStatus");
+
+
+    if (status) {
+
+      status.textContent =
+        "Última importação desfeita com sucesso.";
+
+    }
+
+
+    toast(
+      "Última importação do Agger desfeita."
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Erro ao desfazer importação:",
+      error
+    );
+
+
+    toast(
+      "Não foi possível desfazer a importação."
+    );
+
+  }
+
+}
+
+
+/* BOTÃO */
+
+$("#undoLastAggerImport")
+  ?.addEventListener(
+    "click",
+    undoLastAggerImport
+  );
 
 

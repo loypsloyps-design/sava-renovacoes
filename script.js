@@ -8953,95 +8953,69 @@ async function importAggerExcel(
     event?.target ||
     $("#aggerFile");
 
-
   const file =
-    input
-      ?.files?.[0];
-
+    input?.files?.[0];
 
   if (!file) {
     return;
   }
 
-
   const status =
     $("#aggerImportStatus");
-
 
   try {
 
     if (status) {
-
       status.textContent =
         "Lendo a planilha...";
-
     }
-
 
     const rows =
       await previewAggerImport(
         file
       );
 
-
-    if (
-      !rows.length
-    ) {
+    if (!rows.length) {
 
       if (status) {
-
         status.textContent =
           "Nenhum registro válido encontrado.";
-
       }
 
-
       return;
-
     }
-
 
     const confirmed =
       window.confirm(
-
         `Foram encontradas ${rows.length} linha(s) válidas.\n\nDeseja importar os dados para o CRM?`
-
       );
-
 
     if (!confirmed) {
 
       if (status) {
-
         status.textContent =
           "Importação cancelada.";
-
       }
 
-
       return;
-
     }
 
 
-    let createdClients =
-      0;
+    let createdClients = 0;
+    let createdPolicies = 0;
+    let duplicatedPolicies = 0;
+    let ignoredRows = 0;
+    let processed = 0;
 
 
-    let createdPolicies =
-      0;
+    /*
+      NOVO:
+      Guarda exatamente os registros
+      criados NESTA importação.
+    */
 
-
-    let duplicatedPolicies =
-      0;
-
-
-    let ignoredRows =
-      0;
-
-
-    let processed =
-      0;
+    const importedClientIds = [];
+    const importedPolicyIds = [];
 
 
     for (
@@ -9050,7 +9024,6 @@ async function importAggerExcel(
     ) {
 
       processed++;
-
 
       if (status) {
 
@@ -9081,6 +9054,10 @@ async function importAggerExcel(
         );
 
 
+      /*
+        CLIENTE NOVO
+      */
+
       if (!client) {
 
         client =
@@ -9088,8 +9065,18 @@ async function importAggerExcel(
             imported
           );
 
-
         createdClients++;
+
+
+        /*
+          Guarda o ID somente se
+          o cliente foi criado
+          por esta importação.
+        */
+
+        importedClientIds.push(
+          client.id
+        );
 
       }
 
@@ -9112,19 +9099,58 @@ async function importAggerExcel(
       }
 
 
-      await createImportedPolicy(
-        client,
-        imported
-      );
+      /*
+        CRIA APÓLICE
+      */
+
+      const createdPolicy =
+        await createImportedPolicy(
+          client,
+          imported
+        );
 
 
       createdPolicies++;
 
+
+      /*
+        Guarda exatamente o ID
+        da apólice criada.
+      */
+
+      if (
+        createdPolicy?.id
+      ) {
+
+        importedPolicyIds.push(
+          createdPolicy.id
+        );
+
+      }
+
     }
 
 
-    saveLocalCache();
+    /*
+      REGISTRA A IMPORTAÇÃO.
 
+      Isso é o que permite o botão
+      "Desfazer última importação"
+      saber exatamente o que apagar.
+    */
+
+    saveLastAggerImport({
+
+      clientIds:
+        importedClientIds,
+
+      policyIds:
+        importedPolicyIds
+
+    });
+
+
+    saveLocalCache();
 
     renderAll();
 
@@ -9173,7 +9199,6 @@ async function importAggerExcel(
   }
 
 }
-
 
 /* ============================================================
    LIMPAR SELEÇÃO DO AGGER

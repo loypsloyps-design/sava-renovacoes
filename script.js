@@ -1951,10 +1951,13 @@ function renderDashboard() {
 
                 <div class="line-top">
 
-                  <span>
-                    ${esc(status)}
-                  </span>
-
+                 <span>
+                  ${esc(
+                   status === "Ganho"
+                 ? "Renovado"
+                   : status
+                      )}
+                    </span>
                   <b>
                     ${value}
                   </b>
@@ -6438,7 +6441,11 @@ function generateCommercialReport() {
 
 
       text +=
-        `${group.icon} ${group.status.toUpperCase()} — ${groupPolicies.length}\n\n`;
+       `${group.icon} ${
+  group.status === "Ganho"
+    ? "RENOVADO"
+    : group.status.toUpperCase()
+} — ${groupPolicies.length}\n\n`;
 
 
       groupPolicies.forEach(

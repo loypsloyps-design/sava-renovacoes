@@ -3161,18 +3161,43 @@ function renderKanban() {
   }
 
 
-  const columns = [
-    "Pendente",
-    "Em andamento",
-    "Ganho",
-    "Perdido"
-  ];
+ const columns = [
+    {
+      value: "Pendente",
+      label: "Pendente",
+      icon: "○",
+      description: "Aguardando início"
+    },
 
+    {
+      value: "Em andamento",
+      label: "Em andamento",
+      icon: "◷",
+      description: "Em negociação"
+    },
+
+    {
+      value: "Ganho",
+      label: "Renovado",
+      icon: "✓",
+      description: "Concluído com sucesso"
+    },
+
+    {
+      value: "Perdido",
+      label: "Perdido",
+      icon: "×",
+      description: "Não renovado"
+    }
+  ];
 
   kanban.innerHTML =
     columns
-      .map(
-        status => {
+     .map(
+        column => {
+
+          const status =
+            column.value;
 
           const policies =
             state.policies
@@ -3227,17 +3252,35 @@ function renderKanban() {
               class="kanban-col ${columnClass}"
             >
 
-              <h4>
+            <div class="kanban-column-head">
 
-                <span>
-                  ${esc(status)}
-                </span>
+  <div class="kanban-column-title">
 
-                <span>
-                  ${policies.length}
-                </span>
+    <span
+      class="kanban-column-icon"
+    >
+      ${column.icon}
+    </span>
 
-              </h4>
+    <div>
+
+      <h4>
+        ${esc(column.label)}
+      </h4>
+
+      <small>
+        ${esc(column.description)}
+      </small>
+
+    </div>
+
+  </div>
+
+  <span class="kanban-count">
+    ${policies.length}
+  </span>
+
+</div>
 
 
               ${
@@ -3357,7 +3400,7 @@ function renderKanban() {
                                       : ""
                                   }
                                 >
-                                  Ganho
+                                  renovado
                                 </option>
 
 

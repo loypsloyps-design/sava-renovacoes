@@ -9297,6 +9297,10 @@ async function login(event) {
 
     state.user =
       data.user;
+     sessionStorage.setItem(
+  "sava_login_ativo",
+  "1"
+);
 
     showApp();
 
@@ -9335,6 +9339,9 @@ async function logout() {
 
     await sb.auth
       .signOut();
+     sessionStorage.removeItem(
+  "sava_login_ativo"
+);
 
   } catch (error) {
 
@@ -11525,6 +11532,8 @@ function setupEvents() {
 
 async function init() {
 let recoveryMode = false;
+     const loginDaSessao =
+    sessionStorage.getItem("sava_login_ativo") === "1";
   setupEvents();
 
   /*
@@ -11632,6 +11641,19 @@ if (recoveryMode) {
 
     const session =
       data.session;
+     if (
+  session?.user &&
+  !loginDaSessao
+) {
+
+  await sb.auth.signOut();
+
+  state.user = null;
+
+  showLogin();
+
+  return;
+}
 
     if (
       !session?.user

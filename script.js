@@ -11560,17 +11560,34 @@ async function init() {
           "PASSWORD_RECOVERY"
         ) {
 
-          showLogin();
+        if (event === "PASSWORD_RECOVERY") {
 
-          $("#loginForm")
-            ?.classList
-            .add("hidden");
+  console.log(
+    "Modo de recuperação de senha ativado."
+  );
 
-          $("#recoveryPanel")
-            ?.classList
-            .remove("hidden");
+  state.user =
+    session?.user || null;
 
-          return;
+
+  showLogin();
+
+
+  $("#loginForm")
+    ?.classList
+    .add("hidden");
+
+
+  $("#recoveryPanel")
+    ?.classList
+    .remove("hidden");
+
+  if ($("#recoveryError")) {
+    $("#recoveryError").textContent = "";
+  }
+
+  return;
+}
 
         }
 

@@ -3044,3 +3044,490 @@ select option {
   }
 
 }
+
+/* ==========================================================
+   SAVA — CLIENTES + APÓLICES
+   ========================================================== */
+
+/* CABEÇALHOS */
+
+#clientes .section-head,
+#apolices .section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  margin-bottom: 20px;
+}
+
+#clientes .section-head h3,
+#apolices .section-head h3 {
+  margin: 0 0 5px;
+
+  color: #f5f8fc;
+
+  font-size: 26px;
+  font-weight: 750;
+  letter-spacing: -0.035em;
+}
+
+#clientes .section-head p,
+#apolices .section-head p {
+  margin: 0;
+
+  color: #7d8ca1;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+/* ==========================================================
+   BOTÃO NOVO CLIENTE / NOVA APÓLICE
+   ========================================================== */
+
+#clientes .section-head .btn-primary,
+#apolices .section-head .btn-primary {
+  min-height: 40px;
+
+  padding: 0 16px;
+
+  color: #fff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #326cff,
+      #2459dd
+    );
+
+  border:
+    1px solid
+    rgba(104, 147, 255, 0.32);
+
+  border-radius: 9px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  box-shadow:
+    0 8px 20px
+    rgba(31, 86, 220, 0.18);
+
+  transition:
+    transform 0.17s ease,
+    box-shadow 0.17s ease;
+}
+
+#clientes .section-head .btn-primary:hover,
+#apolices .section-head .btn-primary:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 11px 25px
+    rgba(31, 86, 220, 0.25);
+}
+
+
+/* ==========================================================
+   BARRA DE BUSCA E FILTROS
+   ========================================================== */
+
+#clientes .toolbar,
+#apolices .toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+
+  margin-bottom: 18px;
+
+  padding: 13px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17, 27, 44, 0.98),
+      rgba(12, 20, 33, 0.98)
+    );
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.07);
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 10px 30px
+    rgba(0, 0, 0, 0.08);
+}
+
+
+/* BUSCA */
+
+#clientSearch,
+#policySearch {
+  flex: 1 1 250px;
+
+  min-width: 220px;
+}
+
+
+/* INPUTS E SELECTS */
+
+#clientes .toolbar input,
+#clientes .toolbar select,
+#apolices .toolbar input,
+#apolices .toolbar select {
+  min-height: 38px;
+
+  padding: 0 11px;
+
+  color: #dce4ef !important;
+
+  background:
+    #0b1422 !important;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.085) !important;
+
+  border-radius: 8px;
+
+  font-size: 10px;
+
+  outline: none;
+
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+#clientes .toolbar input:focus,
+#clientes .toolbar select:focus,
+#apolices .toolbar input:focus,
+#apolices .toolbar select:focus {
+  border-color:
+    rgba(74, 128, 255, 0.65) !important;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(57, 120, 255, 0.08);
+}
+
+#clientes .toolbar input::placeholder,
+#apolices .toolbar input::placeholder {
+  color: #5f6e82;
+}
+
+
+/* ==========================================================
+   CLIENTES — GRID
+   ========================================================== */
+
+#clientsGrid.clients-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fill,
+      minmax(280px, 1fr)
+    );
+
+  gap: 14px;
+}
+
+
+/* CARDS EXISTENTES */
+
+#clientsGrid > * {
+  position: relative;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(19, 30, 48, 0.98),
+      rgba(13, 22, 36, 0.98)
+    ) !important;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.07) !important;
+
+  border-radius: 14px !important;
+
+  box-shadow:
+    0 10px 28px
+    rgba(0, 0, 0, 0.10);
+
+  transition:
+    transform 0.17s ease,
+    border-color 0.17s ease,
+    box-shadow 0.17s ease;
+}
+
+#clientsGrid > *::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 17px;
+
+  width: 3px;
+  height: 30px;
+
+  background: #3978ff;
+
+  border-radius:
+    0 4px 4px 0;
+}
+
+#clientsGrid > *:hover {
+  transform: translateY(-2px);
+
+  border-color:
+    rgba(255, 255, 255, 0.12) !important;
+
+  box-shadow:
+    0 14px 35px
+    rgba(0, 0, 0, 0.16);
+}
+
+
+/* TEXTO DOS CARDS */
+
+#clientsGrid strong,
+#clientsGrid h3,
+#clientsGrid h4 {
+  color: #f4f7fb;
+}
+
+#clientsGrid small,
+#clientsGrid p {
+  color: #7d8ca1;
+}
+
+
+/* ==========================================================
+   APÓLICES — TABELA
+   ========================================================== */
+
+#apolices .table-wrap {
+  position: relative;
+
+  overflow-x: auto;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17, 27, 44, 0.98),
+      rgba(12, 20, 33, 0.98)
+    );
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.07);
+
+  border-radius: 15px;
+
+  box-shadow:
+    0 12px 35px
+    rgba(0, 0, 0, 0.10);
+}
+
+
+/* TABELA */
+
+#apolices table {
+  width: 100%;
+
+  border-collapse: separate;
+  border-spacing: 0;
+
+  background: transparent;
+}
+
+
+/* CABEÇALHO */
+
+#apolices thead {
+  background:
+    rgba(255, 255, 255, 0.025);
+}
+
+#apolices thead th {
+  padding: 14px 14px;
+
+  color: #718198;
+
+  border-bottom:
+    1px solid
+    rgba(255, 255, 255, 0.075);
+
+  font-size: 9px;
+  font-weight: 800;
+
+  text-align: left;
+  text-transform: uppercase;
+
+  letter-spacing: 0.07em;
+
+  white-space: nowrap;
+}
+
+
+/* LINHAS */
+
+#apolices tbody td {
+  padding: 14px;
+
+  color: #aeb9c9;
+
+  border-bottom:
+    1px solid
+    rgba(255, 255, 255, 0.052);
+
+  font-size: 10px;
+
+  vertical-align: middle;
+}
+
+#apolices tbody tr {
+  transition:
+    background 0.15s ease;
+}
+
+#apolices tbody tr:hover {
+  background:
+    rgba(57, 120, 255, 0.035);
+}
+
+#apolices tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+
+/* PRIMEIRA COLUNA — CLIENTE */
+
+#apolices tbody td:first-child {
+  color: #eef3f9;
+
+  font-weight: 650;
+}
+
+
+/* ==========================================================
+   PILLS / STATUS
+   ========================================================== */
+
+#apolices .pill {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 5px 8px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+
+/* ==========================================================
+   BOTÕES DE AÇÃO DA TABELA
+   ========================================================== */
+
+#apolices .action-btn {
+  min-height: 29px;
+
+  padding: 5px 8px;
+
+  color: #aebacd;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.07);
+
+  border-radius: 7px;
+
+  font-size: 9px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+#apolices .action-btn:hover {
+  color: #fff;
+
+  background:
+    rgba(57, 120, 255, 0.10);
+
+  border-color:
+    rgba(57, 120, 255, 0.23);
+}
+
+
+/* ==========================================================
+   SCROLL DA TABELA
+   ========================================================== */
+
+#apolices .table-wrap::-webkit-scrollbar {
+  height: 7px;
+}
+
+#apolices .table-wrap::-webkit-scrollbar-thumb {
+  background: #26354a;
+
+  border-radius: 20px;
+}
+
+
+/* ==========================================================
+   RESPONSIVO
+   ========================================================== */
+
+@media (max-width: 800px) {
+
+  #clientes .section-head,
+  #apolices .section-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  #clientes .section-head .btn-primary,
+  #apolices .section-head .btn-primary {
+    width: 100%;
+  }
+
+  #clientes .toolbar,
+  #apolices .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  #clientes .toolbar > *,
+  #apolices .toolbar > * {
+    width: 100%;
+  }
+
+  #clientsGrid.clients-grid {
+    grid-template-columns: 1fr;
+  }
+
+}

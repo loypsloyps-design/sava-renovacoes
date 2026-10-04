@@ -9432,12 +9432,10 @@ async function forgotPassword() {
 async function saveRecoveryPassword() {
 
   const password =
-    $("#recoveryPass")
-      ?.value || "";
+    $("#recoveryPass")?.value || "";
 
   const confirmPassword =
-    $("#recoveryPassConfirm")
-      ?.value || "";
+    $("#recoveryPassConfirm")?.value || "";
 
   const errorBox =
     $("#recoveryError");
@@ -9446,9 +9444,9 @@ async function saveRecoveryPassword() {
     errorBox.textContent = "";
   }
 
-  if (
-    password.length < 6
-  ) {
+
+  // Validação da senha
+  if (password.length < 6) {
 
     if (errorBox) {
       errorBox.textContent =
@@ -9458,10 +9456,9 @@ async function saveRecoveryPassword() {
     return;
   }
 
-  if (
-    password !==
-    confirmPassword
-  ) {
+
+  // Confirmação da senha
+  if (password !== confirmPassword) {
 
     if (errorBox) {
       errorBox.textContent =
@@ -9471,45 +9468,145 @@ async function saveRecoveryPassword() {
     return;
   }
 
+
+  const button =
+    $("#recoverySaveBtn");
+
+
+  // Evita clicar várias vezes
+  if (button) {
+
+    button.disabled = true;
+
+    button.textContent =
+      "Salvando...";
+  }
+
+
   try {
 
+    // Confere se o link de recuperação
+    // realmente criou uma sessão no Supabase
+    const {
+      data: sessionData,
+      error: sessionError
+    } =
+      await sb.auth.getSession();
+
+
+    if (sessionError) {
+      throw sessionError;
+    }
+
+
+    if (!sessionData?.session?.user) {
+
+      throw new Error(
+        "Sessão de recuperação inválida ou expirada."
+      );
+    }
+
+
+    // Altera a senha
     const {
       error
     } =
-      await sb.auth
-        .updateUser({
-          password
-        });
+      await sb.auth.updateUser({
+        password
+      });
+
 
     if (error) {
       throw error;
     }
 
-    toast(
-      "Senha alterada com sucesso."
-    );
 
+    // Encerra a sessão temporária
+    // usada para recuperar a senha
+    await sb.auth.signOut();
+
+
+    state.user = null;
+
+
+    // Limpa a URL do link de recuperação
+    try {
+
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.origin +
+        window.location.pathname
+      );
+
+    } catch (urlError) {
+
+      console.warn(
+        "Não foi possível limpar a URL.",
+        urlError
+      );
+
+    }
+
+
+    // Esconde recuperação
     $("#recoveryPanel")
       ?.classList
       .add("hidden");
 
+
+    // Mostra login novamente
+    $("#loginForm")
+      ?.classList
+      .remove("hidden");
+
+
+    // Limpa os campos
+    if ($("#recoveryPass")) {
+      $("#recoveryPass").value = "";
+    }
+
+    if ($("#recoveryPassConfirm")) {
+      $("#recoveryPassConfirm").value = "";
+    }
+
+
+    toast(
+      "Senha alterada com sucesso! Entre com a nova senha."
+    );
+
+
   } catch (error) {
 
     console.error(
+      "Erro ao redefinir senha:",
       error
     );
+
 
     if (errorBox) {
 
       errorBox.textContent =
-        "Não foi possível alterar a senha.";
+        "O link de recuperação expirou ou é inválido. Solicite um novo link.";
+
+    }
+
+
+  } finally {
+
+    // Reativa o botão
+    if (button) {
+
+      button.disabled = false;
+
+      button.textContent =
+        "Salvar nova senha";
 
     }
 
   }
 
 }
-
 
 /* ============================================================
    ALTERAR SENHA PELAS CONFIGURAÇÕES

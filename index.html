@@ -442,244 +442,255 @@
            DASHBOARD
            =================================================== -->
 
-      <section
-        id="dashboard"
-        class="view active"
+     <section
+  id="dashboard"
+  class="view active"
+>
+
+  <!-- CABEÇALHO DO DASHBOARD -->
+  <div class="sava-dashboard-header">
+
+    <div class="sava-dashboard-title">
+
+      <span class="sava-eyebrow">
+        CENTRAL DE RENOVAÇÕES
+      </span>
+
+      <h2>
+        Visão geral
+      </h2>
+
+      <p>
+        Acompanhe sua carteira, prioridades e renovações
+        em um único lugar.
+      </p>
+
+    </div>
+
+    <div class="sava-dashboard-actions">
+
+      <button
+        id="dashboardRefresh"
+        class="btn btn-secondary"
       >
+        ↻ Atualizar dados
+      </button>
+
+    </div>
+
+  </div>
 
 
-        <div class="welcome-row">
+  <!-- INDICADORES -->
+  <div class="stats-grid sava-kpi-grid">
 
-          <div>
+    <article class="stat-card sava-kpi sava-kpi-total">
 
-            <h3>
-              Visão geral da carteira
-            </h3>
+      <div class="stat-icon blue">
+        ▣
+      </div>
 
-            <p>
-              Acompanhe vencimentos e o andamento
-              das renovações em um só lugar.
-            </p>
+      <div class="sava-kpi-content">
 
-          </div>
+        <span>
+          Total de apólices
+        </span>
+
+        <strong id="statTotal">
+          0
+        </strong>
+
+        <small>
+          Carteira cadastrada
+        </small>
+
+      </div>
+
+    </article>
 
 
-          <button
-            id="dashboardRefresh"
-            class="btn btn-secondary"
-          >
-            ↻ Atualizar
-          </button>
+    <article class="stat-card sava-kpi sava-kpi-warning">
+
+      <div class="stat-icon orange">
+        !
+      </div>
+
+      <div class="sava-kpi-content">
+
+        <span>
+          Próximas do vencimento
+        </span>
+
+        <strong id="stat7">
+          0
+        </strong>
+
+        <small>
+          Vencem nos próximos 7 dias
+        </small>
+
+      </div>
+
+    </article>
+
+
+    <article class="stat-card sava-kpi sava-kpi-danger">
+
+      <div class="stat-icon red">
+        ⌛
+      </div>
+
+      <div class="sava-kpi-content">
+
+        <span>
+          Apólices vencidas
+        </span>
+
+        <strong id="statExpired">
+          0
+        </strong>
+
+        <small>
+          Precisam de atenção
+        </small>
+
+      </div>
+
+    </article>
+
+
+    <article class="stat-card sava-kpi sava-kpi-success">
+
+      <div class="stat-icon green">
+        ✓
+      </div>
+
+      <div class="sava-kpi-content">
+
+        <span>
+          Renovadas
+        </span>
+
+        <strong id="statWon">
+          0
+        </strong>
+
+        <small>
+          Renovações concluídas
+        </small>
+
+      </div>
+
+    </article>
+
+  </div>
+
+
+  <!-- ÁREA PRINCIPAL -->
+  <div class="sava-dashboard-main">
+
+    <!-- VENCIMENTOS -->
+    <article class="panel sava-dashboard-panel sava-upcoming-panel">
+
+      <div class="panel-head sava-panel-head">
+
+        <div>
+
+          <span class="sava-panel-kicker">
+            PRIORIDADES
+          </span>
+
+          <h3>
+            Próximos vencimentos
+          </h3>
+
+          <p>
+            Apólices que precisam de acompanhamento.
+          </p>
 
         </div>
 
+        <button
+          class="link-btn sava-link-btn"
+          data-view="apolices"
+        >
+          Ver apólices →
+        </button>
+
+      </div>
+
+      <div
+        id="upcomingList"
+        class="upcoming-list"
+      ></div>
+
+    </article>
 
 
-        <div class="stats-grid">
+    <!-- ANDAMENTO -->
+    <article class="panel sava-dashboard-panel sava-process-panel">
 
+      <div class="panel-head sava-panel-head">
 
-          <article class="stat-card">
+        <div>
 
-            <div class="stat-icon blue">
-              ▣
-            </div>
+          <span class="sava-panel-kicker">
+            RENOVAÇÕES
+          </span>
 
-            <div>
+          <h3>
+            Andamento
+          </h3>
 
-              <span>
-                Total de apólices
-              </span>
-
-              <strong id="statTotal">
-                0
-              </strong>
-
-              <small>
-                cadastradas
-              </small>
-
-            </div>
-
-          </article>
-
-
-
-          <article class="stat-card">
-
-            <div class="stat-icon orange">
-              !
-            </div>
-
-            <div>
-
-              <span>
-                Vencem em até 7 dias
-              </span>
-
-              <strong id="stat7">
-                0
-              </strong>
-
-              <small>
-                atenção imediata
-              </small>
-
-            </div>
-
-          </article>
-
-
-
-          <article class="stat-card">
-
-            <div class="stat-icon red">
-              ⌛
-            </div>
-
-            <div>
-
-              <span>
-                Vencidas
-              </span>
-
-              <strong id="statExpired">
-                0
-              </strong>
-
-              <small>
-                precisam de ação
-              </small>
-
-            </div>
-
-          </article>
-
-
-
-          <article class="stat-card">
-
-            <div class="stat-icon green">
-              ✓
-            </div>
-
-            <div>
-
-              <span>
-                Renovadas / Ganhas
-              </span>
-
-              <strong id="statWon">
-                0
-              </strong>
-
-              <small>
-                fechadas com sucesso
-              </small>
-
-            </div>
-
-          </article>
+          <p>
+            Situação atual das negociações.
+          </p>
 
         </div>
 
+      </div>
+
+      <div
+        id="processSummary"
+        class="process-summary"
+      ></div>
+
+    </article>
+
+  </div>
 
 
-        <div class="dashboard-grid">
+  <!-- SEGURADORAS -->
+  <article class="panel sava-dashboard-panel sava-insurer-panel">
 
+    <div class="panel-head sava-panel-head">
 
-          <article class="panel large">
+      <div>
 
-            <div class="panel-head">
+        <span class="sava-panel-kicker">
+          CARTEIRA
+        </span>
 
-              <div>
+        <h3>
+          Distribuição por seguradora
+        </h3>
 
-                <h3>
-                  Próximos vencimentos
-                </h3>
+        <p>
+          Veja onde estão concentradas as apólices cadastradas.
+        </p>
 
-                <p>
-                  Apólices que merecem atenção
-                </p>
+      </div>
 
-              </div>
+    </div>
 
+    <div
+      id="insurerSummary"
+      class="insurer-summary"
+    ></div>
 
-              <button
-                class="link-btn"
-                data-view="apolices"
-              >
-                Ver todas →
-              </button>
+  </article>
 
-            </div>
-
-
-            <div
-              id="upcomingList"
-              class="upcoming-list"
-            ></div>
-
-          </article>
-
-
-
-          <article class="panel">
-
-            <div class="panel-head">
-
-              <div>
-
-                <h3>
-                  Andamento das renovações
-                </h3>
-
-                <p>
-                  Status comercial
-                </p>
-
-              </div>
-
-            </div>
-
-
-            <div
-              id="processSummary"
-              class="process-summary"
-            ></div>
-
-          </article>
-
-        </div>
-
-
-
-        <article class="panel">
-
-          <div class="panel-head">
-
-            <div>
-
-              <h3>
-                Carteira por seguradora
-              </h3>
-
-              <p>
-                Distribuição das apólices cadastradas
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <div
-            id="insurerSummary"
-            class="insurer-summary"
-          ></div>
-
-        </article>
-
-      </section>
+</section>
 
 
 

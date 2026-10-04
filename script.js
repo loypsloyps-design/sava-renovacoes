@@ -11524,7 +11524,7 @@ function setupEvents() {
    ============================================================ */
 
 async function init() {
-
+let recoveryMode = false;
   setupEvents();
 
   /*
@@ -11561,6 +11561,7 @@ async function init() {
         ) {
 
         if (event === "PASSWORD_RECOVERY") {
+           recoveryMode = true;
 
   console.log(
     "Modo de recuperação de senha ativado."
@@ -11606,6 +11607,13 @@ async function init() {
       }
     );
 
+await new Promise(
+  resolve => setTimeout(resolve, 300)
+);
+
+if (recoveryMode) {
+  return;
+}
 
     /*
       Recupera sessão existente.

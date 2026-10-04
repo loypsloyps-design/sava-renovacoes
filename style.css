@@ -2415,3 +2415,632 @@ select option {
   }
 
 }
+
+/* ==========================================================
+   SAVA — KANBAN PROFISSIONAL DE RENOVAÇÕES
+   ========================================================== */
+
+/* CABEÇALHO DA PÁGINA */
+
+#renovacoes .section-head {
+  margin-bottom: 20px;
+}
+
+#renovacoes .section-head h3 {
+  margin: 0 0 5px;
+
+  color: #f5f8fc;
+
+  font-size: 26px;
+  font-weight: 750;
+
+  letter-spacing: -0.035em;
+}
+
+#renovacoes .section-head p {
+  margin: 0;
+
+  color: #7d8ca1;
+
+  font-size: 13px;
+}
+
+
+/* ==========================================================
+   FILTROS
+   ========================================================== */
+
+#renovacoes .toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-bottom: 18px;
+
+  padding: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17, 27, 44, 0.98),
+      rgba(12, 20, 33, 0.98)
+    );
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.07);
+
+  border-radius: 14px;
+}
+
+#renovacoes .toolbar input[type="date"] {
+  min-height: 39px;
+
+  padding: 0 12px;
+
+  color: #dce4ef !important;
+
+  background: #0b1422 !important;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.09) !important;
+
+  border-radius: 9px;
+}
+
+
+/* ==========================================================
+   RELATÓRIO COMERCIAL
+   ========================================================== */
+
+#commercialReportArea:empty {
+  display: none;
+}
+
+#commercialReportArea:not(:empty) {
+  display: block;
+
+  margin: 0 0 18px;
+
+  padding: 18px;
+
+  max-height: 330px;
+
+  overflow: auto;
+
+  color: #cdd7e5;
+
+  background: #0b1422;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  border-radius: 14px;
+
+  line-height: 1.6;
+}
+
+
+/* ==========================================================
+   KANBAN
+   ========================================================== */
+
+#kanban.kanban {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(250px, 1fr));
+
+  align-items: start;
+
+  gap: 14px;
+
+  width: 100%;
+
+  overflow-x: auto;
+
+  padding: 2px 2px 14px;
+}
+
+
+/* COLUNA */
+
+#kanban .kanban-col {
+  min-width: 250px;
+  min-height: 470px;
+
+  padding: 10px;
+
+  background:
+    rgba(11, 19, 32, 0.72);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.065);
+
+  border-radius: 15px;
+
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+
+/* ==========================================================
+   CABEÇALHO DA COLUNA
+   ========================================================== */
+
+.kanban-column-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  min-height: 60px;
+
+  margin-bottom: 10px;
+
+  padding: 10px 10px 13px;
+
+  border-bottom:
+    1px solid
+    rgba(255, 255, 255, 0.065);
+}
+
+.kanban-column-title {
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+
+  gap: 9px;
+}
+
+.kanban-column-icon {
+  width: 29px;
+  height: 29px;
+
+  flex: 0 0 29px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.kanban-column-title h4 {
+  margin: 0;
+
+  color: #edf2f8;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.kanban-column-title small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #64748a;
+
+  font-size: 9px;
+}
+
+.kanban-count {
+  min-width: 25px;
+  height: 25px;
+
+  padding: 0 7px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #aab6c7;
+
+  background:
+    rgba(255, 255, 255, 0.055);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.07);
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   IDENTIDADE DE CADA COLUNA
+   ========================================================== */
+
+/* PENDENTE */
+
+#kanban .kanban-col.pendente {
+  border-top:
+    2px solid
+    rgba(245, 185, 66, 0.7);
+}
+
+#kanban .kanban-col.pendente
+.kanban-column-icon {
+  color: #f6c65b;
+
+  background:
+    rgba(245, 185, 66, 0.12);
+}
+
+
+/* EM ANDAMENTO */
+
+#kanban .kanban-col.andamento {
+  border-top:
+    2px solid
+    rgba(57, 120, 255, 0.75);
+}
+
+#kanban .kanban-col.andamento
+.kanban-column-icon {
+  color: #75a0ff;
+
+  background:
+    rgba(57, 120, 255, 0.13);
+}
+
+
+/* RENOVADO */
+
+#kanban .kanban-col.ganho {
+  border-top:
+    2px solid
+    rgba(34, 199, 122, 0.75);
+}
+
+#kanban .kanban-col.ganho
+.kanban-column-icon {
+  color: #50dda0;
+
+  background:
+    rgba(34, 199, 122, 0.13);
+}
+
+
+/* PERDIDO */
+
+#kanban .kanban-col.perdido {
+  border-top:
+    2px solid
+    rgba(239, 90, 103, 0.72);
+}
+
+#kanban .kanban-col.perdido
+.kanban-column-icon {
+  color: #ff7d88;
+
+  background:
+    rgba(239, 90, 103, 0.13);
+}
+
+
+/* ==========================================================
+   CARDS DAS APÓLICES
+   ========================================================== */
+
+#kanban .kanban-card {
+  position: relative;
+
+  margin-bottom: 10px;
+
+  padding: 14px;
+
+  color: #dfe6ef;
+
+  background:
+    linear-gradient(
+      145deg,
+      #141f31,
+      #101928
+    );
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.075);
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 7px 20px
+    rgba(0, 0, 0, 0.11);
+
+  transition:
+    transform 0.17s ease,
+    border-color 0.17s ease,
+    box-shadow 0.17s ease;
+}
+
+#kanban .kanban-card:hover {
+  transform: translateY(-2px);
+
+  border-color:
+    rgba(255, 255, 255, 0.13);
+
+  box-shadow:
+    0 11px 28px
+    rgba(0, 0, 0, 0.18);
+}
+
+
+/* CLIENTE */
+
+#kanban .kanban-card > strong {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #f5f7fb;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* DADOS DA APÓLICE */
+
+#kanban .kanban-card > small {
+  display: block;
+
+  color: #7d8ca1;
+
+  font-size: 10px;
+  line-height: 1.65;
+}
+
+
+/* ==========================================================
+   STATUS DE VENCIMENTO
+   ========================================================== */
+
+#kanban .pill {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 5px 8px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+/* ==========================================================
+   SELECT DE STATUS
+   ========================================================== */
+
+#kanban .kanban-card > select {
+  width: 100%;
+
+  min-height: 36px;
+
+  margin-top: 2px;
+
+  padding: 0 9px;
+
+  color: #dce4ef !important;
+
+  background:
+    #0b1422 !important;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.09) !important;
+
+  border-radius: 8px;
+
+  font-size: 10px;
+
+  cursor: pointer;
+}
+
+
+/* ==========================================================
+   FEEDBACK COMERCIAL
+   ========================================================== */
+
+#kanban .kanban-feedback {
+  margin-top: 13px;
+
+  padding-top: 12px;
+
+  border-top:
+    1px solid
+    rgba(255, 255, 255, 0.055);
+}
+
+#kanban .kanban-feedback label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #7f8da1;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.055em;
+}
+
+#kanban .kanban-feedback textarea {
+  width: 100%;
+
+  min-height: 72px;
+
+  resize: vertical;
+
+  padding: 9px;
+
+  color: #dce4ef !important;
+
+  background:
+    #0b1422 !important;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08) !important;
+
+  border-radius: 8px;
+
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+#kanban .kanban-feedback textarea:focus {
+  border-color:
+    rgba(57, 120, 255, 0.65) !important;
+}
+
+
+/* ==========================================================
+   BOTÕES DO CARD
+   ========================================================== */
+
+#kanban .action-btn {
+  min-height: 31px;
+
+  padding: 6px 9px;
+
+  color: #aebacd;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.075);
+
+  border-radius: 7px;
+
+  font-size: 9px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    border-color 0.16s ease;
+}
+
+#kanban .action-btn:hover {
+  color: #ffffff;
+
+  background:
+    rgba(57, 120, 255, 0.10);
+
+  border-color:
+    rgba(57, 120, 255, 0.22);
+}
+
+#kanban .kanban-feedback .action-btn {
+  width: 100%;
+
+  margin-top: 6px;
+}
+
+
+/* AÇÕES INFERIORES */
+
+#kanban .actions {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 6px;
+}
+
+
+/* ==========================================================
+   COLUNA VAZIA
+   ========================================================== */
+
+#kanban .empty {
+  padding: 38px 12px;
+
+  color: #56657a;
+
+  text-align: center;
+
+  font-size: 10px;
+
+  border:
+    1px dashed
+    rgba(255, 255, 255, 0.075);
+
+  border-radius: 10px;
+}
+
+
+/* ==========================================================
+   SCROLL HORIZONTAL
+   ========================================================== */
+
+#kanban::-webkit-scrollbar {
+  height: 7px;
+}
+
+#kanban::-webkit-scrollbar-thumb {
+  background: #26354a;
+
+  border-radius: 20px;
+}
+
+
+/* ==========================================================
+   RESPONSIVO
+   ========================================================== */
+
+@media (max-width: 1250px) {
+
+  #kanban.kanban {
+    grid-template-columns:
+      repeat(4, 270px);
+  }
+
+}
+
+@media (max-width: 700px) {
+
+  #renovacoes .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  #renovacoes .toolbar > * {
+    width: 100%;
+  }
+
+  #kanban.kanban {
+    grid-template-columns:
+      repeat(4, 260px);
+  }
+
+}

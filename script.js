@@ -9380,6 +9380,15 @@ async function forgotPassword() {
 
   try {
 
+    const redirectUrl =
+      window.location.origin +
+      window.location.pathname;
+
+    console.log(
+      "URL de recuperação:",
+      redirectUrl
+    );
+
     const {
       error
     } =
@@ -9388,8 +9397,7 @@ async function forgotPassword() {
           email,
           {
             redirectTo:
-              window.location.origin +
-              window.location.pathname
+              redirectUrl
           }
         );
 
@@ -9398,17 +9406,18 @@ async function forgotPassword() {
     }
 
     toast(
-      "Enviamos o link de recuperação para o seu e-mail."
+      "Link de recuperação enviado! Verifique seu e-mail."
     );
 
   } catch (error) {
 
     console.error(
+      "Erro ao recuperar senha:",
       error
     );
 
     toast(
-      "Não foi possível enviar a recuperação de senha."
+      "Não foi possível enviar o link de recuperação."
     );
 
   }

@@ -11641,9 +11641,10 @@ if (recoveryMode) {
 
     const session =
       data.session;
-     if (
+    if (
   session?.user &&
-  !loginDaSessao
+  !loginDaSessao &&
+  !recoveryMode
 ) {
 
   await sb.auth.signOut();

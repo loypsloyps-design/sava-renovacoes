@@ -6412,3 +6412,529 @@ select option {
   }
 
 }
+
+/* ==========================================================
+   SAVA — APÓLICES PREMIUM CLARO
+   ========================================================== */
+
+#apolices {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+
+/* ==========================================================
+   CABEÇALHO
+   ========================================================== */
+
+#apolices .section-head {
+  margin-bottom: 20px !important;
+}
+
+#apolices .section-head h3 {
+  margin: 0 0 5px !important;
+
+  color: #15213a !important;
+
+  font-size: 27px !important;
+  line-height: 1.1 !important;
+
+  font-weight: 800 !important;
+  letter-spacing: -.04em !important;
+}
+
+#apolices .section-head p {
+  margin: 0 !important;
+
+  color: #7d899b !important;
+
+  font-size: 12px !important;
+}
+
+
+/* ==========================================================
+   NOVA APÓLICE
+   ========================================================== */
+
+#apolices .section-head .btn-primary {
+  min-height: 42px !important;
+
+  padding: 0 18px !important;
+
+  border-radius: 10px !important;
+
+  font-size: 10px !important;
+  font-weight: 750 !important;
+
+  box-shadow:
+    0 7px 18px rgba(20,33,61,.14) !important;
+}
+
+
+/* ==========================================================
+   FILTROS
+   ========================================================== */
+
+#apolices .toolbar {
+  display: flex !important;
+
+  align-items: center !important;
+  flex-wrap: wrap !important;
+
+  gap: 9px !important;
+
+  margin-bottom: 20px !important;
+
+  padding: 12px !important;
+
+  background: #ffffff !important;
+
+  border:
+    1px solid #e3e8ef !important;
+
+  border-radius:
+    14px !important;
+
+  box-shadow:
+    0 6px 20px rgba(16,24,40,.035) !important;
+}
+
+
+#apolices .toolbar input,
+#apolices .toolbar select {
+  min-height: 40px !important;
+
+  padding: 0 12px !important;
+
+  color: #405069 !important;
+
+  background: #fbfcfd !important;
+
+  border:
+    1px solid #dfe5ec !important;
+
+  border-radius:
+    9px !important;
+
+  font-size: 10px !important;
+}
+
+
+#apolices .toolbar input:hover,
+#apolices .toolbar select:hover {
+  border-color:
+    #cbd5e1 !important;
+}
+
+
+#apolices .toolbar input:focus,
+#apolices .toolbar select:focus {
+  background:
+    #ffffff !important;
+
+  border-color:
+    #6f8fb8 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(49,95,157,.07) !important;
+}
+
+
+/* ==========================================================
+   CONTAINER DA TABELA
+   ========================================================== */
+
+#apolices .table-wrap {
+  position: relative !important;
+
+  overflow-x: auto !important;
+
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #e1e7ee !important;
+
+  border-radius:
+    15px !important;
+
+  box-shadow:
+    0 7px 24px rgba(20,33,61,.045) !important;
+}
+
+
+/* ==========================================================
+   TABELA
+   ========================================================== */
+
+#apolices table {
+  width: 100% !important;
+
+  border-collapse:
+    separate !important;
+
+  border-spacing:
+    0 !important;
+
+  background:
+    #ffffff !important;
+}
+
+
+/* ==========================================================
+   CABEÇALHO DA TABELA
+   ========================================================== */
+
+#apolices thead {
+  background:
+    #f7f9fc !important;
+}
+
+
+#apolices thead th {
+  padding:
+    13px 14px !important;
+
+  color:
+    #718096 !important;
+
+  background:
+    #f7f9fc !important;
+
+  border-bottom:
+    1px solid #e2e7ee !important;
+
+  font-size:
+    8px !important;
+
+  font-weight:
+    800 !important;
+
+  text-transform:
+    uppercase !important;
+
+  letter-spacing:
+    .085em !important;
+
+  white-space:
+    nowrap !important;
+}
+
+
+/* ==========================================================
+   LINHAS
+   ========================================================== */
+
+#apolices tbody tr {
+  background:
+    #ffffff !important;
+
+  transition:
+    background .15s ease !important;
+}
+
+
+#apolices tbody tr:hover {
+  background:
+    #f8fafc !important;
+}
+
+
+#apolices tbody td {
+  padding:
+    13px 14px !important;
+
+  color:
+    #5f6d81 !important;
+
+  border-bottom:
+    1px solid #edf0f4 !important;
+
+  font-size:
+    9px !important;
+
+  vertical-align:
+    middle !important;
+}
+
+
+#apolices tbody tr:last-child td {
+  border-bottom:
+    0 !important;
+}
+
+
+/* ==========================================================
+   CLIENTE
+   ========================================================== */
+
+#apolices tbody td:first-child {
+  color:
+    #223149 !important;
+
+  font-weight:
+    650 !important;
+}
+
+
+#apolices tbody td:first-child strong {
+  color:
+    #1b2940 !important;
+
+  font-weight:
+    750 !important;
+}
+
+
+/* ==========================================================
+   AVATAR
+   ========================================================== */
+
+#apolices .avatar {
+  width: 37px !important;
+  height: 37px !important;
+
+  min-width:
+    37px !important;
+
+  display:
+    inline-flex !important;
+
+  align-items:
+    center !important;
+
+  justify-content:
+    center !important;
+
+  color:
+    #315f9d !important;
+
+  background:
+    #edf4fc !important;
+
+  border:
+    1px solid #e1eaf6 !important;
+
+  border-radius:
+    11px !important;
+
+  font-size:
+    9px !important;
+
+  font-weight:
+    800 !important;
+
+  box-shadow:
+    none !important;
+}
+
+
+/* ==========================================================
+   DADOS SECUNDÁRIOS
+   ========================================================== */
+
+#apolices small,
+#apolices .muted {
+  color:
+    #8995a6 !important;
+}
+
+
+/* ==========================================================
+   STATUS
+   ========================================================== */
+
+#apolices .pill {
+  display:
+    inline-flex !important;
+
+  align-items:
+    center !important;
+
+  justify-content:
+    center !important;
+
+  min-height:
+    24px !important;
+
+  padding:
+    4px 9px !important;
+
+  border-radius:
+    999px !important;
+
+  font-size:
+    8px !important;
+
+  font-weight:
+    750 !important;
+
+  white-space:
+    nowrap !important;
+
+  border:
+    1px solid transparent !important;
+}
+
+
+/* ==========================================================
+   VENCIMENTO
+   ========================================================== */
+
+#apolices tbody td:nth-last-child(2) .pill {
+  font-weight:
+    750 !important;
+}
+
+
+/* ==========================================================
+   AÇÕES
+   ========================================================== */
+
+#apolices .actions {
+  display:
+    flex !important;
+
+  align-items:
+    center !important;
+
+  gap:
+    5px !important;
+
+  white-space:
+    nowrap !important;
+}
+
+
+#apolices .action-btn {
+  min-height:
+    30px !important;
+
+  padding:
+    5px 9px !important;
+
+  color:
+    #536176 !important;
+
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #dfe5ec !important;
+
+  border-radius:
+    8px !important;
+
+  font-size:
+    8px !important;
+
+  font-weight:
+    700 !important;
+
+  box-shadow:
+    none !important;
+
+  transition:
+    color .15s ease,
+    background .15s ease,
+    border-color .15s ease,
+    transform .15s ease !important;
+}
+
+
+#apolices .action-btn:hover {
+  color:
+    #264b79 !important;
+
+  background:
+    #f2f6fb !important;
+
+  border-color:
+    #cad6e5 !important;
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* PDF */
+
+#apolices .action-btn:last-child {
+  font-weight:
+    750 !important;
+}
+
+
+/* ==========================================================
+   SCROLL
+   ========================================================== */
+
+#apolices .table-wrap::-webkit-scrollbar {
+  height:
+    7px !important;
+}
+
+
+#apolices .table-wrap::-webkit-scrollbar-track {
+  background:
+    transparent !important;
+}
+
+
+#apolices .table-wrap::-webkit-scrollbar-thumb {
+  background:
+    #cbd4df !important;
+
+  border-radius:
+    20px !important;
+}
+
+
+/* ==========================================================
+   RESPONSIVO
+   ========================================================== */
+
+@media (max-width: 1000px) {
+
+  #apolices .toolbar {
+    align-items:
+      stretch !important;
+  }
+
+  #apolices .toolbar > * {
+    flex:
+      1 1 220px !important;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  #apolices .section-head {
+    flex-direction:
+      column !important;
+
+    align-items:
+      stretch !important;
+
+    gap:
+      14px !important;
+  }
+
+  #apolices .section-head .btn-primary {
+    width:
+      100% !important;
+  }
+
+  #apolices .toolbar {
+    flex-direction:
+      column !important;
+  }
+
+  #apolices .toolbar > * {
+    width:
+      100% !important;
+  }
+
+}

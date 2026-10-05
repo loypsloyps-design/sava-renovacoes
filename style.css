@@ -8030,3 +8030,513 @@ select option {
   }
 
 }
+
+/* ==========================================================
+   SAVA — RELATÓRIOS & IA PREMIUM CLARO
+   ========================================================== */
+
+#relatorios {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+
+/* ==========================================================
+   CABEÇALHO DA PÁGINA
+   ========================================================== */
+
+#relatorios .section-head {
+  margin-bottom: 20px !important;
+}
+
+#relatorios .section-head h3 {
+  margin: 0 0 5px !important;
+
+  color: #15213a !important;
+
+  font-size: 27px !important;
+  line-height: 1.1 !important;
+
+  font-weight: 800 !important;
+  letter-spacing: -.04em !important;
+}
+
+#relatorios .section-head p {
+  margin: 0 !important;
+
+  color: #7d899b !important;
+
+  font-size: 12px !important;
+}
+
+
+/* ==========================================================
+   BOTÃO GERAR RELATÓRIO
+   ========================================================== */
+
+#relatorios .section-head .btn-primary,
+#relatorios #generateReportBtn {
+  min-height: 42px !important;
+
+  padding: 0 18px !important;
+
+  color: #ffffff !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #203a63,
+      #172b4a
+    ) !important;
+
+  border: 1px solid #172b4a !important;
+
+  border-radius: 10px !important;
+
+  font-size: 10px !important;
+  font-weight: 750 !important;
+
+  box-shadow:
+    0 7px 18px rgba(20,33,61,.14) !important;
+
+  transition:
+    transform .16s ease,
+    box-shadow .16s ease !important;
+}
+
+#relatorios .section-head .btn-primary:hover,
+#relatorios #generateReportBtn:hover {
+  transform: translateY(-1px) !important;
+
+  box-shadow:
+    0 10px 22px rgba(20,33,61,.18) !important;
+}
+
+
+/* ==========================================================
+   CONTAINER PRINCIPAL DO RELATÓRIO
+   ========================================================== */
+
+#relatorios .report-area,
+#relatorios .report-card {
+  padding: 22px !important;
+
+  color: #435168 !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #e1e7ee !important;
+
+  border-radius: 16px !important;
+
+  box-shadow:
+    0 7px 24px rgba(20,33,61,.045) !important;
+
+  font-family: inherit !important;
+}
+
+
+/* ==========================================================
+   TÍTULO DO RELATÓRIO
+   ========================================================== */
+
+#relatorios .report-area h3,
+#relatorios .report-area h2,
+#relatorios .report-card h3,
+#relatorios .report-card h2 {
+  margin-top: 0 !important;
+
+  color: #18263e !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: -.025em !important;
+}
+
+
+#relatorios .report-area > p:first-of-type,
+#relatorios .report-card > p:first-of-type {
+  color: #8995a6 !important;
+
+  font-size: 10px !important;
+}
+
+
+/* ==========================================================
+   CARDS DE NÚMEROS
+   ========================================================== */
+
+#relatorios .report-grid {
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr)) !important;
+
+  gap: 12px !important;
+
+  margin: 18px 0 !important;
+}
+
+
+/* tenta cobrir também os cards gerados dinamicamente */
+
+#relatorios .report-grid > *,
+#relatorios .report-stat,
+#relatorios .metric-card {
+  position: relative !important;
+
+  min-height: 94px !important;
+
+  padding: 17px 16px !important;
+
+  overflow: hidden !important;
+
+  background: #fbfcfd !important;
+
+  border: 1px solid #e2e7ee !important;
+
+  border-radius: 12px !important;
+
+  box-shadow: none !important;
+
+  transition:
+    transform .16s ease,
+    border-color .16s ease,
+    box-shadow .16s ease !important;
+}
+
+
+#relatorios .report-grid > *:hover,
+#relatorios .report-stat:hover,
+#relatorios .metric-card:hover {
+  transform: translateY(-2px) !important;
+
+  background: #ffffff !important;
+
+  border-color: #d3dce7 !important;
+
+  box-shadow:
+    0 7px 18px rgba(20,33,61,.045) !important;
+}
+
+
+/* números */
+
+#relatorios .report-grid strong,
+#relatorios .report-stat strong,
+#relatorios .metric-card strong {
+  display: block !important;
+
+  margin-bottom: 8px !important;
+
+  color: #17243b !important;
+
+  font-size: 21px !important;
+  line-height: 1 !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: -.035em !important;
+}
+
+
+/* descrição */
+
+#relatorios .report-grid span,
+#relatorios .report-grid small,
+#relatorios .report-stat span,
+#relatorios .metric-card span {
+  color: #778499 !important;
+
+  font-size: 9px !important;
+
+  font-weight: 550 !important;
+}
+
+
+/* ==========================================================
+   DESTAQUES DOS INDICADORES
+   ========================================================== */
+
+/* primeiro card - total */
+
+#relatorios .report-grid > *:nth-child(1) {
+  border-left:
+    3px solid #4779bf !important;
+
+  background:
+    linear-gradient(
+      110deg,
+      #ffffff,
+      #f7faff
+    ) !important;
+}
+
+
+/* vencimentos próximos */
+
+#relatorios .report-grid > *:nth-child(2),
+#relatorios .report-grid > *:nth-child(3),
+#relatorios .report-grid > *:nth-child(4) {
+  border-left:
+    3px solid #e99a45 !important;
+}
+
+
+/* vencidas */
+
+#relatorios .report-grid > *:nth-child(5) {
+  border-left:
+    3px solid #df5963 !important;
+
+  background:
+    linear-gradient(
+      110deg,
+      #ffffff,
+      #fffafa
+    ) !important;
+}
+
+
+/* pendentes */
+
+#relatorios .report-grid > *:nth-child(6) {
+  border-left:
+    3px solid #8492a6 !important;
+}
+
+
+/* em andamento */
+
+#relatorios .report-grid > *:nth-child(7) {
+  border-left:
+    3px solid #4779bf !important;
+}
+
+
+/* ganhas */
+
+#relatorios .report-grid > *:nth-child(8) {
+  border-left:
+    3px solid #19a66f !important;
+
+  background:
+    linear-gradient(
+      110deg,
+      #ffffff,
+      #f7fcf9
+    ) !important;
+}
+
+
+/* perdidas */
+
+#relatorios .report-grid > *:nth-child(9) {
+  border-left:
+    3px solid #d95c66 !important;
+}
+
+
+/* sem feedback */
+
+#relatorios .report-grid > *:nth-child(10) {
+  border-left:
+    3px solid #8a75c7 !important;
+}
+
+
+/* ==========================================================
+   TÍTULOS INTERNOS
+   ========================================================== */
+
+#relatorios .report-area h4,
+#relatorios .report-card h4 {
+  margin:
+    22px 0 12px !important;
+
+  color:
+    #233149 !important;
+
+  font-size:
+    12px !important;
+
+  font-weight:
+    800 !important;
+
+  letter-spacing:
+    -.015em !important;
+}
+
+
+/* ==========================================================
+   PRIORIDADES DA CARTEIRA
+   ========================================================== */
+
+#relatorios .report-area ul,
+#relatorios .report-card ul {
+  margin:
+    0 !important;
+
+  padding:
+    0 !important;
+
+  list-style:
+    none !important;
+}
+
+
+#relatorios .report-area li,
+#relatorios .report-card li {
+  position:
+    relative !important;
+
+  margin-bottom:
+    8px !important;
+
+  padding:
+    11px 13px 11px 17px !important;
+
+  color:
+    #526075 !important;
+
+  background:
+    #fafbfd !important;
+
+  border:
+    1px solid #e7ebf0 !important;
+
+  border-radius:
+    10px !important;
+
+  font-size:
+    10px !important;
+
+  line-height:
+    1.5 !important;
+}
+
+
+/* pequena barra de prioridade */
+
+#relatorios .report-area li::before,
+#relatorios .report-card li::before {
+  content: "" !important;
+
+  position:
+    absolute !important;
+
+  left:
+    0 !important;
+
+  top:
+    10px !important;
+
+  bottom:
+    10px !important;
+
+  width:
+    3px !important;
+
+  background:
+    #e46b72 !important;
+
+  border-radius:
+    0 4px 4px 0 !important;
+}
+
+
+#relatorios .report-area li strong,
+#relatorios .report-card li strong {
+  color:
+    #243249 !important;
+
+  font-weight:
+    750 !important;
+}
+
+
+/* ==========================================================
+   FEEDBACKS
+   ========================================================== */
+
+#relatorios .report-area li small,
+#relatorios .report-card li small {
+  display:
+    block !important;
+
+  margin-top:
+    5px !important;
+
+  color:
+    #8490a2 !important;
+
+  font-size:
+    9px !important;
+}
+
+
+/* ==========================================================
+   SEPARADORES
+   ========================================================== */
+
+#relatorios .report-area hr,
+#relatorios .report-card hr {
+  height:
+    1px !important;
+
+  margin:
+    20px 0 !important;
+
+  background:
+    #edf0f4 !important;
+
+  border:
+    0 !important;
+}
+
+
+/* ==========================================================
+   RESPONSIVO
+   ========================================================== */
+
+@media (max-width: 1000px) {
+
+  #relatorios .report-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  #relatorios .section-head {
+    align-items:
+      stretch !important;
+
+    flex-direction:
+      column !important;
+
+    gap:
+      14px !important;
+  }
+
+  #relatorios .section-head .btn-primary,
+  #relatorios #generateReportBtn {
+    width:
+      100% !important;
+  }
+
+  #relatorios .report-grid {
+    grid-template-columns:
+      1fr !important;
+  }
+
+  #relatorios .report-area,
+  #relatorios .report-card {
+    padding:
+      15px !important;
+  }
+
+}

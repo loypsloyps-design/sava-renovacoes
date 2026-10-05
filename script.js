@@ -11608,63 +11608,46 @@ let recoveryMode = false;
       Detecta recuperação de senha.
     */
 
-    sb.auth.onAuthStateChange(
-      async (
-        event,
-        session
-      ) => {
+sb.auth.onAuthStateChange(
+  async (event, session) => {
 
-        if (
-          event ===
-          "PASSWORD_RECOVERY"
-        ) {
+    console.log("Evento Supabase:", event);
 
-        if (event === "PASSWORD_RECOVERY") {
-           recoveryMode = true;
+    if (event === "PASSWORD_RECOVERY") {
 
-  console.log(
-    "Modo de recuperação de senha ativado."
-  );
+      recoveryMode = true;
 
-  state.user =
-    session?.user || null;
+      console.log(
+        "Modo de recuperação de senha ativado."
+      );
 
+      state.user = session?.user || null;
 
-  showLogin();
+      showLogin();
 
+      $("#loginForm")
+        ?.classList
+        .add("hidden");
 
-  $("#loginForm")
-    ?.classList
-    .add("hidden");
+      $("#recoveryPanel")
+        ?.classList
+        .remove("hidden");
 
-
-  $("#recoveryPanel")
-    ?.classList
-    .remove("hidden");
-
-  if ($("#recoveryError")) {
-    $("#recoveryError").textContent = "";
-  }
-
-  return;
-}
-
-        }
-
-        if (
-          event ===
-          "SIGNED_OUT"
-        ) {
-
-          state.user =
-            null;
-
-          showLogin();
-
-        }
-
+      if ($("#recoveryError")) {
+        $("#recoveryError").textContent = "";
       }
-    );
+
+      return;
+    }
+
+    if (event === "SIGNED_OUT") {
+
+      state.user = null;
+
+      showLogin();
+    }
+  }
+);
 
 await new Promise(
   resolve => setTimeout(resolve, 300)

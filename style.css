@@ -7532,3 +7532,501 @@ select option {
   }
 
 }
+
+/* ==========================================================
+   SAVA — GANHOS PREMIUM CLARO
+   ========================================================== */
+
+#ganhos {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+
+/* ==========================================================
+   CONTEÚDO
+   ========================================================== */
+
+#ganhos .page-section {
+  width: 100% !important;
+}
+
+
+/* ==========================================================
+   CABEÇALHO
+   ========================================================== */
+
+#ganhos .section-heading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  gap: 20px !important;
+
+  margin-bottom: 18px !important;
+}
+
+
+#ganhos .section-kicker {
+  display: block !important;
+
+  margin-bottom: 5px !important;
+
+  color: #16865b !important;
+
+  font-size: 9px !important;
+  font-weight: 800 !important;
+
+  letter-spacing: .14em !important;
+}
+
+
+#ganhos .section-heading h2 {
+  margin: 0 0 5px !important;
+
+  color: #15213a !important;
+
+  font-size: 27px !important;
+  line-height: 1.1 !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: -.04em !important;
+}
+
+
+#ganhos .section-heading p {
+  margin: 0 !important;
+
+  color: #7d899b !important;
+
+  font-size: 12px !important;
+}
+
+
+/* ==========================================================
+   CONTADOR DE GANHOS
+   ========================================================== */
+
+#ganhos .wins-summary {
+  display: flex !important;
+
+  align-items: center !important;
+
+  gap: 11px !important;
+
+  min-width: 145px !important;
+
+  padding: 10px 13px !important;
+
+  background: #f0faf5 !important;
+
+  border: 1px solid #d8f0e4 !important;
+
+  border-radius: 11px !important;
+
+  box-shadow:
+    0 4px 14px rgba(22,134,91,.04) !important;
+}
+
+
+#ganhos .wins-summary span {
+  color: #68798a !important;
+
+  font-size: 9px !important;
+
+  font-weight: 650 !important;
+}
+
+
+#ganhos .wins-summary strong {
+  display: flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  min-width: 31px !important;
+  height: 31px !important;
+
+  padding: 0 8px !important;
+
+  color: #12835a !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #ccebdc !important;
+
+  border-radius: 9px !important;
+
+  font-size: 15px !important;
+  font-weight: 800 !important;
+}
+
+
+/* ==========================================================
+   FILTROS
+   ========================================================== */
+
+#ganhos .wins-filters {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(280px, 1.7fr)
+    minmax(150px, .85fr)
+    minmax(170px, .95fr)
+    minmax(145px, .75fr)
+    minmax(145px, .75fr) !important;
+
+  gap: 9px !important;
+
+  margin-bottom: 20px !important;
+
+  padding: 12px !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #e2e7ee !important;
+
+  border-radius: 14px !important;
+
+  box-shadow:
+    0 6px 20px rgba(20,33,61,.035) !important;
+}
+
+
+#ganhos .wins-filters input,
+#ganhos .wins-filters select {
+  width: 100% !important;
+  min-width: 0 !important;
+
+  min-height: 40px !important;
+
+  padding: 0 12px !important;
+
+  color: #405069 !important;
+
+  background: #fbfcfd !important;
+
+  border: 1px solid #dfe5ec !important;
+
+  border-radius: 9px !important;
+
+  font-size: 10px !important;
+
+  outline: none !important;
+
+  box-shadow: none !important;
+}
+
+
+#ganhos .wins-filters input:hover,
+#ganhos .wins-filters select:hover {
+  border-color: #cbd5e1 !important;
+}
+
+
+#ganhos .wins-filters input:focus,
+#ganhos .wins-filters select:focus {
+  background: #ffffff !important;
+
+  border-color: #7895ba !important;
+
+  box-shadow:
+    0 0 0 3px rgba(49,95,157,.07) !important;
+}
+
+
+/* ==========================================================
+   TABELA
+   ========================================================== */
+
+#ganhos .wins-table-card {
+  overflow: hidden !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #e1e7ee !important;
+
+  border-radius: 15px !important;
+
+  box-shadow:
+    0 7px 24px rgba(20,33,61,.045) !important;
+}
+
+
+#ganhos .wins-table-card table {
+  width: 100% !important;
+
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+
+  background: #ffffff !important;
+}
+
+
+/* ==========================================================
+   CABEÇALHO DA TABELA
+   ========================================================== */
+
+#ganhos .wins-table-card thead {
+  background: #f7f9fc !important;
+}
+
+
+#ganhos .wins-table-card thead th {
+  padding: 13px 14px !important;
+
+  color: #718096 !important;
+
+  background: #f7f9fc !important;
+
+  border-bottom: 1px solid #e2e7ee !important;
+
+  font-size: 8px !important;
+  font-weight: 800 !important;
+
+  text-transform: uppercase !important;
+
+  letter-spacing: .085em !important;
+
+  white-space: nowrap !important;
+}
+
+
+/* ==========================================================
+   LINHAS
+   ========================================================== */
+
+#ganhos .wins-table-card tbody tr {
+  background: #ffffff !important;
+
+  transition: background .15s ease !important;
+}
+
+
+#ganhos .wins-table-card tbody tr:hover {
+  background: #f8fbfa !important;
+}
+
+
+#ganhos .wins-table-card tbody td {
+  padding: 13px 14px !important;
+
+  color: #5f6d81 !important;
+
+  border-bottom: 1px solid #edf0f4 !important;
+
+  font-size: 9px !important;
+
+  vertical-align: middle !important;
+}
+
+
+#ganhos .wins-table-card tbody tr:last-child td {
+  border-bottom: 0 !important;
+}
+
+
+/* ==========================================================
+   CLIENTE
+   ========================================================== */
+
+#ganhos .wins-table-card tbody td:first-child {
+  color: #223149 !important;
+
+  font-weight: 650 !important;
+}
+
+
+#ganhos .wins-table-card strong {
+  color: #1b2940 !important;
+
+  font-weight: 750 !important;
+}
+
+
+/* ==========================================================
+   AVATAR
+   ========================================================== */
+
+#ganhos .avatar {
+  width: 37px !important;
+  height: 37px !important;
+
+  min-width: 37px !important;
+
+  display: inline-flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  color: #237a5b !important;
+
+  background: #edf9f4 !important;
+
+  border: 1px solid #dcefe6 !important;
+
+  border-radius: 11px !important;
+
+  font-size: 9px !important;
+  font-weight: 800 !important;
+
+  box-shadow: none !important;
+}
+
+
+/* ==========================================================
+   STATUS GANHO
+   ========================================================== */
+
+#ganhos .pill,
+#ganhos .status-badge {
+  display: inline-flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  min-height: 24px !important;
+
+  padding: 4px 9px !important;
+
+  color: #137a52 !important;
+
+  background: #eaf8f1 !important;
+
+  border: 1px solid #d4eee1 !important;
+
+  border-radius: 999px !important;
+
+  font-size: 8px !important;
+  font-weight: 750 !important;
+
+  white-space: nowrap !important;
+}
+
+
+/* Caso "Ganho" esteja apenas como texto */
+
+#ganhos tbody td:nth-child(5) {
+  color: #16835a !important;
+
+  font-weight: 750 !important;
+}
+
+
+/* ==========================================================
+   AÇÕES
+   ========================================================== */
+
+#ganhos .actions {
+  display: flex !important;
+
+  align-items: center !important;
+
+  gap: 5px !important;
+
+  white-space: nowrap !important;
+}
+
+
+#ganhos .action-btn {
+  min-height: 30px !important;
+
+  padding: 5px 9px !important;
+
+  color: #536176 !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #dfe5ec !important;
+
+  border-radius: 8px !important;
+
+  font-size: 8px !important;
+  font-weight: 700 !important;
+
+  box-shadow: none !important;
+
+  transition:
+    color .15s ease,
+    background .15s ease,
+    border-color .15s ease,
+    transform .15s ease !important;
+}
+
+
+#ganhos .action-btn:hover {
+  color: #176e50 !important;
+
+  background: #f1faf6 !important;
+
+  border-color: #cfe7dc !important;
+
+  transform: translateY(-1px) !important;
+}
+
+
+/* ==========================================================
+   ESTADO VAZIO
+   ========================================================== */
+
+#ganhos .empty {
+  padding: 45px 20px !important;
+
+  color: #8995a6 !important;
+
+  text-align: center !important;
+
+  font-size: 10px !important;
+}
+
+
+/* ==========================================================
+   RESPONSIVIDADE
+   ========================================================== */
+
+@media (max-width: 1200px) {
+
+  #ganhos .wins-filters {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #ganhos #winsSearch {
+    grid-column: 1 / -1 !important;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  #ganhos .section-heading {
+    align-items: stretch !important;
+
+    flex-direction: column !important;
+  }
+
+  #ganhos .wins-summary {
+    width: 100% !important;
+
+    justify-content: space-between !important;
+  }
+
+  #ganhos .wins-filters {
+    grid-template-columns: 1fr !important;
+  }
+
+  #ganhos #winsSearch {
+    grid-column: auto !important;
+  }
+
+  #ganhos .wins-table-card {
+    overflow-x: auto !important;
+  }
+
+  #ganhos .wins-table-card table {
+    min-width: 850px !important;
+  }
+
+}

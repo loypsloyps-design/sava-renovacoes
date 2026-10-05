@@ -5236,3 +5236,714 @@ select option {
   }
 
 }
+
+/* ==========================================================
+   SAVA — DASHBOARD PREMIUM CLARO
+   ACABAMENTO FINAL
+   ========================================================== */
+
+
+/* ==========================================================
+   ESPAÇAMENTO GERAL DO DASHBOARD
+   ========================================================== */
+
+#dashboard {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+
+/* ==========================================================
+   BANNER / CABEÇALHO PRINCIPAL
+   ========================================================== */
+
+#dashboard .sava-dashboard-header {
+  min-height: 145px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  padding: 28px 32px !important;
+
+  margin-bottom: 22px !important;
+
+  background:
+    linear-gradient(
+      100deg,
+      rgba(255,255,255,1) 0%,
+      rgba(255,255,255,.98) 48%,
+      rgba(238,244,251,.94) 100%
+    ) !important;
+
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 18px !important;
+
+  box-shadow:
+    0 8px 28px rgba(20, 33, 61, .055) !important;
+}
+
+
+/* detalhe decorativo */
+
+#dashboard .sava-dashboard-header::before {
+  content: "";
+
+  position: absolute;
+
+  right: 110px;
+  top: -105px;
+
+  width: 330px;
+  height: 330px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(49, 95, 157, .09),
+      rgba(49, 95, 157, .025) 45%,
+      transparent 70%
+    );
+
+  pointer-events: none;
+}
+
+
+#dashboard .sava-dashboard-header::after {
+  content: "";
+
+  position: absolute;
+
+  right: -50px;
+  bottom: -160px;
+
+  width: 360px;
+  height: 360px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(20, 33, 61, .055),
+      transparent 68%
+    );
+
+  pointer-events: none;
+}
+
+
+/* textos */
+
+#dashboard .sava-dashboard-title {
+  position: relative;
+  z-index: 2;
+}
+
+
+#dashboard .sava-eyebrow {
+  margin-bottom: 7px !important;
+
+  color: #315f9d !important;
+
+  font-size: 10px !important;
+  font-weight: 800 !important;
+
+  letter-spacing: .16em !important;
+}
+
+
+#dashboard .sava-dashboard-title h2 {
+  margin: 0 0 8px !important;
+
+  color: #15213a !important;
+
+  font-size: 30px !important;
+  line-height: 1.05 !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: -.045em !important;
+}
+
+
+#dashboard .sava-dashboard-title p {
+  max-width: 620px;
+
+  margin: 0 !important;
+
+  color: #778398 !important;
+
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+}
+
+
+/* botão atualizar */
+
+#dashboard .sava-dashboard-actions {
+  position: relative;
+  z-index: 2;
+}
+
+
+#dashboard .sava-dashboard-actions .btn {
+  min-height: 42px !important;
+
+  padding: 0 16px !important;
+
+  color: #40516a !important;
+
+  background:
+    rgba(255,255,255,.84) !important;
+
+  border:
+    1px solid #dce3ec !important;
+
+  border-radius:
+    10px !important;
+
+  box-shadow:
+    0 4px 14px rgba(16,24,40,.035) !important;
+
+  font-size:
+    11px !important;
+
+  font-weight:
+    700 !important;
+}
+
+
+#dashboard .sava-dashboard-actions .btn:hover {
+  color: #1d385e !important;
+
+  background: #ffffff !important;
+
+  border-color: #cbd6e4 !important;
+
+  transform: translateY(-1px);
+}
+
+
+/* ==========================================================
+   GRID DOS INDICADORES
+   ========================================================== */
+
+#dashboard .sava-kpi-grid {
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr)) !important;
+
+  gap: 16px !important;
+
+  margin-bottom: 22px !important;
+}
+
+
+/* ==========================================================
+   CARDS KPI
+   ========================================================== */
+
+#dashboard .sava-kpi {
+  position: relative !important;
+
+  min-height: 138px !important;
+
+  padding: 24px 22px !important;
+
+  overflow: hidden !important;
+
+  background: #ffffff !important;
+
+  border:
+    1px solid #e3e8ef !important;
+
+  border-radius:
+    16px !important;
+
+  box-shadow:
+    0 7px 22px rgba(20,33,61,.045) !important;
+}
+
+
+/* remove aquele círculo gigante do tema antigo */
+
+#dashboard .sava-kpi::after {
+  content: "";
+
+  position: absolute;
+
+  width: 105px;
+  height: 105px;
+
+  right: -35px;
+  top: -38px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(49,95,157,.035) !important;
+
+  pointer-events: none;
+}
+
+
+/* barrinha lateral */
+
+#dashboard .sava-kpi::before {
+  top: 20px !important;
+
+  width: 3px !important;
+  height: 42px !important;
+
+  border-radius:
+    0 5px 5px 0 !important;
+}
+
+
+/* ==========================================================
+   ÍCONES DOS KPIs
+   ========================================================== */
+
+#dashboard .sava-kpi .stat-icon {
+  width: 48px !important;
+  height: 48px !important;
+
+  flex: 0 0 48px !important;
+
+  border-radius: 12px !important;
+
+  box-shadow: none !important;
+}
+
+
+/* azul */
+
+#dashboard .sava-kpi-total .stat-icon {
+  color: #4779bf !important;
+  background: #edf4ff !important;
+}
+
+
+/* laranja */
+
+#dashboard .sava-kpi-warning .stat-icon {
+  color: #e58a32 !important;
+  background: #fff3e6 !important;
+}
+
+
+/* vermelho */
+
+#dashboard .sava-kpi-danger .stat-icon {
+  color: #df5260 !important;
+  background: #fff0f1 !important;
+}
+
+
+/* verde */
+
+#dashboard .sava-kpi-success .stat-icon {
+  color: #18a36b !important;
+  background: #eaf8f1 !important;
+}
+
+
+/* ==========================================================
+   TEXTOS DOS KPIs
+   ========================================================== */
+
+#dashboard .sava-kpi .stat-label {
+  margin-bottom: 5px !important;
+
+  color: #7b8799 !important;
+
+  font-size: 11px !important;
+
+  font-weight: 600 !important;
+}
+
+
+#dashboard .sava-kpi .stat-value {
+  color: #15213a !important;
+
+  font-size: 30px !important;
+  line-height: 1 !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: -.045em !important;
+}
+
+
+#dashboard .sava-kpi .stat-sub {
+  margin-top: 8px !important;
+
+  color: #8995a7 !important;
+
+  font-size: 10px !important;
+}
+
+
+/* ==========================================================
+   ÁREA PRINCIPAL
+   ========================================================== */
+
+#dashboard .sava-dashboard-main {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 2.15fr)
+    minmax(290px, 1fr) !important;
+
+  gap: 18px !important;
+
+  align-items: stretch !important;
+
+  margin-bottom: 18px !important;
+}
+
+
+/* ==========================================================
+   PAINÉIS
+   ========================================================== */
+
+#dashboard .sava-dashboard-panel {
+  overflow: hidden !important;
+
+  background: #ffffff !important;
+
+  border:
+    1px solid #e3e8ef !important;
+
+  border-radius:
+    16px !important;
+
+  box-shadow:
+    0 7px 24px rgba(20,33,61,.045) !important;
+}
+
+
+#dashboard .sava-dashboard-panel:hover {
+  transform: none !important;
+
+  border-color:
+    #dce2ea !important;
+
+  box-shadow:
+    0 9px 27px rgba(20,33,61,.055) !important;
+}
+
+
+/* ==========================================================
+   CABEÇALHO DOS PAINÉIS
+   ========================================================== */
+
+#dashboard .sava-panel-head {
+  min-height: 88px !important;
+
+  padding: 20px 22px !important;
+
+  border-bottom:
+    1px solid #edf0f4 !important;
+}
+
+
+#dashboard .sava-panel-head > div:first-child {
+  min-width: 0;
+}
+
+
+#dashboard .sava-panel-head h3 {
+  margin: 3px 0 3px !important;
+
+  color: #17233c !important;
+
+  font-size: 15px !important;
+
+  font-weight: 750 !important;
+
+  letter-spacing: -.025em !important;
+}
+
+
+#dashboard .sava-panel-head p {
+  margin: 0 !important;
+
+  color: #8793a4 !important;
+
+  font-size: 10px !important;
+}
+
+
+#dashboard .sava-panel-head .eyebrow,
+#dashboard .sava-panel-head .panel-kicker {
+  color: #537bb6 !important;
+
+  font-size: 8px !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: .13em !important;
+}
+
+
+/* ==========================================================
+   PRÓXIMOS VENCIMENTOS
+   ========================================================== */
+
+#dashboard .upcoming-list {
+  padding: 12px !important;
+}
+
+
+#dashboard .upcoming-list > * {
+  margin-bottom: 9px !important;
+
+  padding: 13px 13px !important;
+
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #e5e9ef !important;
+
+  border-radius:
+    11px !important;
+
+  transition:
+    background .16s ease,
+    border-color .16s ease,
+    transform .16s ease !important;
+}
+
+
+#dashboard .upcoming-list > *:hover {
+  background:
+    #fafbfd !important;
+
+  border-color:
+    #d6dee8 !important;
+
+  transform:
+    translateY(-1px);
+}
+
+
+#dashboard .upcoming-list > *:last-child {
+  margin-bottom:
+    0 !important;
+}
+
+
+/* nomes */
+
+#dashboard .upcoming-list strong {
+  color:
+    #35445a !important;
+
+  font-weight:
+    700 !important;
+}
+
+
+/* textos secundários */
+
+#dashboard .upcoming-list small,
+#dashboard .upcoming-list span {
+  color:
+    #7c899c;
+}
+
+
+/* ==========================================================
+   BOTÃO ABRIR
+   ========================================================== */
+
+#dashboard .upcoming-list button,
+#dashboard .upcoming-list .action-btn {
+  color:
+    #455771 !important;
+
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #dce3eb !important;
+
+  border-radius:
+    8px !important;
+
+  box-shadow:
+    none !important;
+}
+
+
+#dashboard .upcoming-list button:hover,
+#dashboard .upcoming-list .action-btn:hover {
+  color:
+    #24456f !important;
+
+  background:
+    #f4f7fb !important;
+
+  border-color:
+    #cad6e5 !important;
+}
+
+
+/* ==========================================================
+   PAINEL ANDAMENTO
+   ========================================================== */
+
+#dashboard .process-summary {
+  padding:
+    22px !important;
+}
+
+
+#dashboard .process-summary > * {
+  margin-bottom:
+    17px !important;
+}
+
+
+#dashboard .process-summary > *:last-child {
+  margin-bottom:
+    0 !important;
+}
+
+
+/* barras */
+
+#dashboard .process-summary .bar,
+#dashboard .process-summary .progress,
+#dashboard .process-summary [class*="track"] {
+  overflow:
+    hidden !important;
+
+  background:
+    #edf0f4 !important;
+
+  border-radius:
+    999px !important;
+}
+
+
+/* ==========================================================
+   SEGURADORAS / PAINEL INFERIOR
+   ========================================================== */
+
+#dashboard .insurer-summary {
+  color:
+    #536176 !important;
+}
+
+
+#dashboard .insurer-summary strong {
+  color:
+    #263449 !important;
+}
+
+
+/* ==========================================================
+   BOTÃO "VER APÓLICES"
+   ========================================================== */
+
+#dashboard .sava-panel-head .btn,
+#dashboard .sava-panel-head button {
+  color:
+    #4975b3 !important;
+
+  background:
+    #f3f7fd !important;
+
+  border:
+    1px solid #dce7f5 !important;
+
+  border-radius:
+    9px !important;
+
+  box-shadow:
+    none !important;
+
+  font-weight:
+    700 !important;
+}
+
+
+#dashboard .sava-panel-head .btn:hover,
+#dashboard .sava-panel-head button:hover {
+  color:
+    #274d80 !important;
+
+  background:
+    #eaf1fa !important;
+
+  border-color:
+    #ccdbee !important;
+}
+
+
+/* ==========================================================
+   RESPONSIVIDADE
+   ========================================================== */
+
+@media (max-width: 1200px) {
+
+  #dashboard .sava-kpi-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #dashboard .sava-dashboard-main {
+    grid-template-columns:
+      1fr !important;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  #dashboard .sava-dashboard-header {
+    min-height:
+      auto !important;
+
+    padding:
+      22px !important;
+
+    align-items:
+      flex-start !important;
+
+    flex-direction:
+      column !important;
+
+    gap:
+      20px !important;
+  }
+
+  #dashboard .sava-dashboard-actions {
+    width:
+      100% !important;
+  }
+
+  #dashboard .sava-dashboard-actions .btn {
+    width:
+      100% !important;
+  }
+
+  #dashboard .sava-kpi-grid {
+    grid-template-columns:
+      1fr !important;
+  }
+
+  #dashboard .sava-kpi {
+    min-height:
+      120px !important;
+  }
+
+}

@@ -319,7 +319,119 @@ const esc =
 const fmtDate =
   date => {
 
-    if (!date) {
+    if (
+      date === null ||
+      date === undefined ||
+      String(date).trim() === ""
+    ) {
+      return "—";
+    }
+
+    const raw =
+      String(date).trim();
+
+    let parsedDate = null;
+
+
+    /*
+      FORMATO PADRÃO DO SISTEMA
+      yyyy-mm-dd
+    */
+    if (
+      /^\d{4}-\d{2}-\d{2}$/.test(raw)
+    ) {
+
+      const [
+        year,
+        month,
+        day
+      ] =
+        raw
+          .split("-")
+          .map(Number);
+
+      parsedDate =
+        new Date(
+          year,
+          month - 1,
+          day,
+          12,
+          0,
+          0
+        );
+
+    }
+
+
+    /*
+      FORMATO BRASILEIRO
+      dd/mm/yyyy
+    */
+    else if (
+      /^\d{2}\/\d{2}\/\d{4}$/.test(raw)
+    ) {
+
+      const [
+        day,
+        month,
+        year
+      ] =
+        raw
+          .split("/")
+          .map(Number);
+
+      parsedDate =
+        new Date(
+          year,
+          month - 1,
+          day,
+          12,
+          0,
+          0
+        );
+
+    }
+
+
+    /*
+      OUTROS FORMATOS QUE O
+      JAVASCRIPT CONSEGUE INTERPRETAR
+    */
+    else {
+
+      const attempt =
+        new Date(raw);
+
+      if (
+        !Number.isNaN(
+          attempt.getTime()
+        )
+      ) {
+
+        parsedDate =
+          attempt;
+
+      }
+
+    }
+
+
+    /*
+      DATA INVÁLIDA:
+      NÃO DEIXA O SISTEMA QUEBRAR
+    */
+    if (
+      !parsedDate ||
+      Number.isNaN(
+        parsedDate.getTime()
+      )
+    ) {
+
+      console.warn(
+        "Data inválida ignorada:",
+        date
+      );
+
       return "—";
     }
 
@@ -327,13 +439,10 @@ const fmtDate =
     return new Intl.DateTimeFormat(
       "pt-BR"
     ).format(
-      new Date(
-        date + "T12:00:00"
-      )
+      parsedDate
     );
 
   };
-
 
 const iso =
   date => {

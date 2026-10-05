@@ -6938,3 +6938,597 @@ select option {
   }
 
 }
+
+/* ==========================================================
+   SAVA — RENOVAÇÕES / KANBAN PREMIUM CLARO
+   ========================================================== */
+
+#renovacoes {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+
+/* ==========================================================
+   CABEÇALHO
+   ========================================================== */
+
+#renovacoes .section-head {
+  margin-bottom: 20px !important;
+}
+
+#renovacoes .section-head h3 {
+  margin: 0 0 5px !important;
+
+  color: #15213a !important;
+
+  font-size: 27px !important;
+  line-height: 1.1 !important;
+
+  font-weight: 800 !important;
+  letter-spacing: -.04em !important;
+}
+
+#renovacoes .section-head p {
+  margin: 0 !important;
+
+  color: #7d899b !important;
+
+  font-size: 12px !important;
+}
+
+
+/* ==========================================================
+   BARRA DE PERÍODO
+   ========================================================== */
+
+#renovacoes .toolbar {
+  display: flex !important;
+  align-items: center !important;
+
+  gap: 10px !important;
+
+  margin-bottom: 22px !important;
+
+  padding: 12px !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #e2e7ee !important;
+  border-radius: 14px !important;
+
+  box-shadow:
+    0 6px 20px rgba(20,33,61,.04) !important;
+}
+
+
+#renovacoes .toolbar input {
+  min-height: 42px !important;
+
+  color: #34445b !important;
+  background: #fbfcfd !important;
+
+  border: 1px solid #dce3eb !important;
+  border-radius: 9px !important;
+
+  font-size: 10px !important;
+}
+
+
+#renovacoes .toolbar input:focus {
+  background: #ffffff !important;
+
+  border-color: #7895ba !important;
+
+  box-shadow:
+    0 0 0 3px rgba(49,95,157,.07) !important;
+}
+
+
+/* ==========================================================
+   BOTÕES SUPERIORES
+   ========================================================== */
+
+#renovacoes .toolbar button {
+  min-height: 42px !important;
+
+  padding: 0 16px !important;
+
+  border-radius: 9px !important;
+
+  font-size: 10px !important;
+  font-weight: 700 !important;
+
+  white-space: nowrap !important;
+}
+
+
+/* limpar período */
+
+#renovacoes .toolbar .btn-secondary {
+  color: #536176 !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #dce3eb !important;
+
+  box-shadow: none !important;
+}
+
+
+#renovacoes .toolbar .btn-secondary:hover {
+  color: #274d80 !important;
+
+  background: #f5f8fc !important;
+
+  border-color: #cad6e5 !important;
+}
+
+
+/* botão feedback comercial */
+
+#renovacoes .toolbar .btn-primary {
+  color: #ffffff !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #203a63,
+      #172b4a
+    ) !important;
+
+  border: 1px solid #172b4a !important;
+
+  box-shadow:
+    0 6px 16px rgba(20,33,61,.13) !important;
+}
+
+
+/* ==========================================================
+   KANBAN
+   ========================================================== */
+
+#kanban {
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(4, minmax(250px, 1fr)) !important;
+
+  gap: 14px !important;
+
+  align-items: start !important;
+
+  padding-bottom: 16px !important;
+}
+
+
+/* ==========================================================
+   COLUNAS
+   ========================================================== */
+
+#kanban .kanban-col {
+  min-width: 0 !important;
+
+  padding: 10px !important;
+
+  background: #f7f9fc !important;
+
+  border: 1px solid #e1e6ed !important;
+  border-radius: 15px !important;
+
+  box-shadow:
+    0 4px 16px rgba(20,33,61,.025) !important;
+}
+
+
+/* ==========================================================
+   CABEÇALHO DAS COLUNAS
+   ========================================================== */
+
+#kanban .kanban-column-head {
+  min-height: 63px !important;
+
+  padding: 8px 9px 13px !important;
+
+  margin-bottom: 10px !important;
+
+  border-bottom:
+    1px solid #e5e9ef !important;
+}
+
+
+#kanban .kanban-column-title {
+  gap: 9px !important;
+}
+
+
+#kanban .kanban-column-title h4 {
+  margin: 0 !important;
+
+  color: #24334b !important;
+
+  font-size: 11px !important;
+
+  font-weight: 750 !important;
+}
+
+
+#kanban .kanban-column-title small {
+  margin-top: 3px !important;
+
+  color: #8b96a7 !important;
+
+  font-size: 8px !important;
+}
+
+
+/* contador */
+
+#kanban .kanban-column-head > span,
+#kanban .kanban-count {
+  color: #8390a3 !important;
+
+  font-size: 9px !important;
+
+  font-weight: 700 !important;
+}
+
+
+/* ==========================================================
+   ÍCONES DAS COLUNAS
+   ========================================================== */
+
+#kanban .kanban-column-icon {
+  width: 31px !important;
+  height: 31px !important;
+
+  flex: 0 0 31px !important;
+
+  display: flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 9px !important;
+
+  box-shadow: none !important;
+}
+
+
+/* ==========================================================
+   CARDS
+   ========================================================== */
+
+#kanban .kanban-card {
+  padding: 14px !important;
+
+  margin-bottom: 10px !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #e0e6ed !important;
+
+  border-radius: 12px !important;
+
+  box-shadow:
+    0 4px 13px rgba(20,33,61,.035) !important;
+
+  transition:
+    transform .17s ease,
+    border-color .17s ease,
+    box-shadow .17s ease !important;
+}
+
+
+#kanban .kanban-card:hover {
+  transform: translateY(-2px) !important;
+
+  border-color: #ced8e5 !important;
+
+  box-shadow:
+    0 8px 20px rgba(20,33,61,.065) !important;
+}
+
+
+/* ==========================================================
+   NOME / INFORMAÇÕES
+   ========================================================== */
+
+#kanban .kanban-card h4,
+#kanban .kanban-card h3,
+#kanban .kanban-card strong {
+  color: #223149 !important;
+
+  font-weight: 750 !important;
+}
+
+
+#kanban .kanban-card p,
+#kanban .kanban-card small,
+#kanban .kanban-card .muted {
+  color: #7d899b !important;
+}
+
+
+/* ==========================================================
+   SELECT DE STATUS
+   REMOVE O PRETO DO TEMA ANTIGO
+   ========================================================== */
+
+#kanban .kanban-card select {
+  width: 100% !important;
+
+  min-height: 38px !important;
+
+  margin-top: 9px !important;
+
+  padding: 0 11px !important;
+
+  color: #34445b !important;
+
+  background: #f8fafc !important;
+
+  border: 1px solid #dce3eb !important;
+
+  border-radius: 9px !important;
+
+  font-size: 9px !important;
+
+  font-weight: 650 !important;
+
+  box-shadow: none !important;
+
+  outline: none !important;
+}
+
+
+#kanban .kanban-card select:hover {
+  background: #ffffff !important;
+
+  border-color: #cbd6e3 !important;
+}
+
+
+#kanban .kanban-card select:focus {
+  background: #ffffff !important;
+
+  border-color: #7895ba !important;
+
+  box-shadow:
+    0 0 0 3px rgba(49,95,157,.07) !important;
+}
+
+
+/* ==========================================================
+   FEEDBACK COMERCIAL
+   ========================================================== */
+
+#kanban .kanban-card label {
+  display: block !important;
+
+  margin-top: 14px !important;
+  margin-bottom: 6px !important;
+
+  color: #758297 !important;
+
+  font-size: 8px !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: .06em !important;
+
+  text-transform: uppercase !important;
+}
+
+
+/* remove textarea preto */
+
+#kanban .kanban-card textarea {
+  width: 100% !important;
+
+  min-height: 72px !important;
+
+  padding: 10px !important;
+
+  resize: vertical !important;
+
+  color: #45546a !important;
+
+  background: #f8fafc !important;
+
+  border: 1px solid #dce3eb !important;
+
+  border-radius: 9px !important;
+
+  font-family: inherit !important;
+
+  font-size: 9px !important;
+  line-height: 1.5 !important;
+
+  box-shadow: none !important;
+
+  outline: none !important;
+}
+
+
+#kanban .kanban-card textarea::placeholder {
+  color: #9aa5b5 !important;
+}
+
+
+#kanban .kanban-card textarea:focus {
+  background: #ffffff !important;
+
+  border-color: #7895ba !important;
+
+  box-shadow:
+    0 0 0 3px rgba(49,95,157,.07) !important;
+}
+
+
+/* ==========================================================
+   SALVAR FEEDBACK
+   ========================================================== */
+
+#kanban .kanban-card .save-feedback,
+#kanban .kanban-card button[data-action="save-feedback"] {
+  width: 100% !important;
+
+  min-height: 33px !important;
+
+  margin-top: 8px !important;
+
+  color: #40516a !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #dce3eb !important;
+
+  border-radius: 8px !important;
+
+  font-size: 8px !important;
+
+  font-weight: 700 !important;
+
+  box-shadow: none !important;
+}
+
+
+#kanban .kanban-card .save-feedback:hover,
+#kanban .kanban-card button[data-action="save-feedback"]:hover {
+  color: #274d80 !important;
+
+  background: #f4f7fb !important;
+
+  border-color: #cad6e5 !important;
+}
+
+
+/* ==========================================================
+   BOTÕES DO CARD
+   ========================================================== */
+
+#kanban .kanban-card .actions {
+  display: grid !important;
+
+  grid-template-columns:
+    1fr 1fr !important;
+
+  gap: 6px !important;
+
+  margin-top: 9px !important;
+}
+
+
+#kanban .kanban-card .action-btn,
+#kanban .kanban-card button {
+  min-height: 32px !important;
+
+  color: #536176 !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #dce3eb !important;
+
+  border-radius: 8px !important;
+
+  font-size: 8px !important;
+
+  font-weight: 700 !important;
+
+  box-shadow: none !important;
+}
+
+
+#kanban .kanban-card .action-btn:hover,
+#kanban .kanban-card button:hover {
+  color: #264b79 !important;
+
+  background: #f3f7fb !important;
+
+  border-color: #cad6e5 !important;
+}
+
+
+/* ==========================================================
+   BADGES DE VENCIMENTO
+   ========================================================== */
+
+#kanban .pill {
+  display: inline-flex !important;
+
+  align-items: center !important;
+
+  min-height: 23px !important;
+
+  padding: 4px 8px !important;
+
+  border-radius: 999px !important;
+
+  font-size: 8px !important;
+
+  font-weight: 750 !important;
+}
+
+
+/* ==========================================================
+   RELATÓRIO COMERCIAL GERADO
+   ========================================================== */
+
+#commercialReportArea:not(:empty) {
+  margin: 0 0 20px !important;
+
+  padding: 18px !important;
+
+  color: #425168 !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #e1e7ee !important;
+
+  border-radius: 13px !important;
+
+  box-shadow:
+    0 6px 20px rgba(20,33,61,.04) !important;
+
+  font-family: inherit !important;
+
+  font-size: 10px !important;
+
+  line-height: 1.65 !important;
+
+  white-space: pre-wrap !important;
+}
+
+
+/* ==========================================================
+   RESPONSIVIDADE
+   ========================================================== */
+
+@media (max-width: 1250px) {
+
+  #kanban {
+    grid-template-columns:
+      repeat(2, minmax(280px, 1fr)) !important;
+  }
+
+}
+
+
+@media (max-width: 750px) {
+
+  #renovacoes .toolbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  #renovacoes .toolbar > * {
+    width: 100% !important;
+  }
+
+  #kanban {
+    grid-template-columns:
+      1fr !important;
+  }
+
+}

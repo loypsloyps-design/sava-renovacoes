@@ -1650,6 +1650,12 @@ function populateSelects() {
   const policyClient =
     $("#policyClient");
 
+  const winsType =
+    $("#winsTypeFilter");
+
+  const winsInsurer =
+    $("#winsInsurerFilter");
+
 
   if (
     !type ||
@@ -1661,6 +1667,10 @@ function populateSelects() {
     return;
   }
 
+
+  /*
+    FORMULÁRIO DE APÓLICE
+  */
 
   policyType.innerHTML =
     TYPES
@@ -1679,6 +1689,10 @@ function populateSelects() {
       )
       .join("");
 
+
+  /*
+    FILTROS DE APÓLICES
+  */
 
   type.innerHTML =
     `
@@ -1708,6 +1722,50 @@ function populateSelects() {
       .join("");
 
 
+  /*
+    FILTROS DE GANHOS
+  */
+
+  if (winsType) {
+
+    winsType.innerHTML =
+      `
+        <option value="all">
+          Todos os tipos
+        </option>
+      ` +
+      TYPES
+        .map(
+          item =>
+            `<option>${esc(item)}</option>`
+        )
+        .join("");
+
+  }
+
+
+  if (winsInsurer) {
+
+    winsInsurer.innerHTML =
+      `
+        <option value="all">
+          Todas as seguradoras
+        </option>
+      ` +
+      INSURERS
+        .map(
+          item =>
+            `<option>${esc(item)}</option>`
+        )
+        .join("");
+
+  }
+
+
+  /*
+    CLIENTES NO FORMULÁRIO
+  */
+
   policyClient.innerHTML =
     `
       <option value="">
@@ -1733,7 +1791,6 @@ function populateSelects() {
 
 }
 
-
 /* ============================================================
    RENDERIZAR SISTEMA
    ============================================================ */
@@ -1747,19 +1804,17 @@ function renderAll() {
   }
 
 
-  populateSelects();
+renderDashboard();
 
-  renderDashboard();
+renderClients();
 
-  renderClients();
+renderPolicies();
 
-  renderPolicies();
+renderKanban();
 
-  renderKanban();
+renderWins();
 
-  renderConfig();
-
-  checkAutomation();
+renderConfig();
 
 }
 
@@ -2607,6 +2662,17 @@ function renderPolicies() {
     [...state.policies]
       .filter(
         policy => {
+                     /*
+            APÓLICES GANHAS NÃO APARECEM
+            MAIS NESTA TELA.
+            ELAS FICAM NA ABA GANHOS.
+          */
+          if (
+            policy.status ===
+            "Ganho"
+          ) {
+            return false;
+          }
 
           const client =
             clientById(
@@ -2931,7 +2997,347 @@ function renderPolicies() {
 
 }
 
+/* ============================================================
+   GANHOS
+   ============================================================ */
 
+function renderWins() {
+
+  const table =
+    $("#winsTable");
+
+  if (!table) {
+    return;
+  }
+
+
+  const search =
+    (
+      $("#winsSearch")
+        ?.value ||
+      ""
+    )
+      .toLowerCase()
+      .trim();
+
+
+  const typeFilter =
+    $("#winsTypeFilter")
+      ?.value ||
+    "all";
+
+
+  const insurerFilter =
+    $("#winsInsurerFilter")
+      ?.value ||
+    "all";
+
+
+  const startDate =
+    $("#winsStartDate")
+      ?.value ||
+    "";
+
+
+  const endDate =
+    $("#winsEndDate")
+      ?.value ||
+    "";
+
+
+  const policies =
+    [...state.policies]
+      .filter(
+        policy => {
+
+          /*
+            SOMENTE APÓLICES GANHAS
+          */
+
+          if (
+            policy.status !==
+            "Ganho"
+          ) {
+            return false;
+          }
+
+
+          const client =
+            clientById(
+              policy.clientId
+            );
+
+
+          const searchable =
+            [
+              client?.name,
+              policy.number,
+              policy.insurer,
+              policy.type
+            ]
+              .join(" ")
+              .toLowerCase();
+
+
+          if (
+            search &&
+            !searchable.includes(
+              search
+            )
+          ) {
+            return false;
+          }
+
+
+          if (
+            typeFilter !==
+              "all" &&
+            policy.type !==
+              typeFilter
+          ) {
+            return false;
+          }
+
+
+          if (
+            insurerFilter !==
+              "all" &&
+            policy.insurer !==
+              insurerFilter
+          ) {
+            return false;
+          }
+
+
+          if (
+            !inDateRange(
+              policy,
+              startDate,
+              endDate
+            )
+          ) {
+            return false;
+          }
+
+
+          return true;
+
+        }
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.endDate) -
+          new Date(b.endDate)
+      );
+
+
+  /*
+    CONTADOR
+  */
+
+  const total =
+    $("#winsTotal");
+
+  if (total) {
+
+    total.textContent =
+      policies.length;
+
+  }
+
+
+  /*
+    TABELA
+  */
+
+  table.innerHTML =
+    policies.length
+
+      ? policies
+          .map(
+            policy => {
+
+              const client =
+                clientById(
+                  policy.clientId
+                );
+
+
+              const expiry =
+                expiryLabel(
+                  policy
+                );
+
+
+              return `
+                <tr>
+
+                  <td>
+
+                    <div class="client-cell">
+
+                      <div class="avatar">
+                        ${initials(
+                          client?.name
+                        )}
+                      </div>
+
+
+                      <div>
+
+                        <strong>
+                          ${esc(
+                            client?.name ||
+                            "Cliente"
+                          )}
+                        </strong>
+
+                        <small>
+                          ${esc(
+                            formatPhone(
+                              client?.phone
+                            ) ||
+                            ""
+                          )}
+                        </small>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  <td>
+
+                    <b>
+                      ${esc(
+                        policy.type
+                      )}
+                    </b>
+
+                    <small
+                      style="
+                        display:block;
+                        color:#667085
+                      "
+                    >
+                      ${esc(
+                        policy.number ||
+                        ""
+                      )}
+                    </small>
+
+                  </td>
+
+
+                  <td>
+                    ${esc(
+                      policy.insurer
+                    )}
+                  </td>
+
+
+                  <td>
+
+                    ${fmtDate(
+                      policy.startDate
+                    )}
+
+                    →
+
+                    ${fmtDate(
+                      policy.endDate
+                    )}
+
+                  </td>
+
+
+                  <td>
+
+                    <span
+                      class="pill success"
+                    >
+                      Ganho
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <span
+                      class="pill ${expiry.cls}"
+                    >
+                      ${esc(
+                        expiry.text
+                      )}
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <div class="actions">
+
+                      <button
+                        class="action-btn"
+                        onclick="openDetails('${policy.id}')"
+                      >
+                        Ver
+                      </button>
+
+
+                      <button
+                        class="action-btn"
+                        onclick="editPolicy('${policy.id}')"
+                      >
+                        Editar
+                      </button>
+
+
+                      ${
+                        policy.pdfPath
+
+                          ? `
+                              <button
+                                class="action-btn"
+                                onclick="openPdf('${policy.id}')"
+                              >
+                                PDF
+                              </button>
+                            `
+
+                          : ""
+                      }
+
+                    </div>
+
+                  </td>
+
+                </tr>
+              `;
+
+            }
+          )
+          .join("")
+
+      : `
+          <tr>
+
+            <td colspan="7">
+
+              <div class="empty">
+                Nenhum ganho encontrado.
+              </div>
+
+            </td>
+
+          </tr>
+        `;
+
+}
 /* ============================================================
    RENOVAÇÕES — FILTRO DE DATA
    ============================================================ */
@@ -3709,7 +4115,8 @@ function go(view) {
 
     renovacoes:
       "Renovações",
-
+     ganhos:
+        "Ganhos",
     relatorios:
       "Relatórios",
 
@@ -3770,8 +4177,18 @@ function go(view) {
     renderKanban();
 
   }
+   
+if (
+  view ===
+  "ganhos"
+) {
+
+  renderWins();
+
+}
 
 
+   
   if (
     view ===
     "config"
@@ -11682,7 +12099,39 @@ function setupEvents() {
       renderPolicies
     );
 
+  /* GANHOS */
 
+  $("#winsSearch")
+    ?.addEventListener(
+      "input",
+      renderWins
+    );
+
+  $("#winsTypeFilter")
+    ?.addEventListener(
+      "change",
+      renderWins
+    );
+
+  $("#winsInsurerFilter")
+    ?.addEventListener(
+      "change",
+      renderWins
+    );
+
+  $("#winsStartDate")
+    ?.addEventListener(
+      "change",
+      renderWins
+    );
+
+  $("#winsEndDate")
+    ?.addEventListener(
+      "change",
+      renderWins
+    );
+
+   
   /* RENOVAÇÕES */
 
   $("#renewalStartDateFilter")

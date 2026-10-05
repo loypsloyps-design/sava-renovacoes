@@ -342,7 +342,18 @@
           ↻
           <span>Renovações</span>
         </button>
+<button
+  class="nav-item"
+  data-view="ganhos"
+>
+  <span class="nav-icon">
+    ★
+  </span>
 
+  <span>
+    Ganhos
+  </span>
+</button>
 
         <button
           class="nav-item"
@@ -1024,6 +1035,161 @@
 
         </div>
 
+        <!-- =========================================================
+     GANHOS
+     ========================================================= -->
+
+<section
+  id="ganhos"
+  class="view"
+>
+
+  <div class="page-section">
+
+    <div class="section-heading">
+
+      <div>
+
+        <span class="section-kicker">
+          RESULTADOS
+        </span>
+
+        <h2>
+          Ganhos
+        </h2>
+
+        <p>
+          Apólices concluídas com sucesso.
+        </p>
+
+      </div>
+
+      <div class="wins-summary">
+
+        <span>
+          Total de ganhos
+        </span>
+
+        <strong id="winsTotal">
+          0
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- FILTROS -->
+
+    <div class="filters wins-filters">
+
+      <input
+        type="search"
+        id="winsSearch"
+        placeholder="Buscar cliente, apólice ou seguradora..."
+      >
+
+
+      <select id="winsTypeFilter">
+
+        <option value="all">
+          Todos os tipos
+        </option>
+
+      </select>
+
+
+      <select id="winsInsurerFilter">
+
+        <option value="all">
+          Todas as seguradoras
+        </option>
+
+      </select>
+
+
+      <input
+        type="date"
+        id="winsStartDate"
+        title="Data inicial"
+      >
+
+
+      <input
+        type="date"
+        id="winsEndDate"
+        title="Data final"
+      >
+
+    </div>
+
+
+    <!-- TABELA DE GANHOS -->
+
+    <div class="table-card wins-table-card">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Cliente
+            </th>
+
+            <th>
+              Seguro
+            </th>
+
+            <th>
+              Seguradora
+            </th>
+
+            <th>
+              Vigência
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Vencimento
+            </th>
+
+            <th>
+              Ações
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody id="winsTable">
+
+          <tr>
+
+            <td colspan="7">
+
+              <div class="empty">
+                Nenhum ganho registrado.
+              </div>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
 
 
         <!-- RELATÓRIO COMERCIAL -->

@@ -9486,6 +9486,10 @@ async function forgotPassword() {
    SALVAR SENHA APÓS RECUPERAÇÃO
    ============================================================ */
 
+/* ============================================================
+   SALVAR SENHA APÓS RECUPERAÇÃO
+   ============================================================ */
+
 async function saveRecoveryPassword() {
 
   const password =
@@ -9497,12 +9501,19 @@ async function saveRecoveryPassword() {
   const errorBox =
     $("#recoveryError");
 
+  const button =
+    $("#recoverySaveBtn");
+
+
   if (errorBox) {
     errorBox.textContent = "";
   }
 
 
-  // Validação da senha
+  /*
+    VALIDAÇÕES
+  */
+
   if (password.length < 6) {
 
     if (errorBox) {
@@ -9514,7 +9525,6 @@ async function saveRecoveryPassword() {
   }
 
 
-  // Confirmação da senha
   if (password !== confirmPassword) {
 
     if (errorBox) {
@@ -9526,25 +9536,30 @@ async function saveRecoveryPassword() {
   }
 
 
-  const button =
-    $("#recoverySaveBtn");
+  /*
+    EVITA CLIQUES DUPLOS
+  */
 
-
-  // Evita clicar várias vezes
   if (button) {
 
     button.disabled = true;
 
     button.textContent =
       "Salvando...";
+
   }
 
 
   try {
 
-    // Confere se o link de recuperação
-    // realmente criou uma sessão no Supabase
-    const {
+    /*
+      Durante PASSWORD_RECOVERY o Supabase
+      autentica temporariamente o usuário.
+
+      Primeiro tentamos pegar essa sessão.
+    */
+
+    let {
       data: sessionData,
       error: sessionError
     } =
@@ -9556,44 +9571,135 @@ async function saveRecoveryPassword() {
     }
 
 
+    /*
+      Se getSession ainda não devolveu a sessão,
+      esperamos um instante e tentamos novamente.
+
+      Isso evita erro causado pelo processamento
+      do link de recuperação ainda estar terminando.
+    */
+
     if (!sessionData?.session?.user) {
 
-      throw new Error(
-        "Sessão de recuperação inválida ou expirada."
+      await new Promise(
+        resolve =>
+          setTimeout(resolve, 500)
       );
+
+
+      const retry =
+        await sb.auth.getSession();
+
+
+      if (retry.error) {
+        throw retry.error;
+      }
+
+
+      sessionData =
+        retry.data;
+
     }
 
 
-    // Altera a senha
+    /*
+      Se mesmo depois da segunda tentativa
+      não existir usuário autenticado,
+      o link realmente não possui mais
+      uma sessão válida.
+    */
+
+    if (!sessionData?.session?.user) {
+
+      throw new Error(
+        "Sessão de recuperação não encontrada."
+      );
+
+    }
+
+
+    console.log(
+      "Sessão de recuperação confirmada:",
+      sessionData.session.user.email
+    );
+
+
+    /*
+      ALTERA A SENHA
+    */
+
     const {
-      error
+      data: updateData,
+      error: updateError
     } =
       await sb.auth.updateUser({
         password
       });
 
 
-    if (error) {
-      throw error;
+    if (updateError) {
+      throw updateError;
     }
 
 
-    // Encerra a sessão temporária
-    // usada para recuperar a senha
-    await sb.auth.signOut();
+    if (!updateData?.user) {
 
+      throw new Error(
+        "O Supabase não confirmou a alteração da senha."
+      );
+
+    }
+
+
+    console.log(
+      "Senha redefinida com sucesso."
+    );
+
+
+    /*
+      IMPORTANTE:
+      Só encerramos a sessão DEPOIS
+      que updateUser terminou com sucesso.
+    */
+
+    const {
+      error: signOutError
+    } =
+      await sb.auth.signOut();
+
+
+    if (signOutError) {
+
+      console.warn(
+        "A senha foi alterada, mas houve erro ao encerrar a sessão temporária:",
+        signOutError
+      );
+
+    }
+
+
+    /*
+      LIMPA ESTADO LOCAL
+    */
 
     state.user = null;
 
+    sessionStorage.removeItem(
+      "sava_login_ativo"
+    );
 
-    // Limpa a URL do link de recuperação
+
+    /*
+      LIMPA A URL DO LINK DE RECUPERAÇÃO
+    */
+
     try {
 
       window.history.replaceState(
         {},
         document.title,
         window.location.origin +
-        window.location.pathname
+          window.location.pathname
       );
 
     } catch (urlError) {
@@ -9606,25 +9712,42 @@ async function saveRecoveryPassword() {
     }
 
 
-    // Esconde recuperação
+    /*
+      VOLTA PARA A TELA NORMAL DE LOGIN
+    */
+
     $("#recoveryPanel")
       ?.classList
       .add("hidden");
 
 
-    // Mostra login novamente
     $("#loginForm")
       ?.classList
       .remove("hidden");
 
 
-    // Limpa os campos
+    /*
+      LIMPA OS CAMPOS
+    */
+
     if ($("#recoveryPass")) {
-      $("#recoveryPass").value = "";
+
+      $("#recoveryPass").value =
+        "";
+
     }
 
+
     if ($("#recoveryPassConfirm")) {
-      $("#recoveryPassConfirm").value = "";
+
+      $("#recoveryPassConfirm").value =
+        "";
+
+    }
+
+
+    if (errorBox) {
+      errorBox.textContent = "";
     }
 
 
@@ -9644,14 +9767,18 @@ async function saveRecoveryPassword() {
     if (errorBox) {
 
       errorBox.textContent =
-        "O link de recuperação expirou ou é inválido. Solicite um novo link.";
+        error?.message ||
+        "Não foi possível alterar a senha. Solicite um novo link.";
 
     }
 
 
   } finally {
 
-    // Reativa o botão
+    /*
+      REATIVA O BOTÃO
+    */
+
     if (button) {
 
       button.disabled = false;
@@ -11580,147 +11707,285 @@ function setupEvents() {
    INICIALIZAÇÃO
    ============================================================ */
 
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+
 async function init() {
-let recoveryMode = false;
-     const loginDaSessao =
-    sessionStorage.getItem("sava_login_ativo") === "1";
+
+  let recoveryMode = false;
+
+  const loginDaSessao =
+    sessionStorage.getItem(
+      "sava_login_ativo"
+    ) === "1";
+
+
   setupEvents();
 
+
   /*
-    Verifica se o Supabase carregou.
+    VERIFICA SE O SUPABASE CARREGOU
   */
 
-  if (
-    !window.supabase
-  ) {
+  if (!window.supabase) {
 
     console.error(
       "Supabase não foi carregado."
     );
 
     return;
-
   }
+
 
   try {
 
     /*
-      Detecta recuperação de senha.
+      ESCUTA ALTERAÇÕES DE AUTENTICAÇÃO.
+
+      PASSWORD_RECOVERY acontece quando
+      o usuário entra pelo link enviado
+      por e-mail pelo Supabase.
     */
 
-sb.auth.onAuthStateChange(
-  async (event, session) => {
+    sb.auth.onAuthStateChange(
+      async (event, session) => {
 
-    console.log("Evento Supabase:", event);
+        console.log(
+          "Evento Supabase:",
+          event
+        );
 
-    if (event === "PASSWORD_RECOVERY") {
 
-      recoveryMode = true;
+        /*
+          RECUPERAÇÃO DE SENHA
+        */
 
-      console.log(
-        "Modo de recuperação de senha ativado."
-      );
+        if (
+          event ===
+          "PASSWORD_RECOVERY"
+        ) {
 
-      state.user = session?.user || null;
+          recoveryMode = true;
 
-      showLogin();
+          console.log(
+            "Modo de recuperação de senha ativado."
+          );
 
-      $("#loginForm")
-        ?.classList
-        .add("hidden");
 
-      $("#recoveryPanel")
-        ?.classList
-        .remove("hidden");
+          /*
+            Guarda temporariamente o usuário
+            recebido pelo próprio Supabase.
+          */
 
-      if ($("#recoveryError")) {
-        $("#recoveryError").textContent = "";
+          state.user =
+            session?.user || null;
+
+
+          /*
+            NÃO fazemos signOut aqui.
+
+            Essa sessão é necessária para
+            updateUser() conseguir trocar
+            a senha.
+          */
+
+          showLogin();
+
+
+          $("#loginForm")
+            ?.classList
+            .add("hidden");
+
+
+          $("#recoveryPanel")
+            ?.classList
+            .remove("hidden");
+
+
+          if ($("#recoveryError")) {
+
+            $("#recoveryError")
+              .textContent = "";
+
+          }
+
+
+          return;
+        }
+
+
+        /*
+          LOGOUT NORMAL
+
+          Durante recuperação não mexemos
+          na tela caso algum evento inesperado
+          seja disparado.
+        */
+
+        if (
+          event === "SIGNED_OUT" &&
+          !recoveryMode
+        ) {
+
+          state.user = null;
+
+          showLogin();
+
+        }
+
       }
+    );
 
-      return;
-    }
-
-    if (event === "SIGNED_OUT") {
-
-      state.user = null;
-
-      showLogin();
-    }
-  }
-);
-
-await new Promise(
-  resolve => setTimeout(resolve, 300)
-);
-
-if (recoveryMode) {
-  return;
-}
 
     /*
-      Recupera sessão existente.
+      DÁ TEMPO PARA O SUPABASE PROCESSAR
+      OS TOKENS RECEBIDOS NA URL.
+    */
+
+    await new Promise(
+      resolve =>
+        setTimeout(resolve, 800)
+    );
+
+
+    /*
+      CONFERE A SESSÃO DEPOIS QUE O
+      SUPABASE TERMINOU DE PROCESSAR A URL.
     */
 
     const {
       data,
       error
     } =
-      await sb.auth
-        .getSession();
+      await sb.auth.getSession();
+
 
     if (error) {
       throw error;
     }
 
+
     const session =
-      data.session;
+      data?.session || null;
+
+
+    /*
+      PROTEÇÃO EXTRA:
+
+      Às vezes o evento PASSWORD_RECOVERY
+      pode ocorrer muito próximo da leitura
+      da sessão.
+
+      Se já estamos em recoveryMode,
+      jamais fazemos logout automático.
+    */
+
+    if (recoveryMode) {
+
+      console.log(
+        "Recuperação ativa. Sessão temporária preservada."
+      );
+
+
+      if (
+        session?.user &&
+        !state.user
+      ) {
+
+        state.user =
+          session.user;
+
+      }
+
+
+      showLogin();
+
+
+      $("#loginForm")
+        ?.classList
+        .add("hidden");
+
+
+      $("#recoveryPanel")
+        ?.classList
+        .remove("hidden");
+
+
+      return;
+    }
+
+
+    /*
+      SESSÃO EXISTENTE SEM LOGIN FEITO
+      NESTA ABA.
+
+      Essa proteção mantém o comportamento
+      que você já tinha: fechar/abrir o site
+      não entra automaticamente no CRM.
+    */
+
     if (
-  session?.user &&
-  !loginDaSessao &&
-  !recoveryMode
-) {
-
-  await sb.auth.signOut();
-
-  state.user = null;
-
-  showLogin();
-
-  return;
-}
-
-    if (
-      !session?.user
+      session?.user &&
+      !loginDaSessao
     ) {
+
+      console.log(
+        "Sessão antiga encontrada. Encerrando."
+      );
+
+
+      await sb.auth.signOut();
+
+
+      state.user = null;
+
+
+      showLogin();
+
+
+      return;
+    }
+
+
+    /*
+      NÃO EXISTE SESSÃO
+    */
+
+    if (!session?.user) {
+
+      state.user = null;
 
       showLogin();
 
       return;
-
     }
+
+
+    /*
+      LOGIN NORMAL JÁ AUTORIZADO
+      NESTA ABA
+    */
 
     state.user =
       session.user;
 
+
     showApp();
 
+
     /*
-      Primeiro tenta carregar
-      banco online.
+      CARREGA OS DADOS DO CRM
     */
 
     await loadCloudData();
 
-    /*
-      Depois renderiza.
-      Se o Supabase falhar,
-      loadCloudData mantém o cache
-      em vez de zerar tudo.
-    */
 
     renderAll();
 
+
     checkAutomation();
+
 
   } catch (error) {
 
@@ -11729,14 +11994,16 @@ if (recoveryMode) {
       error
     );
 
+
     /*
-      Nunca zera a interface
-      por causa de uma falha
-      temporária do Supabase.
+      SE O USUÁRIO JÁ ESTAVA
+      IDENTIFICADO, TENTA MANTER
+      O SISTEMA FUNCIONANDO PELO CACHE.
     */
 
     if (
-      state.user
+      state.user &&
+      !recoveryMode
     ) {
 
       loadLocalCache();
@@ -11745,7 +12012,7 @@ if (recoveryMode) {
 
       renderAll();
 
-    } else {
+    } else if (!recoveryMode) {
 
       showLogin();
 
@@ -11754,8 +12021,6 @@ if (recoveryMode) {
   }
 
 }
-
-
 /* ============================================================
    FUNÇÕES GLOBAIS
    Necessárias para os botões gerados dinamicamente

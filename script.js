@@ -4066,140 +4066,76 @@ function renderConfig() {
 
 function go(view) {
 
-  $$(".view")
-    .forEach(
-      element =>
-        element.classList.remove(
-          "active"
-        )
-    );
+  $$(".view").forEach(element => {
+    element.classList.remove("active");
+  });
 
+  const target = $("#" + view);
 
-  const target =
-    $("#" + view);
-
-
-  if (target) {
-
-    target.classList.add(
-      "active"
-    );
-
+  if (!target) {
+    console.error("Tela não encontrada:", view);
+    return;
   }
 
+  target.classList.add("active");
 
-  $$(".nav-item")
-    .forEach(
-      button => {
-
-        button.classList.toggle(
-          "active",
-          button.dataset.view ===
-            view
-        );
-
-      }
+  $$(".nav-item").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.view === view
     );
-
+  });
 
   const titles = {
-
-    dashboard:
-      "Dashboard",
-
-    clientes:
-      "Clientes",
-
-    apolices:
-      "Apólices",
-
-    renovacoes:
-      "Renovações",
-     ganhos:
-        "Ganhos",
-    relatorios:
-      "Relatórios",
-
-    config:
-      "Configurações"
-
+    dashboard: "Dashboard",
+    clientes: "Clientes",
+    apolices: "Apólices",
+    renovacoes: "Renovações",
+    ganhos: "Ganhos",
+    relatorios: "Relatórios",
+    config: "Configurações"
   };
 
-
-  const pageTitle =
-    $("#pageTitle");
-
+  const pageTitle = $("#pageTitle");
 
   if (pageTitle) {
-
     pageTitle.textContent =
-      titles[view] ||
-      "Dashboard";
-
+      titles[view] || "Dashboard";
   }
 
+  switch (view) {
 
-  if (
-    view ===
-    "dashboard"
-  ) {
+    case "dashboard":
+      renderDashboard();
+      break;
 
-    renderDashboard();
+    case "clientes":
+      renderClients();
+      break;
 
+    case "apolices":
+      renderPolicies();
+      break;
+
+    case "renovacoes":
+      renderKanban();
+      break;
+
+    case "ganhos":
+      renderWins();
+      break;
+
+    case "relatorios":
+      if (typeof showReport === "function") {
+        showReport();
+      }
+      break;
+
+    case "config":
+      renderConfig();
+      break;
   }
-
-
-  if (
-    view ===
-    "clientes"
-  ) {
-
-    renderClients();
-
-  }
-
-
-  if (
-    view ===
-    "apolices"
-  ) {
-
-    renderPolicies();
-
-  }
-
-
-  if (
-    view ===
-    "renovacoes"
-  ) {
-
-    renderKanban();
-
-  }
-   
-if (
-  view ===
-  "ganhos"
-) {
-
-  renderWins();
-
 }
-
-
-   
-  if (
-    view ===
-    "config"
-  ) {
-
-    renderConfig();
-
-  }
-
-}
-
 
 /* ============================================================
    MODAIS

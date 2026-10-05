@@ -8540,3 +8540,30 @@ select option {
   }
 
 }
+
+/* ==========================================================
+   SAVA — BACKGROUND INSTITUCIONAL DO SISTEMA
+   ========================================================== */
+
+body {
+  background:
+    linear-gradient(
+      rgba(245, 248, 252, 0.84),
+      rgba(245, 248, 252, 0.84)
+    ),
+    url("sava-system-bg.png") center center / cover fixed no-repeat !important;
+}
+
+
+/* área principal transparente para mostrar o wallpaper */
+
+.main {
+  background: transparent !important;
+}
+
+
+/* telas internas */
+
+.view {
+  background: transparent !important;
+}

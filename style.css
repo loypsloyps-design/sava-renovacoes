@@ -5947,3 +5947,468 @@ select option {
   }
 
 }
+
+/* ==========================================================
+   SAVA — CLIENTES PREMIUM CLARO
+   ========================================================== */
+
+
+/* ==========================================================
+   PÁGINA
+   ========================================================== */
+
+#clientes {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+
+/* ==========================================================
+   CABEÇALHO
+   ========================================================== */
+
+#clientes .section-head {
+  margin-bottom: 20px !important;
+}
+
+#clientes .section-head h3 {
+  margin: 0 0 5px !important;
+
+  color: #15213a !important;
+
+  font-size: 27px !important;
+  line-height: 1.1 !important;
+
+  font-weight: 800 !important;
+
+  letter-spacing: -.04em !important;
+}
+
+#clientes .section-head p {
+  margin: 0 !important;
+
+  color: #7d899b !important;
+
+  font-size: 12px !important;
+}
+
+
+/* ==========================================================
+   BOTÃO NOVO CLIENTE
+   ========================================================== */
+
+#clientes .section-head .btn-primary {
+  min-height: 42px !important;
+
+  padding: 0 18px !important;
+
+  border-radius: 10px !important;
+
+  font-size: 10px !important;
+  font-weight: 750 !important;
+
+  box-shadow:
+    0 7px 18px rgba(20,33,61,.14) !important;
+}
+
+
+/* ==========================================================
+   FILTROS
+   ========================================================== */
+
+#clientes .toolbar {
+  gap: 9px !important;
+
+  margin-bottom: 20px !important;
+
+  padding: 12px !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #e3e8ef !important;
+
+  border-radius: 14px !important;
+
+  box-shadow:
+    0 6px 20px rgba(16,24,40,.035) !important;
+}
+
+#clientes .toolbar input,
+#clientes .toolbar select {
+  min-height: 40px !important;
+
+  padding: 0 12px !important;
+
+  color: #405069 !important;
+
+  background: #fbfcfd !important;
+
+  border: 1px solid #dfe5ec !important;
+
+  border-radius: 9px !important;
+
+  font-size: 10px !important;
+}
+
+#clientes .toolbar input:hover,
+#clientes .toolbar select:hover {
+  border-color: #cbd5e1 !important;
+}
+
+#clientes .toolbar input:focus,
+#clientes .toolbar select:focus {
+  background: #ffffff !important;
+
+  border-color: #6f8fb8 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(49,95,157,.07) !important;
+}
+
+
+/* ==========================================================
+   GRID
+   ========================================================== */
+
+#clientsGrid.clients-grid {
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr)) !important;
+
+  gap: 15px !important;
+
+  align-items: stretch !important;
+}
+
+
+/* ==========================================================
+   CARD DO CLIENTE
+   ========================================================== */
+
+#clientsGrid > * {
+  position: relative !important;
+
+  min-width: 0 !important;
+
+  padding: 18px !important;
+
+  overflow: hidden !important;
+
+  background: #ffffff !important;
+
+  border:
+    1px solid #e2e7ee !important;
+
+  border-radius:
+    15px !important;
+
+  box-shadow:
+    0 6px 20px rgba(20,33,61,.04) !important;
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease !important;
+}
+
+
+/* barrinha azul lateral */
+
+#clientsGrid > *::before {
+  content: "" !important;
+
+  position: absolute !important;
+
+  left: 0 !important;
+  top: 17px !important;
+
+  width: 3px !important;
+  height: 30px !important;
+
+  background: #315f9d !important;
+
+  border-radius:
+    0 4px 4px 0 !important;
+}
+
+
+#clientsGrid > *:hover {
+  transform:
+    translateY(-3px) !important;
+
+  border-color:
+    #d2dae5 !important;
+
+  box-shadow:
+    0 12px 28px rgba(20,33,61,.075) !important;
+}
+
+
+/* ==========================================================
+   AVATAR / INICIAIS
+   ========================================================== */
+
+#clientsGrid .avatar {
+  width: 36px !important;
+  height: 36px !important;
+
+  min-width: 36px !important;
+
+  display: inline-flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  color: #315f9d !important;
+
+  background: #edf4fc !important;
+
+  border: 1px solid #e2ebf7 !important;
+
+  border-radius: 11px !important;
+
+  font-size: 11px !important;
+  font-weight: 800 !important;
+
+  box-shadow: none !important;
+}
+
+
+/* ==========================================================
+   NOME DO CLIENTE
+   ========================================================== */
+
+#clientsGrid strong,
+#clientsGrid h3,
+#clientsGrid h4 {
+  color: #1e2b42 !important;
+}
+
+#clientsGrid h3,
+#clientsGrid h4 {
+  font-size: 13px !important;
+
+  line-height: 1.25 !important;
+
+  font-weight: 750 !important;
+
+  letter-spacing: -.018em !important;
+}
+
+
+/* ==========================================================
+   INFORMAÇÕES SECUNDÁRIAS
+   ========================================================== */
+
+#clientsGrid p,
+#clientsGrid small {
+  color: #7d899b !important;
+
+  line-height: 1.45 !important;
+}
+
+#clientsGrid .muted {
+  color: #8b96a7 !important;
+}
+
+
+/* ==========================================================
+   CONTADOR DE APÓLICES
+   ========================================================== */
+
+#clientsGrid .badge,
+#clientsGrid .pill {
+  color: #315f9d !important;
+
+  background: #eef4fc !important;
+
+  border: 1px solid #e1eaf6 !important;
+
+  border-radius: 999px !important;
+
+  font-size: 9px !important;
+  font-weight: 750 !important;
+
+  box-shadow: none !important;
+}
+
+
+/* ==========================================================
+   DIVISORES
+   ========================================================== */
+
+#clientsGrid hr {
+  height: 1px !important;
+
+  margin: 14px 0 !important;
+
+  background: #edf0f4 !important;
+
+  border: 0 !important;
+}
+
+
+/* ==========================================================
+   APÓLICES DENTRO DO CARD
+   ========================================================== */
+
+#clientsGrid .client-policy,
+#clientsGrid .policy-item {
+  padding: 9px 10px !important;
+
+  margin-top: 7px !important;
+
+  color: #435168 !important;
+
+  background: #f8fafc !important;
+
+  border: 1px solid #edf0f4 !important;
+
+  border-radius: 9px !important;
+}
+
+
+/* data da apólice */
+
+#clientsGrid .client-policy strong,
+#clientsGrid .policy-item strong {
+  color: #1e2b42 !important;
+
+  font-weight: 750 !important;
+}
+
+
+/* ==========================================================
+   AÇÕES DO CARD
+   ========================================================== */
+
+#clientsGrid .actions {
+  display: flex !important;
+
+  flex-wrap: wrap !important;
+
+  gap: 6px !important;
+
+  margin-top: 12px !important;
+}
+
+
+#clientsGrid .action-btn {
+  min-height: 31px !important;
+
+  padding: 5px 9px !important;
+
+  color: #536176 !important;
+
+  background: #ffffff !important;
+
+  border:
+    1px solid #dfe5ec !important;
+
+  border-radius:
+    8px !important;
+
+  font-size:
+    9px !important;
+
+  font-weight:
+    650 !important;
+
+  box-shadow:
+    none !important;
+}
+
+
+#clientsGrid .action-btn:hover {
+  color:
+    #264b79 !important;
+
+  background:
+    #f4f7fb !important;
+
+  border-color:
+    #cbd7e5 !important;
+}
+
+
+/* botão excluir */
+
+#clientsGrid .action-btn.danger,
+#clientsGrid .btn-danger {
+  color:
+    #c7525e !important;
+
+  background:
+    #fffafa !important;
+
+  border-color:
+    #f1dcdf !important;
+}
+
+
+#clientsGrid .action-btn.danger:hover,
+#clientsGrid .btn-danger:hover {
+  color:
+    #b53c49 !important;
+
+  background:
+    #fff1f2 !important;
+
+  border-color:
+    #edcdd1 !important;
+}
+
+
+/* ==========================================================
+   RESPONSIVIDADE
+   ========================================================== */
+
+@media (max-width: 1350px) {
+
+  #clientsGrid.clients-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr)) !important;
+  }
+
+}
+
+
+@media (max-width: 1050px) {
+
+  #clientsGrid.clients-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  #clientes .section-head {
+    align-items: stretch !important;
+
+    flex-direction: column !important;
+
+    gap: 14px !important;
+  }
+
+  #clientes .section-head .btn-primary {
+    width: 100% !important;
+  }
+
+  #clientes .toolbar {
+    flex-direction: column !important;
+  }
+
+  #clientes .toolbar > * {
+    width: 100% !important;
+  }
+
+  #clientsGrid.clients-grid {
+    grid-template-columns:
+      1fr !important;
+  }
+
+}

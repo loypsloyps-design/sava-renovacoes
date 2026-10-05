@@ -4126,3 +4126,1113 @@ select option {
    SAVA 2026 — NOVO VISUAL CLARO OFICIAL
    NÃO APAGAR
    ========================================================= */
+
+/* ==========================================================
+   SAVA SEGUROS — NOVA IDENTIDADE VISUAL CLARA
+   2026
+   IMPORTANTE: manter este bloco no FINAL do style.css
+   ========================================================== */
+
+:root {
+  --sava-navy: #14213d;
+  --sava-navy-2: #1d2f50;
+  --sava-blue: #315f9d;
+  --sava-blue-soft: #eef4fb;
+
+  --sava-bg: #f5f7fa;
+  --sava-surface: #ffffff;
+  --sava-surface-2: #f9fafb;
+
+  --sava-text: #172033;
+  --sava-muted: #718096;
+  --sava-border: #e5e9f0;
+
+  --sava-green: #16a36a;
+  --sava-green-soft: #eaf8f1;
+
+  --sava-red: #e04f5f;
+  --sava-red-soft: #fff0f1;
+
+  --sava-orange: #e98b3a;
+  --sava-orange-soft: #fff5eb;
+
+  --sava-purple: #7357c7;
+  --sava-purple-soft: #f2effc;
+
+  --sava-radius: 14px;
+  --sava-radius-sm: 10px;
+
+  --sava-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.02),
+    0 7px 24px rgba(16, 24, 40, 0.055);
+}
+
+
+/* ==========================================================
+   APLICAÇÃO
+   Não interfere na tela de login
+   ========================================================== */
+
+#app.app {
+  min-height: 100vh !important;
+
+  background:
+    radial-gradient(
+      circle at 78% 0%,
+      rgba(49, 95, 157, 0.055),
+      transparent 30%
+    ),
+    #f5f7fa !important;
+
+  color: var(--sava-text) !important;
+}
+
+
+/* ==========================================================
+   SIDEBAR
+   ========================================================== */
+
+#app .sidebar {
+  width: 238px !important;
+
+  padding: 20px 14px 16px !important;
+
+  background: #ffffff !important;
+
+  border-right:
+    1px solid #e7ebf1 !important;
+
+  box-shadow:
+    5px 0 25px rgba(22, 34, 55, 0.035) !important;
+}
+
+
+/* MARCA */
+
+#app .sidebar-brand {
+  min-height: 62px !important;
+
+  margin-bottom: 22px !important;
+
+  padding:
+    0 10px 17px !important;
+
+  border-bottom:
+    1px solid #edf0f4 !important;
+}
+
+
+#app .sidebar-brand .brand-mark {
+  width: 40px !important;
+  height: 40px !important;
+
+  flex: 0 0 40px !important;
+
+  color: #ffffff !important;
+
+  background:
+    linear-gradient(
+      145deg,
+      #203a63,
+      #14213d
+    ) !important;
+
+  border:
+    1px solid rgba(20, 33, 61, 0.12) !important;
+
+  border-radius: 11px !important;
+
+  box-shadow:
+    0 7px 18px rgba(20, 33, 61, 0.14) !important;
+}
+
+
+#app .sidebar-brand strong {
+  color: #14213d !important;
+
+  font-size: 15px !important;
+  font-weight: 800 !important;
+}
+
+
+#app .sidebar-brand span {
+  color: #8b96a8 !important;
+
+  font-size: 8px !important;
+  font-weight: 700 !important;
+}
+
+
+/* ==========================================================
+   MENU LATERAL
+   ========================================================== */
+
+#app .sidebar nav {
+  gap: 5px !important;
+}
+
+
+#app .nav-item {
+  min-height: 42px !important;
+
+  padding:
+    0 12px !important;
+
+  color: #69768a !important;
+
+  background:
+    transparent !important;
+
+  border:
+    1px solid transparent !important;
+
+  border-radius:
+    10px !important;
+
+  font-size:
+    11px !important;
+
+  font-weight:
+    650 !important;
+
+  box-shadow:
+    none !important;
+
+  transition:
+    background 0.17s ease,
+    color 0.17s ease,
+    border-color 0.17s ease,
+    transform 0.17s ease !important;
+}
+
+
+#app .nav-item:hover {
+  color:
+    #213b63 !important;
+
+  background:
+    #f5f7fa !important;
+
+  border-color:
+    #edf0f4 !important;
+
+  transform:
+    translateX(2px);
+}
+
+
+#app .nav-item.active {
+  color:
+    #1b365d !important;
+
+  background:
+    #edf3fa !important;
+
+  border-color:
+    #dfe9f5 !important;
+
+  box-shadow:
+    inset 3px 0 0 #315f9d !important;
+}
+
+
+#app .nav-item.active .nav-icon {
+  color:
+    #315f9d !important;
+}
+
+
+#app .nav-icon {
+  color:
+    #8995a7 !important;
+}
+
+
+/* ==========================================================
+   RODAPÉ DA SIDEBAR
+   ========================================================== */
+
+#app .sidebar-bottom {
+  border-top:
+    1px solid #edf0f4 !important;
+}
+
+
+#app .sidebar-bottom button {
+  color:
+    #69768a !important;
+}
+
+
+/* ==========================================================
+   ÁREA PRINCIPAL
+   ========================================================== */
+
+#app .main {
+  margin-left:
+    238px !important;
+
+  background:
+    transparent !important;
+}
+
+
+/* ==========================================================
+   TOPBAR
+   ========================================================== */
+
+#app .topbar {
+  min-height:
+    68px !important;
+
+  padding:
+    0 30px !important;
+
+  background:
+    rgba(255, 255, 255, 0.94) !important;
+
+  border-bottom:
+    1px solid #e7ebf1 !important;
+
+  box-shadow:
+    0 3px 18px rgba(16, 24, 40, 0.025) !important;
+
+  backdrop-filter:
+    blur(12px);
+}
+
+
+#app #pageTitle {
+  color:
+    #14213d !important;
+
+  font-size:
+    16px !important;
+
+  font-weight:
+    750 !important;
+
+  letter-spacing:
+    -0.02em !important;
+}
+
+
+/* ==========================================================
+   CONTEÚDO DAS PÁGINAS
+   ========================================================== */
+
+#app .content {
+  padding:
+    28px 30px 40px !important;
+}
+
+
+#app .view {
+  color:
+    var(--sava-text) !important;
+}
+
+
+/* ==========================================================
+   CABEÇALHOS
+   ========================================================== */
+
+#app .section-head h3,
+#app .section-heading h2,
+#app .section-heading h3,
+#renovacoes .section-head h3,
+#clientes .section-head h3,
+#apolices .section-head h3 {
+  color:
+    #172033 !important;
+
+  font-weight:
+    750 !important;
+
+  letter-spacing:
+    -0.035em !important;
+}
+
+
+#app .section-head p,
+#app .section-heading p,
+#renovacoes .section-head p,
+#clientes .section-head p,
+#apolices .section-head p {
+  color:
+    #7a8799 !important;
+}
+
+
+/* ==========================================================
+   BOTÕES
+   ========================================================== */
+
+#app .btn-primary,
+#clientes .section-head .btn-primary,
+#apolices .section-head .btn-primary {
+  color:
+    #ffffff !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #203a63,
+      #172b4a
+    ) !important;
+
+  border:
+    1px solid #172b4a !important;
+
+  border-radius:
+    9px !important;
+
+  box-shadow:
+    0 5px 14px rgba(20, 33, 61, 0.13) !important;
+
+  font-weight:
+    700 !important;
+}
+
+
+#app .btn-primary:hover,
+#clientes .section-head .btn-primary:hover,
+#apolices .section-head .btn-primary:hover {
+  background:
+    #14213d !important;
+
+  transform:
+    translateY(-1px) !important;
+
+  box-shadow:
+    0 8px 18px rgba(20, 33, 61, 0.17) !important;
+}
+
+
+#app .btn-secondary,
+#app .action-btn {
+  color:
+    #536176 !important;
+
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #e1e6ed !important;
+
+  box-shadow:
+    none !important;
+}
+
+
+#app .btn-secondary:hover,
+#app .action-btn:hover {
+  color:
+    #203a63 !important;
+
+  background:
+    #f5f8fc !important;
+
+  border-color:
+    #cfd9e7 !important;
+}
+
+
+/* ==========================================================
+   CAMPOS / INPUTS / SELECTS
+   ========================================================== */
+
+#app input:not([type="checkbox"]):not([type="radio"]),
+#app select,
+#app textarea,
+
+#clientes .toolbar input,
+#clientes .toolbar select,
+
+#apolices .toolbar input,
+#apolices .toolbar select,
+
+#renovacoes .toolbar input,
+#renovacoes .toolbar select,
+
+#ganhos input,
+#ganhos select {
+  color:
+    #263449 !important;
+
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #dde3eb !important;
+
+  border-radius:
+    9px !important;
+
+  box-shadow:
+    none !important;
+
+  outline:
+    none !important;
+}
+
+
+#app input::placeholder,
+#app textarea::placeholder {
+  color:
+    #9aa5b4 !important;
+}
+
+
+#app input:focus,
+#app select:focus,
+#app textarea:focus {
+  border-color:
+    #7895ba !important;
+
+  box-shadow:
+    0 0 0 3px rgba(49, 95, 157, 0.08) !important;
+}
+
+
+/* ==========================================================
+   TOOLBARS / FILTROS
+   ========================================================== */
+
+#clientes .toolbar,
+#apolices .toolbar,
+#renovacoes .toolbar,
+#ganhos .filters,
+#ganhos .wins-filters {
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #e6eaf0 !important;
+
+  border-radius:
+    13px !important;
+
+  box-shadow:
+    0 5px 18px rgba(16, 24, 40, 0.035) !important;
+}
+
+
+/* ==========================================================
+   CARDS GERAIS
+   ========================================================== */
+
+#app .card,
+#app .panel,
+#app .table-card {
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #e6eaf0 !important;
+
+  border-radius:
+    14px !important;
+
+  box-shadow:
+    var(--sava-shadow) !important;
+}
+
+
+/* ==========================================================
+   TABELAS
+   ========================================================== */
+
+#app .table-wrap,
+#apolices .table-wrap,
+#ganhos .table-card,
+#ganhos .wins-table-card {
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #e6eaf0 !important;
+
+  border-radius:
+    14px !important;
+
+  box-shadow:
+    0 7px 22px rgba(16, 24, 40, 0.04) !important;
+}
+
+
+#app table {
+  background:
+    transparent !important;
+}
+
+
+#app thead,
+#apolices thead {
+  background:
+    #f8fafc !important;
+}
+
+
+#app thead th,
+#apolices thead th {
+  color:
+    #7b8798 !important;
+
+  background:
+    #f8fafc !important;
+
+  border-bottom:
+    1px solid #e5e9ef !important;
+
+  font-weight:
+    750 !important;
+}
+
+
+#app tbody td,
+#apolices tbody td {
+  color:
+    #566377 !important;
+
+  border-bottom:
+    1px solid #edf0f4 !important;
+}
+
+
+#app tbody td:first-child,
+#apolices tbody td:first-child {
+  color:
+    #263449 !important;
+
+  font-weight:
+    650 !important;
+}
+
+
+#app tbody tr:hover,
+#apolices tbody tr:hover {
+  background:
+    #f8fafc !important;
+}
+
+
+/* ==========================================================
+   DASHBOARD
+   ========================================================== */
+
+#dashboard .sava-dashboard-header {
+  position:
+    relative;
+
+  overflow:
+    hidden;
+
+  margin-bottom:
+    22px !important;
+
+  padding:
+    24px 26px !important;
+
+  background:
+    linear-gradient(
+      105deg,
+      rgba(255,255,255,.98) 0%,
+      rgba(255,255,255,.94) 50%,
+      rgba(240,245,251,.90) 100%
+    ) !important;
+
+  border:
+    1px solid #e4e9f0 !important;
+
+  border-radius:
+    16px !important;
+
+  box-shadow:
+    var(--sava-shadow) !important;
+}
+
+
+#dashboard .sava-dashboard-header::after {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  right:
+    -60px;
+
+  top:
+    -100px;
+
+  width:
+    320px;
+
+  height:
+    320px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(49,95,157,.10),
+      transparent 68%
+    );
+
+  pointer-events:
+    none;
+}
+
+
+#dashboard .sava-eyebrow {
+  color:
+    #315f9d !important;
+
+  font-weight:
+    800 !important;
+
+  letter-spacing:
+    .12em !important;
+}
+
+
+#dashboard .sava-dashboard-title h2 {
+  color:
+    #172033 !important;
+
+  font-size:
+    27px !important;
+
+  font-weight:
+    780 !important;
+
+  letter-spacing:
+    -.04em !important;
+}
+
+
+#dashboard .sava-dashboard-title p {
+  color:
+    #7b8798 !important;
+}
+
+
+/* ==========================================================
+   KPIs DO DASHBOARD
+   ========================================================== */
+
+#dashboard .sava-kpi {
+  position:
+    relative;
+
+  overflow:
+    hidden;
+
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #e5e9ef !important;
+
+  border-radius:
+    15px !important;
+
+  box-shadow:
+    0 6px 20px rgba(16, 24, 40, 0.045) !important;
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease !important;
+}
+
+
+#dashboard .sava-kpi:hover {
+  transform:
+    translateY(-3px) !important;
+
+  border-color:
+    #d7dee8 !important;
+
+  box-shadow:
+    0 12px 30px rgba(16, 24, 40, 0.075) !important;
+}
+
+
+#dashboard .sava-kpi::before {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  left:
+    0;
+
+  top:
+    18px;
+
+  width:
+    3px;
+
+  height:
+    38px;
+
+  border-radius:
+    0 4px 4px 0;
+}
+
+
+#dashboard .sava-kpi-total::before {
+  background:
+    #315f9d;
+}
+
+
+#dashboard .sava-kpi-warning::before {
+  background:
+    #e98b3a;
+}
+
+
+#dashboard .sava-kpi-danger::before {
+  background:
+    #e04f5f;
+}
+
+
+#dashboard .sava-kpi-success::before {
+  background:
+    #16a36a;
+}
+
+
+#dashboard .sava-kpi .stat-label,
+#dashboard .sava-kpi small {
+  color:
+    #7b8798 !important;
+}
+
+
+#dashboard .sava-kpi .stat-value,
+#dashboard .sava-kpi strong {
+  color:
+    #172033 !important;
+}
+
+
+/* ==========================================================
+   PAINÉIS DO DASHBOARD
+   ========================================================== */
+
+#dashboard .sava-dashboard-panel {
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #e5e9ef !important;
+
+  border-radius:
+    15px !important;
+
+  box-shadow:
+    0 7px 22px rgba(16, 24, 40, 0.04) !important;
+}
+
+
+#dashboard .sava-dashboard-panel:hover {
+  border-color:
+    #d8dee7 !important;
+
+  box-shadow:
+    0 9px 26px rgba(16, 24, 40, 0.055) !important;
+}
+
+
+#dashboard .sava-panel-head {
+  border-bottom-color:
+    #edf0f4 !important;
+}
+
+
+#dashboard .sava-panel-head h3 {
+  color:
+    #263449 !important;
+}
+
+
+#dashboard .sava-panel-head p,
+#dashboard .sava-panel-head small {
+  color:
+    #8994a5 !important;
+}
+
+
+#dashboard .upcoming-list,
+#dashboard .process-summary,
+#dashboard .insurer-summary {
+  color:
+    #566377 !important;
+}
+
+
+/* ==========================================================
+   CLIENTES
+   ========================================================== */
+
+#clientsGrid > * {
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #e5e9ef !important;
+
+  border-radius:
+    14px !important;
+
+  box-shadow:
+    0 6px 20px rgba(16, 24, 40, 0.04) !important;
+}
+
+
+#clientsGrid > *::before {
+  background:
+    #315f9d !important;
+}
+
+
+#clientsGrid > *:hover {
+  transform:
+    translateY(-2px) !important;
+
+  border-color:
+    #d5dce6 !important;
+
+  box-shadow:
+    0 11px 28px rgba(16, 24, 40, 0.065) !important;
+}
+
+
+#clientsGrid strong,
+#clientsGrid h3,
+#clientsGrid h4 {
+  color:
+    #263449 !important;
+}
+
+
+#clientsGrid small,
+#clientsGrid p {
+  color:
+    #7b8798 !important;
+}
+
+
+/* ==========================================================
+   RENOVAÇÕES / KANBAN
+   ========================================================== */
+
+#commercialReportArea:not(:empty) {
+  color:
+    #4e5d72 !important;
+
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #e4e9ef !important;
+
+  box-shadow:
+    var(--sava-shadow) !important;
+}
+
+
+#kanban .kanban-col {
+  background:
+    #f7f9fc !important;
+
+  border:
+    1px solid #e3e8ef !important;
+
+  border-radius:
+    14px !important;
+}
+
+
+#kanban .kanban-column-head {
+  border-bottom:
+    1px solid #e5e9ef !important;
+}
+
+
+#kanban .kanban-column-title h4 {
+  color:
+    #263449 !important;
+}
+
+
+#kanban .kanban-column-title small {
+  color:
+    #8994a5 !important;
+}
+
+
+#kanban .kanban-card {
+  background:
+    #ffffff !important;
+
+  border:
+    1px solid #e2e7ed !important;
+
+  box-shadow:
+    0 4px 14px rgba(16, 24, 40, 0.035) !important;
+}
+
+
+#kanban .kanban-card:hover {
+  border-color:
+    #d1d9e4 !important;
+
+  box-shadow:
+    0 8px 20px rgba(16, 24, 40, 0.06) !important;
+}
+
+
+#kanban .empty {
+  color:
+    #929dad !important;
+
+  background:
+    rgba(255,255,255,.55) !important;
+
+  border:
+    1px dashed #d9e0e9 !important;
+}
+
+
+/* ==========================================================
+   GANHOS
+   ========================================================== */
+
+#ganhos .section-kicker {
+  color:
+    #16a36a !important;
+
+  font-weight:
+    800 !important;
+
+  letter-spacing:
+    .1em !important;
+}
+
+
+#ganhos .wins-summary {
+  color:
+    #526176 !important;
+}
+
+
+#ganhos #winsTotal {
+  color:
+    #16a36a !important;
+
+  font-weight:
+    800 !important;
+}
+
+
+/* ==========================================================
+   STATUS
+   ========================================================== */
+
+#app .pill,
+#app .status-badge {
+  border-radius:
+    999px !important;
+
+  font-weight:
+    700 !important;
+}
+
+
+/* ==========================================================
+   SCROLLBAR
+   ========================================================== */
+
+#app ::-webkit-scrollbar {
+  width:
+    7px;
+
+  height:
+    7px;
+}
+
+
+#app ::-webkit-scrollbar-track {
+  background:
+    transparent;
+}
+
+
+#app ::-webkit-scrollbar-thumb {
+  background:
+    #cbd3df !important;
+
+  border-radius:
+    20px;
+}
+
+
+#app ::-webkit-scrollbar-thumb:hover {
+  background:
+    #aeb9c8 !important;
+}
+
+
+/* ==========================================================
+   RESPONSIVO
+   ========================================================== */
+
+@media (max-width: 900px) {
+
+  #app .sidebar {
+    width:
+      210px !important;
+  }
+
+  #app .main {
+    margin-left:
+      210px !important;
+  }
+
+  #app .content {
+    padding:
+      22px 20px 35px !important;
+  }
+
+  #app .topbar {
+    padding:
+      0 20px !important;
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  #app .content {
+    padding:
+      18px 14px 30px !important;
+  }
+
+  #dashboard .sava-dashboard-header {
+    padding:
+      20px !important;
+  }
+
+  #dashboard .sava-dashboard-title h2 {
+    font-size:
+      23px !important;
+  }
+
+}

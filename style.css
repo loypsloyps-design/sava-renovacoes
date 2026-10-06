@@ -8542,28 +8542,128 @@ select option {
 }
 
 /* ==========================================================
-   SAVA — BACKGROUND INSTITUCIONAL DO SISTEMA
+   SAVA — WALLPAPER OFICIAL DO SISTEMA
    ========================================================== */
 
+/* Fundo geral */
+html {
+  min-height: 100%;
+  background: #eef2f7;
+}
+
 body {
-  background:
+  min-height: 100vh;
+
+  background-image:
     linear-gradient(
-      rgba(245, 248, 252, 0.84),
-      rgba(245, 248, 252, 0.84)
+      rgba(242, 246, 251, 0.82),
+      rgba(242, 246, 251, 0.82)
     ),
-    url("sava-system-bg.png") center center / cover fixed no-repeat !important;
+    url("sava-system-bg.png") !important;
+
+  background-position: center center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
 }
 
 
-/* área principal transparente para mostrar o wallpaper */
+/* O APP NÃO PODE ESCONDER A IMAGEM */
+#app,
+.app {
+  min-height: 100vh !important;
+  background: transparent !important;
+}
 
+
+/* CONTEÚDO PRINCIPAL */
+#app .main,
 .main {
   background: transparent !important;
 }
 
 
-/* telas internas */
+/* ÁREA DAS TELAS */
+#app .content,
+.content {
+  background: transparent !important;
+}
 
+
+/* AS VIEWS TAMBÉM PRECISAM SER TRANSPARENTES */
+#app .view,
 .view {
   background: transparent !important;
+}
+
+
+/* ==========================================================
+   CAMADA SUAVE SOBRE O WALLPAPER
+   ========================================================== */
+
+#app::before {
+  content: "";
+
+  position: fixed;
+
+  top: 0;
+  left: 230px;
+  right: 0;
+  bottom: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(247, 249, 252, 0.30),
+      rgba(238, 243, 249, 0.18)
+    );
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+
+/* Mantém o conteúdo acima da imagem */
+#app .main {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+
+/* Sidebar continua branca */
+#app .sidebar {
+  position: fixed;
+  z-index: 50;
+
+  background: rgba(255,255,255,0.97) !important;
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+
+/* Topbar com leve transparência */
+#app .topbar {
+  position: sticky;
+  z-index: 40;
+
+  background: rgba(255,255,255,0.91) !important;
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+
+/* Cards continuam legíveis */
+#app .panel,
+#app .stat-card,
+#app .client-card,
+#app .table-card,
+#app .kanban-column,
+#app .report-area {
+  background: rgba(255,255,255,0.94) !important;
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }

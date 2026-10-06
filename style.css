@@ -8598,3 +8598,100 @@ body #app .main .view,
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
+
+/* ==========================================================
+   SAVA — GLASS EFFECT / TRANSPARÊNCIA
+   ========================================================== */
+
+/* Cabeçalho "Visão geral" */
+.sava-dashboard-header {
+  background: rgba(255, 255, 255, 0.78) !important;
+  backdrop-filter: blur(16px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+
+  box-shadow:
+    0 12px 35px rgba(15, 35, 65, 0.10),
+    inset 0 1px 0 rgba(255,255,255,.8) !important;
+}
+
+
+/* Cards dos números:
+   Total / próximos / vencidas / renovadas */
+.sava-kpi {
+  background: rgba(255, 255, 255, 0.82) !important;
+
+  backdrop-filter: blur(18px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(120%) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.70) !important;
+
+  box-shadow:
+    0 12px 30px rgba(15, 35, 65, 0.10),
+    inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+
+
+/* Painéis grandes do Dashboard */
+.sava-dashboard-panel {
+  background: rgba(255, 255, 255, 0.80) !important;
+
+  backdrop-filter: blur(20px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(120%) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+
+  box-shadow:
+    0 14px 40px rgba(15, 35, 65, 0.11),
+    inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+
+
+/* Linhas das próximas renovações */
+.sava-upcoming-item,
+.upcoming-item {
+  background: rgba(255, 255, 255, 0.62) !important;
+
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+
+  border: 1px solid rgba(210, 220, 235, 0.72) !important;
+}
+
+
+/* Topo */
+.topbar {
+  background: rgba(255, 255, 255, 0.88) !important;
+
+  backdrop-filter: blur(18px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(120%) !important;
+}
+
+
+/* Pequeno efeito ao passar o mouse nos cards */
+.sava-kpi,
+.sava-dashboard-panel {
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    background .22s ease !important;
+}
+
+.sava-kpi:hover {
+  transform: translateY(-3px);
+
+  background: rgba(255,255,255,.90) !important;
+
+  box-shadow:
+    0 18px 40px rgba(15,35,65,.15) !important;
+}
+
+
+/* Mantém textos importantes bem legíveis */
+.sava-dashboard-header h2,
+.sava-dashboard-panel h3,
+.sava-kpi strong,
+.sava-kpi-value {
+  color: #0c1d38 !important;
+}

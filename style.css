@@ -8741,133 +8741,117 @@ body #app .main .view,
    SAVA — LOGO INTERATIVO
    ========================================================== */
 
-/* Área da marca */
-.sidebar-brand,
-.brand {
-  position: relative;
-}
+/* =========================================================
+   SAVA — IDENTIDADE INTERATIVA
+   ========================================================= */
 
-/* Quadrado com S */
-.sidebar-brand .brand-mark,
-.brand .brand-mark,
-.logo-mark {
+/* Logo inteira */
+.sidebar-brand {
   position: relative;
-  overflow: hidden;
-
+  cursor: default;
+  border-radius: 16px;
   transition:
     transform .35s ease,
-    box-shadow .35s ease,
-    filter .35s ease !important;
+    filter .35s ease;
 }
 
-/* Reflexo que atravessa o símbolo */
-.sidebar-brand .brand-mark::after,
-.brand .brand-mark::after,
-.logo-mark::after {
+/* Quadrado S */
+.sidebar-brand .brand-mark.small {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  transition:
+    transform .35s cubic-bezier(.2,.8,.2,1),
+    box-shadow .35s ease,
+    background .35s ease;
+}
+
+/* Reflexo dourado */
+.sidebar-brand .brand-mark.small::after {
   content: "";
   position: absolute;
 
-  top: -40%;
-  left: -80%;
+  top: -60%;
+  left: -100%;
 
   width: 45%;
-  height: 180%;
+  height: 220%;
 
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 214, 135, .55),
-    rgba(255,255,255,.8),
+    rgba(255, 213, 128, .25),
+    rgba(255, 239, 190, .9),
+    rgba(255,255,255,.95),
+    rgba(255, 213, 128, .35),
     transparent
   );
 
   transform: rotate(20deg);
-  opacity: 0;
-
   pointer-events: none;
+  z-index: 2;
 }
 
-/* Ao passar o mouse */
-.sidebar-brand:hover .brand-mark,
-.brand:hover .brand-mark,
-.logo-mark:hover {
-  transform: translateY(-2px) scale(1.05);
+/* Mouse em cima da marca */
+.sidebar-brand:hover .brand-mark.small {
+  transform:
+    translateY(-3px)
+    scale(1.07);
 
   box-shadow:
-    0 8px 22px rgba(10, 31, 64, .22),
-    0 0 18px rgba(210, 166, 78, .18) !important;
+    0 10px 25px rgba(9, 30, 66, .25),
+    0 0 0 1px rgba(210, 165, 76, .25),
+    0 0 22px rgba(210, 165, 76, .22);
 }
 
-/* Faz o reflexo atravessar */
-.sidebar-brand:hover .brand-mark::after,
-.brand:hover .brand-mark::after,
-.logo-mark:hover::after {
-  opacity: 1;
-  animation: savaLogoShine .85s ease forwards;
+/* Reflexo atravessando */
+.sidebar-brand:hover .brand-mark.small::after {
+  animation: savaShine .9s ease;
 }
 
-@keyframes savaLogoShine {
+@keyframes savaShine {
+
   0% {
-    left: -80%;
+    left: -100%;
   }
 
   100% {
-    left: 150%;
+    left: 160%;
   }
+
 }
 
 
-/* Nome SAVA */
-.sidebar-brand .brand-name,
-.brand .brand-name {
+/* Texto SAVA */
+.sidebar-brand > div:last-child strong {
+  display: block;
+
   transition:
+    transform .3s ease,
     letter-spacing .3s ease,
-    transform .3s ease;
+    color .3s ease;
 }
 
-.sidebar-brand:hover .brand-name,
-.brand:hover .brand-name {
-  letter-spacing: .7px;
-  transform: translateX(2px);
-}
-
-
-/* Item selecionado do menu */
-.nav-item.active {
-  position: relative;
-  overflow: hidden;
-}
-
-.nav-item.active::before {
-  content: "";
-  position: absolute;
-
-  left: 0;
-  top: 22%;
-
-  width: 3px;
-  height: 56%;
-
-  border-radius: 0 10px 10px 0;
-
-  background: #2768d7;
-
-  box-shadow:
-    0 0 8px rgba(39,104,215,.35);
+.sidebar-brand:hover > div:last-child strong {
+  transform: translateX(3px);
+  letter-spacing: 1.3px;
+  color: #173c73;
 }
 
 
-/* Ícones do menu */
-.nav-item .nav-icon {
+/* Texto SEGUROS */
+.sidebar-brand > div:last-child span {
+  display: block;
+
   transition:
-    transform .25s ease,
-    color .25s ease;
+    transform .35s ease,
+    letter-spacing .35s ease,
+    color .35s ease;
 }
 
-.nav-item:hover .nav-icon {
-  transform: translateY(-1px) scale(1.15);
-}
-
-.nav-item.active .nav-icon {
-  transform: scale(1.08);
+.sidebar-brand:hover > div:last-child span {
+  transform: translateX(3px);
+  letter-spacing: 2.2px;
+  color: #b38a42;
 }

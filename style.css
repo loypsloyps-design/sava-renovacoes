@@ -8737,121 +8737,124 @@ body #app .main .view,
   color: #0b1d38 !important;
 }
 
-/* ==========================================================
-   SAVA — LOGO INTERATIVO
-   ========================================================== */
+
 
 /* =========================================================
-   SAVA — IDENTIDADE INTERATIVA
+   SAVA LOGO - EFEITO VISÍVEL
    ========================================================= */
 
-/* Logo inteira */
-.sidebar-brand {
-  position: relative;
-  cursor: default;
-  border-radius: 16px;
+.sidebar .sidebar-brand .brand-mark.small {
+  position: relative !important;
+  overflow: hidden !important;
+
+  background: linear-gradient(
+    135deg,
+    #0b1f3a 0%,
+    #173d70 50%,
+    #0b1f3a 100%
+  ) !important;
+
+  color: #ffffff !important;
+
+  box-shadow:
+    0 8px 22px rgba(11, 31, 58, 0.25),
+    0 0 0 1px rgba(201, 160, 74, 0.25) !important;
+
   transition:
     transform .35s ease,
-    filter .35s ease;
+    box-shadow .35s ease !important;
 }
 
-/* Quadrado S */
-.sidebar-brand .brand-mark.small {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
 
-  transition:
-    transform .35s cubic-bezier(.2,.8,.2,1),
-    box-shadow .35s ease,
-    background .35s ease;
-}
+/* brilho que fica escondido */
+.sidebar .sidebar-brand .brand-mark.small::before {
+  content: "" !important;
 
-/* Reflexo dourado */
-.sidebar-brand .brand-mark.small::after {
-  content: "";
-  position: absolute;
+  position: absolute !important;
+  top: -50% !important;
+  left: -120% !important;
 
-  top: -60%;
-  left: -100%;
-
-  width: 45%;
-  height: 220%;
+  width: 55% !important;
+  height: 200% !important;
 
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 213, 128, .25),
-    rgba(255, 239, 190, .9),
-    rgba(255,255,255,.95),
-    rgba(255, 213, 128, .35),
+    rgba(255,255,255,.15),
+    rgba(255,220,150,.95),
+    rgba(255,255,255,.9),
     transparent
-  );
+  ) !important;
 
-  transform: rotate(20deg);
-  pointer-events: none;
-  z-index: 2;
+  transform: rotate(20deg) !important;
+
+  pointer-events: none !important;
 }
 
-/* Mouse em cima da marca */
-.sidebar-brand:hover .brand-mark.small {
+
+/* quando passa o mouse */
+.sidebar .sidebar-brand:hover .brand-mark.small {
   transform:
-    translateY(-3px)
-    scale(1.07);
+    translateY(-5px)
+    scale(1.12)
+    rotate(-3deg) !important;
 
   box-shadow:
-    0 10px 25px rgba(9, 30, 66, .25),
-    0 0 0 1px rgba(210, 165, 76, .25),
-    0 0 22px rgba(210, 165, 76, .22);
+    0 15px 30px rgba(11,31,58,.30),
+    0 0 18px rgba(201,160,74,.45) !important;
 }
 
-/* Reflexo atravessando */
-.sidebar-brand:hover .brand-mark.small::after {
-  animation: savaShine .9s ease;
+
+/* brilho atravessa o S */
+.sidebar .sidebar-brand:hover .brand-mark.small::before {
+  animation: savaLogoShine .85s ease forwards !important;
 }
 
-@keyframes savaShine {
+
+@keyframes savaLogoShine {
 
   0% {
-    left: -100%;
+    left: -120%;
   }
 
   100% {
-    left: 160%;
+    left: 170%;
   }
 
 }
 
 
-/* Texto SAVA */
-.sidebar-brand > div:last-child strong {
-  display: block;
+/* SAVA */
+.sidebar .sidebar-brand strong {
+  display: block !important;
 
   transition:
     transform .3s ease,
-    letter-spacing .3s ease,
-    color .3s ease;
-}
-
-.sidebar-brand:hover > div:last-child strong {
-  transform: translateX(3px);
-  letter-spacing: 1.3px;
-  color: #173c73;
+    color .3s ease,
+    letter-spacing .3s ease !important;
 }
 
 
-/* Texto SEGUROS */
-.sidebar-brand > div:last-child span {
-  display: block;
+/* SEGUROS */
+.sidebar .sidebar-brand span {
+  display: block !important;
 
   transition:
-    transform .35s ease,
-    letter-spacing .35s ease,
-    color .35s ease;
+    transform .3s ease,
+    color .3s ease,
+    letter-spacing .3s ease !important;
 }
 
-.sidebar-brand:hover > div:last-child span {
-  transform: translateX(3px);
-  letter-spacing: 2.2px;
-  color: #b38a42;
+
+.sidebar .sidebar-brand:hover strong {
+  transform: translateX(5px) !important;
+  color: #173d70 !important;
+  letter-spacing: 1.5px !important;
+}
+
+
+.sidebar .sidebar-brand:hover span {
+  transform: translateX(5px) !important;
+  color: #b78a37 !important;
+  letter-spacing: 2.5px !important;
 }

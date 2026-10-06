@@ -8737,3 +8737,137 @@ body #app .main .view,
   color: #0b1d38 !important;
 }
 
+/* ==========================================================
+   SAVA — LOGO INTERATIVO
+   ========================================================== */
+
+/* Área da marca */
+.sidebar-brand,
+.brand {
+  position: relative;
+}
+
+/* Quadrado com S */
+.sidebar-brand .brand-mark,
+.brand .brand-mark,
+.logo-mark {
+  position: relative;
+  overflow: hidden;
+
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    filter .35s ease !important;
+}
+
+/* Reflexo que atravessa o símbolo */
+.sidebar-brand .brand-mark::after,
+.brand .brand-mark::after,
+.logo-mark::after {
+  content: "";
+  position: absolute;
+
+  top: -40%;
+  left: -80%;
+
+  width: 45%;
+  height: 180%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 214, 135, .55),
+    rgba(255,255,255,.8),
+    transparent
+  );
+
+  transform: rotate(20deg);
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+/* Ao passar o mouse */
+.sidebar-brand:hover .brand-mark,
+.brand:hover .brand-mark,
+.logo-mark:hover {
+  transform: translateY(-2px) scale(1.05);
+
+  box-shadow:
+    0 8px 22px rgba(10, 31, 64, .22),
+    0 0 18px rgba(210, 166, 78, .18) !important;
+}
+
+/* Faz o reflexo atravessar */
+.sidebar-brand:hover .brand-mark::after,
+.brand:hover .brand-mark::after,
+.logo-mark:hover::after {
+  opacity: 1;
+  animation: savaLogoShine .85s ease forwards;
+}
+
+@keyframes savaLogoShine {
+  0% {
+    left: -80%;
+  }
+
+  100% {
+    left: 150%;
+  }
+}
+
+
+/* Nome SAVA */
+.sidebar-brand .brand-name,
+.brand .brand-name {
+  transition:
+    letter-spacing .3s ease,
+    transform .3s ease;
+}
+
+.sidebar-brand:hover .brand-name,
+.brand:hover .brand-name {
+  letter-spacing: .7px;
+  transform: translateX(2px);
+}
+
+
+/* Item selecionado do menu */
+.nav-item.active {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+
+  left: 0;
+  top: 22%;
+
+  width: 3px;
+  height: 56%;
+
+  border-radius: 0 10px 10px 0;
+
+  background: #2768d7;
+
+  box-shadow:
+    0 0 8px rgba(39,104,215,.35);
+}
+
+
+/* Ícones do menu */
+.nav-item .nav-icon {
+  transition:
+    transform .25s ease,
+    color .25s ease;
+}
+
+.nav-item:hover .nav-icon {
+  transform: translateY(-1px) scale(1.15);
+}
+
+.nav-item.active .nav-icon {
+  transform: scale(1.08);
+}

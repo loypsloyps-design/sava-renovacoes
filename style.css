@@ -8740,121 +8740,175 @@ body #app .main .view,
 
 
 /* =========================================================
-   SAVA LOGO - EFEITO VISÍVEL
+   SAVA — LOGO PREMIUM INTERATIVA
    ========================================================= */
 
 .sidebar .sidebar-brand .brand-mark.small {
   position: relative !important;
+  isolation: isolate !important;
   overflow: hidden !important;
 
-  background: linear-gradient(
-    135deg,
-    #0b1f3a 0%,
-    #173d70 50%,
-    #0b1f3a 100%
-  ) !important;
+  /* fundo azul vivo */
+  background:
+    linear-gradient(
+      135deg,
+      #07172e 0%,
+      #0d2f5f 30%,
+      #1d5ca8 50%,
+      #0d2f5f 70%,
+      #07172e 100%
+    ) !important;
 
+  background-size: 250% 250% !important;
+
+  /* S */
   color: #ffffff !important;
+  font-weight: 800 !important;
+  text-shadow:
+    0 0 8px rgba(255,255,255,.35),
+    0 0 16px rgba(255,255,255,.15) !important;
+
+  /* acabamento */
+  border: 1px solid rgba(210,170,85,.45) !important;
 
   box-shadow:
-    0 8px 22px rgba(11, 31, 58, 0.25),
-    0 0 0 1px rgba(201, 160, 74, 0.25) !important;
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -1px 0 rgba(0,0,0,.25),
+    0 6px 18px rgba(8,31,65,.20) !important;
+
+  animation:
+    savaGradient 7s ease-in-out infinite !important;
 
   transition:
-    transform .35s ease,
-    box-shadow .35s ease !important;
+    box-shadow .35s ease,
+    border-color .35s ease,
+    filter .35s ease !important;
 }
 
 
-/* brilho que fica escondido */
+/* brilho passando por dentro */
 .sidebar .sidebar-brand .brand-mark.small::before {
   content: "" !important;
 
   position: absolute !important;
-  top: -50% !important;
-  left: -120% !important;
+  z-index: -1 !important;
 
-  width: 55% !important;
-  height: 200% !important;
+  top: -80% !important;
+  left: -80% !important;
+
+  width: 45% !important;
+  height: 260% !important;
 
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255,255,255,.15),
-    rgba(255,220,150,.95),
-    rgba(255,255,255,.9),
+    rgba(255,255,255,.05),
+    rgba(255,215,130,.55),
+    rgba(255,255,255,.8),
+    rgba(255,215,130,.30),
     transparent
   ) !important;
 
-  transform: rotate(20deg) !important;
+  transform: rotate(25deg) !important;
+
+  animation:
+    savaLightPass 5s ease-in-out infinite !important;
 
   pointer-events: none !important;
 }
 
 
-/* quando passa o mouse */
+/* reflexo interno */
+.sidebar .sidebar-brand .brand-mark.small::after {
+  content: "" !important;
+
+  position: absolute !important;
+  z-index: -1 !important;
+
+  width: 38px !important;
+  height: 38px !important;
+
+  top: -20px !important;
+  right: -15px !important;
+
+  border-radius: 50% !important;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,214,120,.55) 0%,
+      rgba(255,214,120,.18) 35%,
+      transparent 70%
+    ) !important;
+
+  animation:
+    savaGlow 3s ease-in-out infinite alternate !important;
+
+  pointer-events: none !important;
+}
+
+
+/* mouse: fica mais luminoso, SEM ficar pulando */
 .sidebar .sidebar-brand:hover .brand-mark.small {
-  transform:
-    translateY(-5px)
-    scale(1.12)
-    rotate(-3deg) !important;
+  transform: none !important;
+
+  border-color: rgba(226,183,91,.85) !important;
+
+  filter:
+    brightness(1.12)
+    saturate(1.15) !important;
 
   box-shadow:
-    0 15px 30px rgba(11,31,58,.30),
-    0 0 18px rgba(201,160,74,.45) !important;
+    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 -1px 0 rgba(0,0,0,.25),
+    0 0 0 2px rgba(211,169,78,.10),
+    0 7px 22px rgba(8,31,65,.28),
+    0 0 18px rgba(210,168,77,.20) !important;
 }
 
 
-/* brilho atravessa o S */
-.sidebar .sidebar-brand:hover .brand-mark.small::before {
-  animation: savaLogoShine .85s ease forwards !important;
-}
-
-
-@keyframes savaLogoShine {
-
+/* animação das cores */
+@keyframes savaGradient {
   0% {
-    left: -120%;
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
   }
 
   100% {
-    left: 170%;
+    background-position: 0% 50%;
+  }
+}
+
+
+/* faixa de luz atravessando */
+@keyframes savaLightPass {
+  0%,
+  55% {
+    left: -80%;
   }
 
+  80% {
+    left: 150%;
+  }
+
+  100% {
+    left: 150%;
+  }
 }
 
 
-/* SAVA */
-.sidebar .sidebar-brand strong {
-  display: block !important;
+/* pequeno brilho dourado interno */
+@keyframes savaGlow {
+  from {
+    opacity: .35;
+    transform: scale(.8);
+  }
 
-  transition:
-    transform .3s ease,
-    color .3s ease,
-    letter-spacing .3s ease !important;
-}
-
-
-/* SEGUROS */
-.sidebar .sidebar-brand span {
-  display: block !important;
-
-  transition:
-    transform .3s ease,
-    color .3s ease,
-    letter-spacing .3s ease !important;
-}
-
-
-.sidebar .sidebar-brand:hover strong {
-  transform: translateX(5px) !important;
-  color: #173d70 !important;
-  letter-spacing: 1.5px !important;
-}
-
-
-.sidebar .sidebar-brand:hover span {
-  transform: translateX(5px) !important;
-  color: #b78a37 !important;
-  letter-spacing: 2.5px !important;
+  to {
+    opacity: .85;
+    transform: scale(1.35);
+  }
 }

@@ -10281,4 +10281,5929 @@ select option {
 
 }
 
+/* ============================================================
+   SAVA SEGUROS — CENTRAL DE RENOVAÇÕES
+   STYLE.CSS — NOVA INTERFACE 2026
+
+   PARTE 2/6
+   Dashboard • Hero • KPIs • Painéis • Renovações • Processo
+   ============================================================ */
+
+
+/* ============================================================
+   18. DASHBOARD — ESTRUTURA
+   ============================================================ */
+
+#dashboard {
+  position: relative;
+  background: transparent;
+}
+
+
+/* mantém respiro consistente entre os blocos */
+
+#dashboard > * + * {
+  margin-top: 18px;
+}
+
+
+/* ============================================================
+   19. DASHBOARD — CABEÇALHO / HERO
+   ============================================================ */
+
+.sava-dashboard-header {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  min-height: 148px;
+
+  padding: 28px 30px;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .84);
+
+  border-radius: var(--sava-radius-xl);
+
+  background:
+    linear-gradient(
+      105deg,
+      rgba(255, 255, 255, .95) 0%,
+      rgba(255, 255, 255, .84) 55%,
+      rgba(237, 246, 255, .76) 100%
+    );
+
+  box-shadow:
+    0 14px 38px
+    rgba(25, 49, 80, .09);
+
+  backdrop-filter:
+    blur(20px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(20px)
+    saturate(125%);
+}
+
+
+/* iluminação azul do hero */
+
+.sava-dashboard-header::before {
+  content: "";
+
+  position: absolute;
+
+  top: -150px;
+  right: -85px;
+
+  width: 390px;
+  height: 390px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(67, 136, 232, .18) 0%,
+      rgba(67, 136, 232, .07) 35%,
+      transparent 70%
+    );
+}
+
+
+/* detalhe decorativo */
+
+.sava-dashboard-header::after {
+  content: "";
+
+  position: absolute;
+
+  right: 54px;
+  bottom: -62px;
+
+  width: 185px;
+  height: 185px;
+
+  border:
+    1px solid rgba(47, 114, 214, .08);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  box-shadow:
+    0 0 0 24px rgba(47, 114, 214, .025),
+    0 0 0 48px rgba(47, 114, 214, .018);
+}
+
+
+.sava-dashboard-title {
+  position: relative;
+  z-index: 2;
+
+  max-width: 690px;
+}
+
+
+.sava-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 8px;
+
+  color: #316cb6;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: .17em;
+
+  text-transform: uppercase;
+}
+
+
+/* pequeno detalhe antes do texto */
+
+.sava-eyebrow::before {
+  content: "";
+
+  display: block;
+
+  width: 18px;
+  height: 2px;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #286bc2,
+      #67a3ef
+    );
+}
+
+
+.sava-dashboard-title h2 {
+  margin: 0;
+
+  color: #10213a;
+
+  font-size: clamp(26px, 2.3vw, 34px);
+  font-weight: 820;
+
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+
+
+.sava-dashboard-title p {
+  max-width: 610px;
+
+  margin:
+    9px 0 0;
+
+  color: #6f7f94;
+
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+
+/* ============================================================
+   20. BOTÃO ATUALIZAR DO DASHBOARD
+   ============================================================ */
+
+#dashboardRefresh {
+  position: relative;
+  z-index: 3;
+
+  flex: 0 0 auto;
+
+  min-height: 40px;
+
+  padding:
+    0 15px;
+
+  color: #39536f;
+
+  border:
+    1px solid rgba(31, 73, 119, .12);
+
+  border-radius: 11px;
+
+  background:
+    rgba(255, 255, 255, .83);
+
+  box-shadow:
+    0 5px 15px
+    rgba(20, 46, 75, .055);
+
+  backdrop-filter:
+    blur(12px);
+
+  -webkit-backdrop-filter:
+    blur(12px);
+
+  font-size: 11px;
+  font-weight: 750;
+
+  transition:
+    transform var(--sava-transition),
+    color var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition),
+    box-shadow var(--sava-transition);
+}
+
+
+#dashboardRefresh:hover {
+  color: #245eaa;
+
+  border-color:
+    rgba(47, 114, 214, .20);
+
+  background:
+    rgba(255, 255, 255, .97);
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 9px 20px
+    rgba(20, 46, 75, .09);
+}
+
+
+#dashboardRefresh:active {
+  transform: translateY(0);
+}
+
+
+/* ============================================================
+   21. GRID DOS KPIs
+   ============================================================ */
+
+.sava-kpi-grid,
+.stats-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+
+/* ============================================================
+   22. CARDS DOS KPIs
+   ============================================================ */
+
+.sava-kpi,
+.stat-card {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  min-width: 0;
+  min-height: 130px;
+
+  padding: 20px;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .86);
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, .90);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  transition:
+    transform var(--sava-transition),
+    box-shadow var(--sava-transition),
+    border-color var(--sava-transition);
+}
+
+
+/* barrinha de identidade */
+
+.sava-kpi::before,
+.stat-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 18px;
+  bottom: 18px;
+  left: 0;
+
+  width: 3px;
+
+  border-radius:
+    0 4px 4px 0;
+
+  background:
+    var(--sava-blue-600);
+}
+
+
+/* brilho ambiente do card */
+
+.sava-kpi::after,
+.stat-card::after {
+  content: "";
+
+  position: absolute;
+
+  right: -45px;
+  bottom: -55px;
+
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(47, 114, 214, .13),
+      transparent 68%
+    );
+}
+
+
+.sava-kpi:hover,
+.stat-card:hover {
+  transform:
+    translateY(-4px);
+
+  border-color:
+    rgba(47, 114, 214, .15);
+
+  box-shadow:
+    var(--sava-shadow-hover);
+}
+
+
+/* ============================================================
+   23. CORES INDIVIDUAIS DOS KPIs
+   ============================================================ */
+
+/* TOTAL */
+
+.sava-kpi-total::before {
+  background:
+    linear-gradient(
+      180deg,
+      #4b94ef,
+      #2f72d6
+    );
+}
+
+
+.sava-kpi-total::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(47, 114, 214, .17),
+      transparent 68%
+    );
+}
+
+
+/* 7 DIAS */
+
+.sava-kpi-warning::before {
+  background:
+    linear-gradient(
+      180deg,
+      #f2aa5e,
+      #e9933e
+    );
+}
+
+
+.sava-kpi-warning::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(233, 147, 62, .17),
+      transparent 68%
+    );
+}
+
+
+/* VENCIDAS */
+
+.sava-kpi-danger::before {
+  background:
+    linear-gradient(
+      180deg,
+      #ed6c79,
+      #e65362
+    );
+}
+
+
+.sava-kpi-danger::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(230, 83, 98, .16),
+      transparent 68%
+    );
+}
+
+
+/* GANHAS */
+
+.sava-kpi-success::before {
+  background:
+    linear-gradient(
+      180deg,
+      #30ba80,
+      #16a36a
+    );
+}
+
+
+.sava-kpi-success::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(22, 163, 106, .17),
+      transparent 68%
+    );
+}
+
+
+/* ============================================================
+   24. ÍCONES DOS KPIs
+   ============================================================ */
+
+.stat-icon {
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  width: 45px;
+  height: 45px;
+
+  border-radius: 13px;
+
+  font-size: 19px;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, .58);
+}
+
+
+.stat-icon.blue {
+  color: #2876db;
+  background: #e9f3ff;
+}
+
+
+.stat-icon.orange {
+  color: #d97d28;
+  background: #fff3e5;
+}
+
+
+.stat-icon.red {
+  color: #d94858;
+  background: #ffedef;
+}
+
+
+.stat-icon.green {
+  color: #11905d;
+  background: #e7f7ef;
+}
+
+
+/* ============================================================
+   25. CONTEÚDO DOS KPIs
+   ============================================================ */
+
+.sava-kpi-content,
+.stat-content {
+  position: relative;
+  z-index: 2;
+
+  min-width: 0;
+}
+
+
+.sava-kpi-content > span,
+.stat-content > span,
+.stat-label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #7a8798;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  line-height: 1.35;
+
+  letter-spacing: .035em;
+
+  text-transform: uppercase;
+}
+
+
+.sava-kpi-content strong,
+.stat-value,
+.stat-content strong {
+  display: block;
+
+  color: #13233b;
+
+  font-size: 27px;
+  font-weight: 850;
+
+  line-height: 1;
+
+  letter-spacing: -.04em;
+}
+
+
+.sava-kpi-content small,
+.stat-content small,
+.stat-help {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #919cac;
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+/* ============================================================
+   26. ÁREA PRINCIPAL DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-main {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.45fr)
+    minmax(300px, .85fr);
+
+  gap: 16px;
+
+  align-items: stretch;
+}
+
+
+/* ============================================================
+   27. PAINÉIS DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-panel {
+  position: relative;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .85);
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, .91);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  transition:
+    transform var(--sava-transition),
+    box-shadow var(--sava-transition),
+    border-color var(--sava-transition);
+}
+
+
+.sava-dashboard-panel:hover {
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(47, 114, 214, .11);
+
+  box-shadow:
+    0 16px 38px
+    rgba(25, 49, 80, .105);
+}
+
+
+/* linha de luz superior */
+
+.sava-dashboard-panel::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 7%;
+  right: 7%;
+
+  height: 1px;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, .95),
+      transparent
+    );
+}
+
+
+/* ============================================================
+   28. CABEÇALHO DOS PAINÉIS
+   ============================================================ */
+
+.sava-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  min-height: 72px;
+
+  padding:
+    17px 19px;
+
+  border-bottom:
+    1px solid #edf1f5;
+
+  background:
+    rgba(255, 255, 255, .38);
+}
+
+
+.sava-panel-head > div {
+  min-width: 0;
+}
+
+
+.sava-panel-kicker {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #3977c9;
+
+  font-size: 8px;
+  font-weight: 900;
+
+  letter-spacing: .16em;
+
+  text-transform: uppercase;
+}
+
+
+.sava-panel-head h3 {
+  margin: 0;
+
+  color: #1b2b43;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  letter-spacing: -.018em;
+}
+
+
+.sava-panel-head p,
+.sava-panel-head small {
+  display: block;
+
+  margin: 4px 0 0;
+
+  color: #8793a3;
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+/* ============================================================
+   29. BOTÃO / LINK DOS PAINÉIS
+   ============================================================ */
+
+.sava-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  flex: 0 0 auto;
+
+  min-height: 32px;
+
+  padding:
+    0 10px;
+
+  color: #2e67b2;
+
+  border:
+    1px solid #dce8f6;
+
+  border-radius: 9px;
+
+  background:
+    #f2f7fd;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  transition:
+    transform var(--sava-transition),
+    color var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition);
+}
+
+
+.sava-link-btn:hover {
+  color: #225796;
+
+  border-color: #cbdcf0;
+
+  background: #e9f3ff;
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* ============================================================
+   30. PRÓXIMAS RENOVAÇÕES
+   ============================================================ */
+
+.upcoming-list,
+.sava-upcoming-list {
+  display: grid;
+  gap: 8px;
+
+  padding: 12px;
+
+  background: transparent;
+}
+
+
+.upcoming-item,
+.sava-upcoming-item {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.4fr)
+    minmax(90px, .65fr)
+    minmax(85px, .55fr);
+
+  align-items: center;
+  gap: 12px;
+
+  min-height: 58px;
+
+  padding:
+    10px 12px;
+
+  overflow: hidden;
+
+  border:
+    1px solid #e7ecf2;
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, .72);
+
+  box-shadow:
+    0 3px 12px
+    rgba(24, 45, 70, .025);
+
+  transition:
+    transform var(--sava-transition),
+    border-color var(--sava-transition),
+    box-shadow var(--sava-transition),
+    background var(--sava-transition);
+}
+
+
+.upcoming-item:hover,
+.sava-upcoming-item:hover {
+  transform:
+    translateX(3px);
+
+  border-color: #cedae8;
+
+  background:
+    rgba(255, 255, 255, .96);
+
+  box-shadow:
+    0 7px 18px
+    rgba(24, 45, 70, .06);
+}
+
+
+/* detalhe lateral */
+
+.upcoming-item::before,
+.sava-upcoming-item::before {
+  content: "";
+
+  position: absolute;
+
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+
+  width: 2px;
+
+  border-radius:
+    0 3px 3px 0;
+
+  background:
+    #8fb7e8;
+}
+
+
+.upcoming-item strong,
+.sava-upcoming-item strong {
+  color: #273850;
+
+  font-size: 11px;
+  font-weight: 750;
+}
+
+
+.upcoming-item span,
+.sava-upcoming-item span {
+  color: #758296;
+
+  font-size: 10px;
+}
+
+
+.upcoming-item small,
+.sava-upcoming-item small {
+  color: #929dac;
+
+  font-size: 9px;
+}
+
+
+/* ============================================================
+   31. ESTADO VAZIO DO DASHBOARD
+   ============================================================ */
+
+.empty-state,
+.sava-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 150px;
+
+  padding: 25px;
+
+  color: #8996a7;
+
+  text-align: center;
+}
+
+
+.empty-state strong,
+.sava-empty-state strong {
+  margin-bottom: 4px;
+
+  color: #5d6d82;
+
+  font-size: 12px;
+}
+
+
+.empty-state p,
+.sava-empty-state p {
+  max-width: 330px;
+
+  margin: 0;
+
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+
+/* ============================================================
+   32. PROCESSO DE RENOVAÇÃO
+   ============================================================ */
+
+.renewal-process,
+.sava-renewal-process {
+  display: grid;
+  gap: 13px;
+
+  padding:
+    16px 18px 19px;
+}
+
+
+.process-row,
+.sava-process-row {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(90px, 1fr)
+    minmax(110px, 1.7fr)
+    auto;
+
+  align-items: center;
+  gap: 10px;
+
+  min-height: 34px;
+}
+
+
+.process-row > span:first-child,
+.sava-process-row > span:first-child {
+  color: #637288;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+.process-row strong,
+.sava-process-row strong {
+  min-width: 26px;
+
+  color: #263850;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-align: right;
+}
+
+
+/* trilho */
+
+.process-bar,
+.sava-process-bar {
+  position: relative;
+
+  width: 100%;
+  height: 7px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: #edf1f5;
+
+  box-shadow:
+    inset 0 1px 2px
+    rgba(20, 42, 68, .05);
+}
+
+
+/* preenchimento */
+
+.process-bar > span,
+.process-bar-fill,
+.sava-process-bar > span,
+.sava-process-bar-fill {
+  display: block;
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #3d83df,
+      #6ca7ef
+    );
+
+  box-shadow:
+    0 0 10px
+    rgba(47, 114, 214, .15);
+}
+
+
+/* cores por status quando existirem */
+
+.process-row.warning .process-bar > span,
+.process-row.warning .process-bar-fill,
+.sava-process-row.warning .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #e9933e,
+      #f1b36e
+    );
+}
+
+
+.process-row.success .process-bar > span,
+.process-row.success .process-bar-fill,
+.sava-process-row.success .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #16a36a,
+      #4bc58e
+    );
+}
+
+
+.process-row.danger .process-bar > span,
+.process-row.danger .process-bar-fill,
+.sava-process-row.danger .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #e65362,
+      #ef7b86
+    );
+}
+
+
+/* ============================================================
+   33. SEGURADORAS
+   ============================================================ */
+
+.insurer-list,
+.sava-insurer-list {
+  display: grid;
+  gap: 8px;
+
+  padding: 12px;
+}
+
+
+.insurer-item,
+.sava-insurer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  min-height: 49px;
+
+  padding:
+    9px 12px;
+
+  border:
+    1px solid #e8edf2;
+
+  border-radius: 11px;
+
+  background:
+    rgba(255, 255, 255, .69);
+
+  transition:
+    transform var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition),
+    box-shadow var(--sava-transition);
+}
+
+
+.insurer-item:hover,
+.sava-insurer-item:hover {
+  transform:
+    translateY(-1px);
+
+  border-color: #d4deea;
+
+  background: #fff;
+
+  box-shadow:
+    0 6px 16px
+    rgba(25, 49, 80, .05);
+}
+
+
+.insurer-item strong,
+.sava-insurer-item strong {
+  color: #35465d;
+
+  font-size: 10.5px;
+  font-weight: 750;
+}
+
+
+.insurer-item span,
+.sava-insurer-item span {
+  color: #8793a3;
+
+  font-size: 9.5px;
+}
+
+
+/* quantidade */
+
+.insurer-count,
+.sava-insurer-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 28px;
+  min-height: 25px;
+
+  padding: 0 8px;
+
+  color: #356db6;
+
+  border:
+    1px solid #dce8f6;
+
+  border-radius: 999px;
+
+  background: #f0f6fd;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+
+/* ============================================================
+   34. PAINEL GENÉRICO
+   Também será reaproveitado nas próximas telas.
+   ============================================================ */
+
+.panel {
+  position: relative;
+
+  min-width: 0;
+
+  border:
+    1px solid rgba(255, 255, 255, .84);
+
+  border-radius: var(--sava-radius-lg);
+
+  background:
+    var(--sava-surface);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(17px)
+    saturate(120%);
+
+  -webkit-backdrop-filter:
+    blur(17px)
+    saturate(120%);
+}
+
+
+.panel-head,
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding:
+    16px 18px;
+
+  border-bottom:
+    1px solid #edf1f5;
+}
+
+
+.panel-head h3,
+.panel-header h3 {
+  margin: 0;
+
+  color: #1c2c44;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+
+.panel-head p,
+.panel-header p {
+  margin: 4px 0 0;
+
+  color: #8995a5;
+
+  font-size: 10px;
+}
+
+
+/* ============================================================
+   35. BADGES / PILLS
+   Base visual que será usada em todo o sistema.
+   ============================================================ */
+
+.badge,
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  min-height: 24px;
+
+  padding:
+    0 8px;
+
+  border:
+    1px solid transparent;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+
+.badge.blue,
+.pill.blue {
+  color: #285fa9;
+
+  border-color:
+    rgba(47, 114, 214, .10);
+
+  background:
+    var(--sava-blue-100);
+}
+
+
+.badge.green,
+.pill.green {
+  color: var(--sava-green-dark);
+
+  border-color:
+    rgba(22, 163, 106, .10);
+
+  background:
+    var(--sava-green-soft);
+}
+
+
+.badge.orange,
+.pill.orange {
+  color: var(--sava-orange-dark);
+
+  border-color:
+    rgba(233, 147, 62, .12);
+
+  background:
+    var(--sava-orange-soft);
+}
+
+
+.badge.red,
+.pill.red {
+  color: var(--sava-red-dark);
+
+  border-color:
+    rgba(230, 83, 98, .11);
+
+  background:
+    var(--sava-red-soft);
+}
+
+
+.badge.purple,
+.pill.purple {
+  color: #6642b5;
+
+  border-color:
+    rgba(128, 91, 212, .10);
+
+  background:
+    var(--sava-purple-soft);
+}
+
+
+/* ============================================================
+   36. MICROINTERAÇÕES DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-header,
+.sava-kpi,
+.stat-card,
+.sava-dashboard-panel {
+  will-change: transform;
+}
+
+
+/* brilho muito sutil ao passar nos KPIs */
+
+.sava-kpi:hover .stat-icon,
+.stat-card:hover .stat-icon {
+  transform:
+    scale(1.04);
+}
+
+
+.stat-icon {
+  transition:
+    transform var(--sava-transition);
+}
+
+
+/* ============================================================
+   37. RESPONSIVIDADE DO DASHBOARD
+   ============================================================ */
+
+@media (max-width: 1180px) {
+
+  .sava-kpi-grid,
+  .stats-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  .sava-dashboard-main {
+    grid-template-columns:
+      minmax(0, 1.3fr)
+      minmax(280px, .8fr);
+  }
+
+}
+
+
+@media (max-width: 950px) {
+
+  .sava-dashboard-header {
+    min-height: 130px;
+
+    padding:
+      23px 22px;
+  }
+
+
+  .sava-dashboard-main {
+    grid-template-columns: 1fr;
+  }
+
+
+  .sava-dashboard-title h2 {
+    font-size: 27px;
+  }
+
+}
+
+
+@media (max-width: 680px) {
+
+  .sava-dashboard-header {
+    display: block;
+
+    min-height: auto;
+
+    padding:
+      21px 18px;
+  }
+
+
+  #dashboardRefresh {
+    margin-top: 17px;
+  }
+
+
+  .sava-kpi-grid,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .sava-kpi,
+  .stat-card {
+    min-height: 112px;
+  }
+
+
+  .upcoming-item,
+  .sava-upcoming-item {
+    grid-template-columns: 1fr;
+
+    gap: 5px;
+  }
+
+
+  .process-row,
+  .sava-process-row {
+    grid-template-columns:
+      minmax(80px, 1fr)
+      minmax(100px, 1.4fr)
+      auto;
+  }
+
+}
+
+
+/* ============================================================
+   FIM — PARTE 2/6
+
+   PARTE 3:
+   Clientes • Apólices • Toolbars • Filtros • Tabelas • Cards
+   ============================================================ *//* ============================================================
+   SAVA SEGUROS — CENTRAL DE RENOVAÇÕES
+   STYLE.CSS — NOVA INTERFACE 2026
+
+   PARTE 2/6
+   Dashboard • Hero • KPIs • Painéis • Renovações • Processo
+   ============================================================ */
+
+
+/* ============================================================
+   18. DASHBOARD — ESTRUTURA
+   ============================================================ */
+
+#dashboard {
+  position: relative;
+  background: transparent;
+}
+
+
+/* mantém respiro consistente entre os blocos */
+
+#dashboard > * + * {
+  margin-top: 18px;
+}
+
+
+/* ============================================================
+   19. DASHBOARD — CABEÇALHO / HERO
+   ============================================================ */
+
+.sava-dashboard-header {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  min-height: 148px;
+
+  padding: 28px 30px;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .84);
+
+  border-radius: var(--sava-radius-xl);
+
+  background:
+    linear-gradient(
+      105deg,
+      rgba(255, 255, 255, .95) 0%,
+      rgba(255, 255, 255, .84) 55%,
+      rgba(237, 246, 255, .76) 100%
+    );
+
+  box-shadow:
+    0 14px 38px
+    rgba(25, 49, 80, .09);
+
+  backdrop-filter:
+    blur(20px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(20px)
+    saturate(125%);
+}
+
+
+/* iluminação azul do hero */
+
+.sava-dashboard-header::before {
+  content: "";
+
+  position: absolute;
+
+  top: -150px;
+  right: -85px;
+
+  width: 390px;
+  height: 390px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(67, 136, 232, .18) 0%,
+      rgba(67, 136, 232, .07) 35%,
+      transparent 70%
+    );
+}
+
+
+/* detalhe decorativo */
+
+.sava-dashboard-header::after {
+  content: "";
+
+  position: absolute;
+
+  right: 54px;
+  bottom: -62px;
+
+  width: 185px;
+  height: 185px;
+
+  border:
+    1px solid rgba(47, 114, 214, .08);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  box-shadow:
+    0 0 0 24px rgba(47, 114, 214, .025),
+    0 0 0 48px rgba(47, 114, 214, .018);
+}
+
+
+.sava-dashboard-title {
+  position: relative;
+  z-index: 2;
+
+  max-width: 690px;
+}
+
+
+.sava-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 8px;
+
+  color: #316cb6;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: .17em;
+
+  text-transform: uppercase;
+}
+
+
+/* pequeno detalhe antes do texto */
+
+.sava-eyebrow::before {
+  content: "";
+
+  display: block;
+
+  width: 18px;
+  height: 2px;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #286bc2,
+      #67a3ef
+    );
+}
+
+
+.sava-dashboard-title h2 {
+  margin: 0;
+
+  color: #10213a;
+
+  font-size: clamp(26px, 2.3vw, 34px);
+  font-weight: 820;
+
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+
+
+.sava-dashboard-title p {
+  max-width: 610px;
+
+  margin:
+    9px 0 0;
+
+  color: #6f7f94;
+
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+
+/* ============================================================
+   20. BOTÃO ATUALIZAR DO DASHBOARD
+   ============================================================ */
+
+#dashboardRefresh {
+  position: relative;
+  z-index: 3;
+
+  flex: 0 0 auto;
+
+  min-height: 40px;
+
+  padding:
+    0 15px;
+
+  color: #39536f;
+
+  border:
+    1px solid rgba(31, 73, 119, .12);
+
+  border-radius: 11px;
+
+  background:
+    rgba(255, 255, 255, .83);
+
+  box-shadow:
+    0 5px 15px
+    rgba(20, 46, 75, .055);
+
+  backdrop-filter:
+    blur(12px);
+
+  -webkit-backdrop-filter:
+    blur(12px);
+
+  font-size: 11px;
+  font-weight: 750;
+
+  transition:
+    transform var(--sava-transition),
+    color var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition),
+    box-shadow var(--sava-transition);
+}
+
+
+#dashboardRefresh:hover {
+  color: #245eaa;
+
+  border-color:
+    rgba(47, 114, 214, .20);
+
+  background:
+    rgba(255, 255, 255, .97);
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 9px 20px
+    rgba(20, 46, 75, .09);
+}
+
+
+#dashboardRefresh:active {
+  transform: translateY(0);
+}
+
+
+/* ============================================================
+   21. GRID DOS KPIs
+   ============================================================ */
+
+.sava-kpi-grid,
+.stats-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+
+/* ============================================================
+   22. CARDS DOS KPIs
+   ============================================================ */
+
+.sava-kpi,
+.stat-card {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  min-width: 0;
+  min-height: 130px;
+
+  padding: 20px;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .86);
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, .90);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  transition:
+    transform var(--sava-transition),
+    box-shadow var(--sava-transition),
+    border-color var(--sava-transition);
+}
+
+
+/* barrinha de identidade */
+
+.sava-kpi::before,
+.stat-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 18px;
+  bottom: 18px;
+  left: 0;
+
+  width: 3px;
+
+  border-radius:
+    0 4px 4px 0;
+
+  background:
+    var(--sava-blue-600);
+}
+
+
+/* brilho ambiente do card */
+
+.sava-kpi::after,
+.stat-card::after {
+  content: "";
+
+  position: absolute;
+
+  right: -45px;
+  bottom: -55px;
+
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(47, 114, 214, .13),
+      transparent 68%
+    );
+}
+
+
+.sava-kpi:hover,
+.stat-card:hover {
+  transform:
+    translateY(-4px);
+
+  border-color:
+    rgba(47, 114, 214, .15);
+
+  box-shadow:
+    var(--sava-shadow-hover);
+}
+
+
+/* ============================================================
+   23. CORES INDIVIDUAIS DOS KPIs
+   ============================================================ */
+
+/* TOTAL */
+
+.sava-kpi-total::before {
+  background:
+    linear-gradient(
+      180deg,
+      #4b94ef,
+      #2f72d6
+    );
+}
+
+
+.sava-kpi-total::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(47, 114, 214, .17),
+      transparent 68%
+    );
+}
+
+
+/* 7 DIAS */
+
+.sava-kpi-warning::before {
+  background:
+    linear-gradient(
+      180deg,
+      #f2aa5e,
+      #e9933e
+    );
+}
+
+
+.sava-kpi-warning::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(233, 147, 62, .17),
+      transparent 68%
+    );
+}
+
+
+/* VENCIDAS */
+
+.sava-kpi-danger::before {
+  background:
+    linear-gradient(
+      180deg,
+      #ed6c79,
+      #e65362
+    );
+}
+
+
+.sava-kpi-danger::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(230, 83, 98, .16),
+      transparent 68%
+    );
+}
+
+
+/* GANHAS */
+
+.sava-kpi-success::before {
+  background:
+    linear-gradient(
+      180deg,
+      #30ba80,
+      #16a36a
+    );
+}
+
+
+.sava-kpi-success::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(22, 163, 106, .17),
+      transparent 68%
+    );
+}
+
+
+/* ============================================================
+   24. ÍCONES DOS KPIs
+   ============================================================ */
+
+.stat-icon {
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  width: 45px;
+  height: 45px;
+
+  border-radius: 13px;
+
+  font-size: 19px;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, .58);
+}
+
+
+.stat-icon.blue {
+  color: #2876db;
+  background: #e9f3ff;
+}
+
+
+.stat-icon.orange {
+  color: #d97d28;
+  background: #fff3e5;
+}
+
+
+.stat-icon.red {
+  color: #d94858;
+  background: #ffedef;
+}
+
+
+.stat-icon.green {
+  color: #11905d;
+  background: #e7f7ef;
+}
+
+
+/* ============================================================
+   25. CONTEÚDO DOS KPIs
+   ============================================================ */
+
+.sava-kpi-content,
+.stat-content {
+  position: relative;
+  z-index: 2;
+
+  min-width: 0;
+}
+
+
+.sava-kpi-content > span,
+.stat-content > span,
+.stat-label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #7a8798;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  line-height: 1.35;
+
+  letter-spacing: .035em;
+
+  text-transform: uppercase;
+}
+
+
+.sava-kpi-content strong,
+.stat-value,
+.stat-content strong {
+  display: block;
+
+  color: #13233b;
+
+  font-size: 27px;
+  font-weight: 850;
+
+  line-height: 1;
+
+  letter-spacing: -.04em;
+}
+
+
+.sava-kpi-content small,
+.stat-content small,
+.stat-help {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #919cac;
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+/* ============================================================
+   26. ÁREA PRINCIPAL DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-main {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.45fr)
+    minmax(300px, .85fr);
+
+  gap: 16px;
+
+  align-items: stretch;
+}
+
+
+/* ============================================================
+   27. PAINÉIS DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-panel {
+  position: relative;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .85);
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, .91);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  transition:
+    transform var(--sava-transition),
+    box-shadow var(--sava-transition),
+    border-color var(--sava-transition);
+}
+
+
+.sava-dashboard-panel:hover {
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(47, 114, 214, .11);
+
+  box-shadow:
+    0 16px 38px
+    rgba(25, 49, 80, .105);
+}
+
+
+/* linha de luz superior */
+
+.sava-dashboard-panel::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 7%;
+  right: 7%;
+
+  height: 1px;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, .95),
+      transparent
+    );
+}
+
+
+/* ============================================================
+   28. CABEÇALHO DOS PAINÉIS
+   ============================================================ */
+
+.sava-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  min-height: 72px;
+
+  padding:
+    17px 19px;
+
+  border-bottom:
+    1px solid #edf1f5;
+
+  background:
+    rgba(255, 255, 255, .38);
+}
+
+
+.sava-panel-head > div {
+  min-width: 0;
+}
+
+
+.sava-panel-kicker {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #3977c9;
+
+  font-size: 8px;
+  font-weight: 900;
+
+  letter-spacing: .16em;
+
+  text-transform: uppercase;
+}
+
+
+.sava-panel-head h3 {
+  margin: 0;
+
+  color: #1b2b43;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  letter-spacing: -.018em;
+}
+
+
+.sava-panel-head p,
+.sava-panel-head small {
+  display: block;
+
+  margin: 4px 0 0;
+
+  color: #8793a3;
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+/* ============================================================
+   29. BOTÃO / LINK DOS PAINÉIS
+   ============================================================ */
+
+.sava-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  flex: 0 0 auto;
+
+  min-height: 32px;
+
+  padding:
+    0 10px;
+
+  color: #2e67b2;
+
+  border:
+    1px solid #dce8f6;
+
+  border-radius: 9px;
+
+  background:
+    #f2f7fd;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  transition:
+    transform var(--sava-transition),
+    color var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition);
+}
+
+
+.sava-link-btn:hover {
+  color: #225796;
+
+  border-color: #cbdcf0;
+
+  background: #e9f3ff;
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* ============================================================
+   30. PRÓXIMAS RENOVAÇÕES
+   ============================================================ */
+
+.upcoming-list,
+.sava-upcoming-list {
+  display: grid;
+  gap: 8px;
+
+  padding: 12px;
+
+  background: transparent;
+}
+
+
+.upcoming-item,
+.sava-upcoming-item {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.4fr)
+    minmax(90px, .65fr)
+    minmax(85px, .55fr);
+
+  align-items: center;
+  gap: 12px;
+
+  min-height: 58px;
+
+  padding:
+    10px 12px;
+
+  overflow: hidden;
+
+  border:
+    1px solid #e7ecf2;
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, .72);
+
+  box-shadow:
+    0 3px 12px
+    rgba(24, 45, 70, .025);
+
+  transition:
+    transform var(--sava-transition),
+    border-color var(--sava-transition),
+    box-shadow var(--sava-transition),
+    background var(--sava-transition);
+}
+
+
+.upcoming-item:hover,
+.sava-upcoming-item:hover {
+  transform:
+    translateX(3px);
+
+  border-color: #cedae8;
+
+  background:
+    rgba(255, 255, 255, .96);
+
+  box-shadow:
+    0 7px 18px
+    rgba(24, 45, 70, .06);
+}
+
+
+/* detalhe lateral */
+
+.upcoming-item::before,
+.sava-upcoming-item::before {
+  content: "";
+
+  position: absolute;
+
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+
+  width: 2px;
+
+  border-radius:
+    0 3px 3px 0;
+
+  background:
+    #8fb7e8;
+}
+
+
+.upcoming-item strong,
+.sava-upcoming-item strong {
+  color: #273850;
+
+  font-size: 11px;
+  font-weight: 750;
+}
+
+
+.upcoming-item span,
+.sava-upcoming-item span {
+  color: #758296;
+
+  font-size: 10px;
+}
+
+
+.upcoming-item small,
+.sava-upcoming-item small {
+  color: #929dac;
+
+  font-size: 9px;
+}
+
+
+/* ============================================================
+   31. ESTADO VAZIO DO DASHBOARD
+   ============================================================ */
+
+.empty-state,
+.sava-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 150px;
+
+  padding: 25px;
+
+  color: #8996a7;
+
+  text-align: center;
+}
+
+
+.empty-state strong,
+.sava-empty-state strong {
+  margin-bottom: 4px;
+
+  color: #5d6d82;
+
+  font-size: 12px;
+}
+
+
+.empty-state p,
+.sava-empty-state p {
+  max-width: 330px;
+
+  margin: 0;
+
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+
+/* ============================================================
+   32. PROCESSO DE RENOVAÇÃO
+   ============================================================ */
+
+.renewal-process,
+.sava-renewal-process {
+  display: grid;
+  gap: 13px;
+
+  padding:
+    16px 18px 19px;
+}
+
+
+.process-row,
+.sava-process-row {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(90px, 1fr)
+    minmax(110px, 1.7fr)
+    auto;
+
+  align-items: center;
+  gap: 10px;
+
+  min-height: 34px;
+}
+
+
+.process-row > span:first-child,
+.sava-process-row > span:first-child {
+  color: #637288;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+.process-row strong,
+.sava-process-row strong {
+  min-width: 26px;
+
+  color: #263850;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-align: right;
+}
+
+
+/* trilho */
+
+.process-bar,
+.sava-process-bar {
+  position: relative;
+
+  width: 100%;
+  height: 7px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: #edf1f5;
+
+  box-shadow:
+    inset 0 1px 2px
+    rgba(20, 42, 68, .05);
+}
+
+
+/* preenchimento */
+
+.process-bar > span,
+.process-bar-fill,
+.sava-process-bar > span,
+.sava-process-bar-fill {
+  display: block;
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #3d83df,
+      #6ca7ef
+    );
+
+  box-shadow:
+    0 0 10px
+    rgba(47, 114, 214, .15);
+}
+
+
+/* cores por status quando existirem */
+
+.process-row.warning .process-bar > span,
+.process-row.warning .process-bar-fill,
+.sava-process-row.warning .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #e9933e,
+      #f1b36e
+    );
+}
+
+
+.process-row.success .process-bar > span,
+.process-row.success .process-bar-fill,
+.sava-process-row.success .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #16a36a,
+      #4bc58e
+    );
+}
+
+
+.process-row.danger .process-bar > span,
+.process-row.danger .process-bar-fill,
+.sava-process-row.danger .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #e65362,
+      #ef7b86
+    );
+}
+
+
+/* ============================================================
+   33. SEGURADORAS
+   ============================================================ */
+
+.insurer-list,
+.sava-insurer-list {
+  display: grid;
+  gap: 8px;
+
+  padding: 12px;
+}
+
+
+.insurer-item,
+.sava-insurer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  min-height: 49px;
+
+  padding:
+    9px 12px;
+
+  border:
+    1px solid #e8edf2;
+
+  border-radius: 11px;
+
+  background:
+    rgba(255, 255, 255, .69);
+
+  transition:
+    transform var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition),
+    box-shadow var(--sava-transition);
+}
+
+
+.insurer-item:hover,
+.sava-insurer-item:hover {
+  transform:
+    translateY(-1px);
+
+  border-color: #d4deea;
+
+  background: #fff;
+
+  box-shadow:
+    0 6px 16px
+    rgba(25, 49, 80, .05);
+}
+
+
+.insurer-item strong,
+.sava-insurer-item strong {
+  color: #35465d;
+
+  font-size: 10.5px;
+  font-weight: 750;
+}
+
+
+.insurer-item span,
+.sava-insurer-item span {
+  color: #8793a3;
+
+  font-size: 9.5px;
+}
+
+
+/* quantidade */
+
+.insurer-count,
+.sava-insurer-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 28px;
+  min-height: 25px;
+
+  padding: 0 8px;
+
+  color: #356db6;
+
+  border:
+    1px solid #dce8f6;
+
+  border-radius: 999px;
+
+  background: #f0f6fd;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+
+/* ============================================================
+   34. PAINEL GENÉRICO
+   Também será reaproveitado nas próximas telas.
+   ============================================================ */
+
+.panel {
+  position: relative;
+
+  min-width: 0;
+
+  border:
+    1px solid rgba(255, 255, 255, .84);
+
+  border-radius: var(--sava-radius-lg);
+
+  background:
+    var(--sava-surface);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(17px)
+    saturate(120%);
+
+  -webkit-backdrop-filter:
+    blur(17px)
+    saturate(120%);
+}
+
+
+.panel-head,
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding:
+    16px 18px;
+
+  border-bottom:
+    1px solid #edf1f5;
+}
+
+
+.panel-head h3,
+.panel-header h3 {
+  margin: 0;
+
+  color: #1c2c44;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+
+.panel-head p,
+.panel-header p {
+  margin: 4px 0 0;
+
+  color: #8995a5;
+
+  font-size: 10px;
+}
+
+
+/* ============================================================
+   35. BADGES / PILLS
+   Base visual que será usada em todo o sistema.
+   ============================================================ */
+
+.badge,
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  min-height: 24px;
+
+  padding:
+    0 8px;
+
+  border:
+    1px solid transparent;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+
+.badge.blue,
+.pill.blue {
+  color: #285fa9;
+
+  border-color:
+    rgba(47, 114, 214, .10);
+
+  background:
+    var(--sava-blue-100);
+}
+
+
+.badge.green,
+.pill.green {
+  color: var(--sava-green-dark);
+
+  border-color:
+    rgba(22, 163, 106, .10);
+
+  background:
+    var(--sava-green-soft);
+}
+
+
+.badge.orange,
+.pill.orange {
+  color: var(--sava-orange-dark);
+
+  border-color:
+    rgba(233, 147, 62, .12);
+
+  background:
+    var(--sava-orange-soft);
+}
+
+
+.badge.red,
+.pill.red {
+  color: var(--sava-red-dark);
+
+  border-color:
+    rgba(230, 83, 98, .11);
+
+  background:
+    var(--sava-red-soft);
+}
+
+
+.badge.purple,
+.pill.purple {
+  color: #6642b5;
+
+  border-color:
+    rgba(128, 91, 212, .10);
+
+  background:
+    var(--sava-purple-soft);
+}
+
+
+/* ============================================================
+   36. MICROINTERAÇÕES DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-header,
+.sava-kpi,
+.stat-card,
+.sava-dashboard-panel {
+  will-change: transform;
+}
+
+
+/* brilho muito sutil ao passar nos KPIs */
+
+.sava-kpi:hover .stat-icon,
+.stat-card:hover .stat-icon {
+  transform:
+    scale(1.04);
+}
+
+
+.stat-icon {
+  transition:
+    transform var(--sava-transition);
+}
+
+
+/* ============================================================
+   37. RESPONSIVIDADE DO DASHBOARD
+   ============================================================ */
+
+@media (max-width: 1180px) {
+
+  .sava-kpi-grid,
+  .stats-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  .sava-dashboard-main {
+    grid-template-columns:
+      minmax(0, 1.3fr)
+      minmax(280px, .8fr);
+  }
+
+}
+
+
+@media (max-width: 950px) {
+
+  .sava-dashboard-header {
+    min-height: 130px;
+
+    padding:
+      23px 22px;
+  }
+
+
+  .sava-dashboard-main {
+    grid-template-columns: 1fr;
+  }
+
+
+  .sava-dashboard-title h2 {
+    font-size: 27px;
+  }
+
+}
+
+
+@media (max-width: 680px) {
+
+  .sava-dashboard-header {
+    display: block;
+
+    min-height: auto;
+
+    padding:
+      21px 18px;
+  }
+
+
+  #dashboardRefresh {
+    margin-top: 17px;
+  }
+
+
+  .sava-kpi-grid,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .sava-kpi,
+  .stat-card {
+    min-height: 112px;
+  }
+
+
+  .upcoming-item,
+  .sava-upcoming-item {
+    grid-template-columns: 1fr;
+
+    gap: 5px;
+  }
+
+
+  .process-row,
+  .sava-process-row {
+    grid-template-columns:
+      minmax(80px, 1fr)
+      minmax(100px, 1.4fr)
+      auto;
+  }
+
+}
+/* ============================================================
+   SAVA SEGUROS — CENTRAL DE RENOVAÇÕES
+   STYLE.CSS — NOVA INTERFACE 2026
+
+   PARTE 2/6
+   Dashboard • Hero • KPIs • Painéis • Renovações • Processo
+   ============================================================ */
+
+
+/* ============================================================
+   18. DASHBOARD — ESTRUTURA
+   ============================================================ */
+
+#dashboard {
+  position: relative;
+  background: transparent;
+}
+
+
+/* mantém respiro consistente entre os blocos */
+
+#dashboard > * + * {
+  margin-top: 18px;
+}
+
+
+/* ============================================================
+   19. DASHBOARD — CABEÇALHO / HERO
+   ============================================================ */
+
+.sava-dashboard-header {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  min-height: 148px;
+
+  padding: 28px 30px;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .84);
+
+  border-radius: var(--sava-radius-xl);
+
+  background:
+    linear-gradient(
+      105deg,
+      rgba(255, 255, 255, .95) 0%,
+      rgba(255, 255, 255, .84) 55%,
+      rgba(237, 246, 255, .76) 100%
+    );
+
+  box-shadow:
+    0 14px 38px
+    rgba(25, 49, 80, .09);
+
+  backdrop-filter:
+    blur(20px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(20px)
+    saturate(125%);
+}
+
+
+/* iluminação azul do hero */
+
+.sava-dashboard-header::before {
+  content: "";
+
+  position: absolute;
+
+  top: -150px;
+  right: -85px;
+
+  width: 390px;
+  height: 390px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(67, 136, 232, .18) 0%,
+      rgba(67, 136, 232, .07) 35%,
+      transparent 70%
+    );
+}
+
+
+/* detalhe decorativo */
+
+.sava-dashboard-header::after {
+  content: "";
+
+  position: absolute;
+
+  right: 54px;
+  bottom: -62px;
+
+  width: 185px;
+  height: 185px;
+
+  border:
+    1px solid rgba(47, 114, 214, .08);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  box-shadow:
+    0 0 0 24px rgba(47, 114, 214, .025),
+    0 0 0 48px rgba(47, 114, 214, .018);
+}
+
+
+.sava-dashboard-title {
+  position: relative;
+  z-index: 2;
+
+  max-width: 690px;
+}
+
+
+.sava-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 8px;
+
+  color: #316cb6;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: .17em;
+
+  text-transform: uppercase;
+}
+
+
+/* pequeno detalhe antes do texto */
+
+.sava-eyebrow::before {
+  content: "";
+
+  display: block;
+
+  width: 18px;
+  height: 2px;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #286bc2,
+      #67a3ef
+    );
+}
+
+
+.sava-dashboard-title h2 {
+  margin: 0;
+
+  color: #10213a;
+
+  font-size: clamp(26px, 2.3vw, 34px);
+  font-weight: 820;
+
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+
+
+.sava-dashboard-title p {
+  max-width: 610px;
+
+  margin:
+    9px 0 0;
+
+  color: #6f7f94;
+
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+
+/* ============================================================
+   20. BOTÃO ATUALIZAR DO DASHBOARD
+   ============================================================ */
+
+#dashboardRefresh {
+  position: relative;
+  z-index: 3;
+
+  flex: 0 0 auto;
+
+  min-height: 40px;
+
+  padding:
+    0 15px;
+
+  color: #39536f;
+
+  border:
+    1px solid rgba(31, 73, 119, .12);
+
+  border-radius: 11px;
+
+  background:
+    rgba(255, 255, 255, .83);
+
+  box-shadow:
+    0 5px 15px
+    rgba(20, 46, 75, .055);
+
+  backdrop-filter:
+    blur(12px);
+
+  -webkit-backdrop-filter:
+    blur(12px);
+
+  font-size: 11px;
+  font-weight: 750;
+
+  transition:
+    transform var(--sava-transition),
+    color var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition),
+    box-shadow var(--sava-transition);
+}
+
+
+#dashboardRefresh:hover {
+  color: #245eaa;
+
+  border-color:
+    rgba(47, 114, 214, .20);
+
+  background:
+    rgba(255, 255, 255, .97);
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 9px 20px
+    rgba(20, 46, 75, .09);
+}
+
+
+#dashboardRefresh:active {
+  transform: translateY(0);
+}
+
+
+/* ============================================================
+   21. GRID DOS KPIs
+   ============================================================ */
+
+.sava-kpi-grid,
+.stats-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+
+/* ============================================================
+   22. CARDS DOS KPIs
+   ============================================================ */
+
+.sava-kpi,
+.stat-card {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  min-width: 0;
+  min-height: 130px;
+
+  padding: 20px;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .86);
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, .90);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  transition:
+    transform var(--sava-transition),
+    box-shadow var(--sava-transition),
+    border-color var(--sava-transition);
+}
+
+
+/* barrinha de identidade */
+
+.sava-kpi::before,
+.stat-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 18px;
+  bottom: 18px;
+  left: 0;
+
+  width: 3px;
+
+  border-radius:
+    0 4px 4px 0;
+
+  background:
+    var(--sava-blue-600);
+}
+
+
+/* brilho ambiente do card */
+
+.sava-kpi::after,
+.stat-card::after {
+  content: "";
+
+  position: absolute;
+
+  right: -45px;
+  bottom: -55px;
+
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(47, 114, 214, .13),
+      transparent 68%
+    );
+}
+
+
+.sava-kpi:hover,
+.stat-card:hover {
+  transform:
+    translateY(-4px);
+
+  border-color:
+    rgba(47, 114, 214, .15);
+
+  box-shadow:
+    var(--sava-shadow-hover);
+}
+
+
+/* ============================================================
+   23. CORES INDIVIDUAIS DOS KPIs
+   ============================================================ */
+
+/* TOTAL */
+
+.sava-kpi-total::before {
+  background:
+    linear-gradient(
+      180deg,
+      #4b94ef,
+      #2f72d6
+    );
+}
+
+
+.sava-kpi-total::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(47, 114, 214, .17),
+      transparent 68%
+    );
+}
+
+
+/* 7 DIAS */
+
+.sava-kpi-warning::before {
+  background:
+    linear-gradient(
+      180deg,
+      #f2aa5e,
+      #e9933e
+    );
+}
+
+
+.sava-kpi-warning::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(233, 147, 62, .17),
+      transparent 68%
+    );
+}
+
+
+/* VENCIDAS */
+
+.sava-kpi-danger::before {
+  background:
+    linear-gradient(
+      180deg,
+      #ed6c79,
+      #e65362
+    );
+}
+
+
+.sava-kpi-danger::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(230, 83, 98, .16),
+      transparent 68%
+    );
+}
+
+
+/* GANHAS */
+
+.sava-kpi-success::before {
+  background:
+    linear-gradient(
+      180deg,
+      #30ba80,
+      #16a36a
+    );
+}
+
+
+.sava-kpi-success::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(22, 163, 106, .17),
+      transparent 68%
+    );
+}
+
+
+/* ============================================================
+   24. ÍCONES DOS KPIs
+   ============================================================ */
+
+.stat-icon {
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  width: 45px;
+  height: 45px;
+
+  border-radius: 13px;
+
+  font-size: 19px;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, .58);
+}
+
+
+.stat-icon.blue {
+  color: #2876db;
+  background: #e9f3ff;
+}
+
+
+.stat-icon.orange {
+  color: #d97d28;
+  background: #fff3e5;
+}
+
+
+.stat-icon.red {
+  color: #d94858;
+  background: #ffedef;
+}
+
+
+.stat-icon.green {
+  color: #11905d;
+  background: #e7f7ef;
+}
+
+
+/* ============================================================
+   25. CONTEÚDO DOS KPIs
+   ============================================================ */
+
+.sava-kpi-content,
+.stat-content {
+  position: relative;
+  z-index: 2;
+
+  min-width: 0;
+}
+
+
+.sava-kpi-content > span,
+.stat-content > span,
+.stat-label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #7a8798;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  line-height: 1.35;
+
+  letter-spacing: .035em;
+
+  text-transform: uppercase;
+}
+
+
+.sava-kpi-content strong,
+.stat-value,
+.stat-content strong {
+  display: block;
+
+  color: #13233b;
+
+  font-size: 27px;
+  font-weight: 850;
+
+  line-height: 1;
+
+  letter-spacing: -.04em;
+}
+
+
+.sava-kpi-content small,
+.stat-content small,
+.stat-help {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #919cac;
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+/* ============================================================
+   26. ÁREA PRINCIPAL DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-main {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.45fr)
+    minmax(300px, .85fr);
+
+  gap: 16px;
+
+  align-items: stretch;
+}
+
+
+/* ============================================================
+   27. PAINÉIS DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-panel {
+  position: relative;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .85);
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, .91);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  transition:
+    transform var(--sava-transition),
+    box-shadow var(--sava-transition),
+    border-color var(--sava-transition);
+}
+
+
+.sava-dashboard-panel:hover {
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(47, 114, 214, .11);
+
+  box-shadow:
+    0 16px 38px
+    rgba(25, 49, 80, .105);
+}
+
+
+/* linha de luz superior */
+
+.sava-dashboard-panel::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 7%;
+  right: 7%;
+
+  height: 1px;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, .95),
+      transparent
+    );
+}
+
+
+/* ============================================================
+   28. CABEÇALHO DOS PAINÉIS
+   ============================================================ */
+
+.sava-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  min-height: 72px;
+
+  padding:
+    17px 19px;
+
+  border-bottom:
+    1px solid #edf1f5;
+
+  background:
+    rgba(255, 255, 255, .38);
+}
+
+
+.sava-panel-head > div {
+  min-width: 0;
+}
+
+
+.sava-panel-kicker {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #3977c9;
+
+  font-size: 8px;
+  font-weight: 900;
+
+  letter-spacing: .16em;
+
+  text-transform: uppercase;
+}
+
+
+.sava-panel-head h3 {
+  margin: 0;
+
+  color: #1b2b43;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  letter-spacing: -.018em;
+}
+
+
+.sava-panel-head p,
+.sava-panel-head small {
+  display: block;
+
+  margin: 4px 0 0;
+
+  color: #8793a3;
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+/* ============================================================
+   29. BOTÃO / LINK DOS PAINÉIS
+   ============================================================ */
+
+.sava-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  flex: 0 0 auto;
+
+  min-height: 32px;
+
+  padding:
+    0 10px;
+
+  color: #2e67b2;
+
+  border:
+    1px solid #dce8f6;
+
+  border-radius: 9px;
+
+  background:
+    #f2f7fd;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  transition:
+    transform var(--sava-transition),
+    color var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition);
+}
+
+
+.sava-link-btn:hover {
+  color: #225796;
+
+  border-color: #cbdcf0;
+
+  background: #e9f3ff;
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* ============================================================
+   30. PRÓXIMAS RENOVAÇÕES
+   ============================================================ */
+
+.upcoming-list,
+.sava-upcoming-list {
+  display: grid;
+  gap: 8px;
+
+  padding: 12px;
+
+  background: transparent;
+}
+
+
+.upcoming-item,
+.sava-upcoming-item {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.4fr)
+    minmax(90px, .65fr)
+    minmax(85px, .55fr);
+
+  align-items: center;
+  gap: 12px;
+
+  min-height: 58px;
+
+  padding:
+    10px 12px;
+
+  overflow: hidden;
+
+  border:
+    1px solid #e7ecf2;
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, .72);
+
+  box-shadow:
+    0 3px 12px
+    rgba(24, 45, 70, .025);
+
+  transition:
+    transform var(--sava-transition),
+    border-color var(--sava-transition),
+    box-shadow var(--sava-transition),
+    background var(--sava-transition);
+}
+
+
+.upcoming-item:hover,
+.sava-upcoming-item:hover {
+  transform:
+    translateX(3px);
+
+  border-color: #cedae8;
+
+  background:
+    rgba(255, 255, 255, .96);
+
+  box-shadow:
+    0 7px 18px
+    rgba(24, 45, 70, .06);
+}
+
+
+/* detalhe lateral */
+
+.upcoming-item::before,
+.sava-upcoming-item::before {
+  content: "";
+
+  position: absolute;
+
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+
+  width: 2px;
+
+  border-radius:
+    0 3px 3px 0;
+
+  background:
+    #8fb7e8;
+}
+
+
+.upcoming-item strong,
+.sava-upcoming-item strong {
+  color: #273850;
+
+  font-size: 11px;
+  font-weight: 750;
+}
+
+
+.upcoming-item span,
+.sava-upcoming-item span {
+  color: #758296;
+
+  font-size: 10px;
+}
+
+
+.upcoming-item small,
+.sava-upcoming-item small {
+  color: #929dac;
+
+  font-size: 9px;
+}
+
+
+/* ============================================================
+   31. ESTADO VAZIO DO DASHBOARD
+   ============================================================ */
+
+.empty-state,
+.sava-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 150px;
+
+  padding: 25px;
+
+  color: #8996a7;
+
+  text-align: center;
+}
+
+
+.empty-state strong,
+.sava-empty-state strong {
+  margin-bottom: 4px;
+
+  color: #5d6d82;
+
+  font-size: 12px;
+}
+
+
+.empty-state p,
+.sava-empty-state p {
+  max-width: 330px;
+
+  margin: 0;
+
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+
+/* ============================================================
+   32. PROCESSO DE RENOVAÇÃO
+   ============================================================ */
+
+.renewal-process,
+.sava-renewal-process {
+  display: grid;
+  gap: 13px;
+
+  padding:
+    16px 18px 19px;
+}
+
+
+.process-row,
+.sava-process-row {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(90px, 1fr)
+    minmax(110px, 1.7fr)
+    auto;
+
+  align-items: center;
+  gap: 10px;
+
+  min-height: 34px;
+}
+
+
+.process-row > span:first-child,
+.sava-process-row > span:first-child {
+  color: #637288;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+.process-row strong,
+.sava-process-row strong {
+  min-width: 26px;
+
+  color: #263850;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-align: right;
+}
+
+
+/* trilho */
+
+.process-bar,
+.sava-process-bar {
+  position: relative;
+
+  width: 100%;
+  height: 7px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: #edf1f5;
+
+  box-shadow:
+    inset 0 1px 2px
+    rgba(20, 42, 68, .05);
+}
+
+
+/* preenchimento */
+
+.process-bar > span,
+.process-bar-fill,
+.sava-process-bar > span,
+.sava-process-bar-fill {
+  display: block;
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #3d83df,
+      #6ca7ef
+    );
+
+  box-shadow:
+    0 0 10px
+    rgba(47, 114, 214, .15);
+}
+
+
+/* cores por status quando existirem */
+
+.process-row.warning .process-bar > span,
+.process-row.warning .process-bar-fill,
+.sava-process-row.warning .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #e9933e,
+      #f1b36e
+    );
+}
+
+
+.process-row.success .process-bar > span,
+.process-row.success .process-bar-fill,
+.sava-process-row.success .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #16a36a,
+      #4bc58e
+    );
+}
+
+
+.process-row.danger .process-bar > span,
+.process-row.danger .process-bar-fill,
+.sava-process-row.danger .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #e65362,
+      #ef7b86
+    );
+}
+
+
+/* ============================================================
+   33. SEGURADORAS
+   ============================================================ */
+
+.insurer-list,
+.sava-insurer-list {
+  display: grid;
+  gap: 8px;
+
+  padding: 12px;
+}
+
+
+.insurer-item,
+.sava-insurer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  min-height: 49px;
+
+  padding:
+    9px 12px;
+
+  border:
+    1px solid #e8edf2;
+
+  border-radius: 11px;
+
+  background:
+    rgba(255, 255, 255, .69);
+
+  transition:
+    transform var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition),
+    box-shadow var(--sava-transition);
+}
+
+
+.insurer-item:hover,
+.sava-insurer-item:hover {
+  transform:
+    translateY(-1px);
+
+  border-color: #d4deea;
+
+  background: #fff;
+
+  box-shadow:
+    0 6px 16px
+    rgba(25, 49, 80, .05);
+}
+
+
+.insurer-item strong,
+.sava-insurer-item strong {
+  color: #35465d;
+
+  font-size: 10.5px;
+  font-weight: 750;
+}
+
+
+.insurer-item span,
+.sava-insurer-item span {
+  color: #8793a3;
+
+  font-size: 9.5px;
+}
+
+
+/* quantidade */
+
+.insurer-count,
+.sava-insurer-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 28px;
+  min-height: 25px;
+
+  padding: 0 8px;
+
+  color: #356db6;
+
+  border:
+    1px solid #dce8f6;
+
+  border-radius: 999px;
+
+  background: #f0f6fd;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+
+/* ============================================================
+   34. PAINEL GENÉRICO
+   Também será reaproveitado nas próximas telas.
+   ============================================================ */
+
+.panel {
+  position: relative;
+
+  min-width: 0;
+
+  border:
+    1px solid rgba(255, 255, 255, .84);
+
+  border-radius: var(--sava-radius-lg);
+
+  background:
+    var(--sava-surface);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(17px)
+    saturate(120%);
+
+  -webkit-backdrop-filter:
+    blur(17px)
+    saturate(120%);
+}
+
+
+.panel-head,
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding:
+    16px 18px;
+
+  border-bottom:
+    1px solid #edf1f5;
+}
+
+
+.panel-head h3,
+.panel-header h3 {
+  margin: 0;
+
+  color: #1c2c44;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+
+.panel-head p,
+.panel-header p {
+  margin: 4px 0 0;
+
+  color: #8995a5;
+
+  font-size: 10px;
+}
+
+
+/* ============================================================
+   35. BADGES / PILLS
+   Base visual que será usada em todo o sistema.
+   ============================================================ */
+
+.badge,
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  min-height: 24px;
+
+  padding:
+    0 8px;
+
+  border:
+    1px solid transparent;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+
+.badge.blue,
+.pill.blue {
+  color: #285fa9;
+
+  border-color:
+    rgba(47, 114, 214, .10);
+
+  background:
+    var(--sava-blue-100);
+}
+
+
+.badge.green,
+.pill.green {
+  color: var(--sava-green-dark);
+
+  border-color:
+    rgba(22, 163, 106, .10);
+
+  background:
+    var(--sava-green-soft);
+}
+
+
+.badge.orange,
+.pill.orange {
+  color: var(--sava-orange-dark);
+
+  border-color:
+    rgba(233, 147, 62, .12);
+
+  background:
+    var(--sava-orange-soft);
+}
+
+
+.badge.red,
+.pill.red {
+  color: var(--sava-red-dark);
+
+  border-color:
+    rgba(230, 83, 98, .11);
+
+  background:
+    var(--sava-red-soft);
+}
+
+
+.badge.purple,
+.pill.purple {
+  color: #6642b5;
+
+  border-color:
+    rgba(128, 91, 212, .10);
+
+  background:
+    var(--sava-purple-soft);
+}
+
+
+/* ============================================================
+   36. MICROINTERAÇÕES DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-header,
+.sava-kpi,
+.stat-card,
+.sava-dashboard-panel {
+  will-change: transform;
+}
+
+
+/* brilho muito sutil ao passar nos KPIs */
+
+.sava-kpi:hover .stat-icon,
+.stat-card:hover .stat-icon {
+  transform:
+    scale(1.04);
+}
+
+
+.stat-icon {
+  transition:
+    transform var(--sava-transition);
+}
+
+
+/* ============================================================
+   37. RESPONSIVIDADE DO DASHBOARD
+   ============================================================ */
+
+@media (max-width: 1180px) {
+
+  .sava-kpi-grid,
+  .stats-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  .sava-dashboard-main {
+    grid-template-columns:
+      minmax(0, 1.3fr)
+      minmax(280px, .8fr);
+  }
+
+}
+
+
+@media (max-width: 950px) {
+
+  .sava-dashboard-header {
+    min-height: 130px;
+
+    padding:
+      23px 22px;
+  }
+
+
+  .sava-dashboard-main {
+    grid-template-columns: 1fr;
+  }
+
+
+  .sava-dashboard-title h2 {
+    font-size: 27px;
+  }
+
+}
+
+
+@media (max-width: 680px) {
+
+  .sava-dashboard-header {
+    display: block;
+
+    min-height: auto;
+
+    padding:
+      21px 18px;
+  }
+
+
+  #dashboardRefresh {
+    margin-top: 17px;
+  }
+
+
+  .sava-kpi-grid,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .sava-kpi,
+  .stat-card {
+    min-height: 112px;
+  }
+
+
+  .upcoming-item,
+  .sava-upcoming-item {
+    grid-template-columns: 1fr;
+
+    gap: 5px;
+  }
+
+
+  .process-row,
+  .sava-process-row {
+    grid-template-columns:
+      minmax(80px, 1fr)
+      minmax(100px, 1.4fr)
+      auto;
+  }
+
+}/* ============================================================
+   SAVA SEGUROS — CENTRAL DE RENOVAÇÕES
+   STYLE.CSS — NOVA INTERFACE 2026
+
+   PARTE 2/6
+   Dashboard • Hero • KPIs • Painéis • Renovações • Processo
+   ============================================================ */
+
+
+/* ============================================================
+   18. DASHBOARD — ESTRUTURA
+   ============================================================ */
+
+#dashboard {
+  position: relative;
+  background: transparent;
+}
+
+
+/* mantém respiro consistente entre os blocos */
+
+#dashboard > * + * {
+  margin-top: 18px;
+}
+
+
+/* ============================================================
+   19. DASHBOARD — CABEÇALHO / HERO
+   ============================================================ */
+
+.sava-dashboard-header {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  min-height: 148px;
+
+  padding: 28px 30px;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .84);
+
+  border-radius: var(--sava-radius-xl);
+
+  background:
+    linear-gradient(
+      105deg,
+      rgba(255, 255, 255, .95) 0%,
+      rgba(255, 255, 255, .84) 55%,
+      rgba(237, 246, 255, .76) 100%
+    );
+
+  box-shadow:
+    0 14px 38px
+    rgba(25, 49, 80, .09);
+
+  backdrop-filter:
+    blur(20px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(20px)
+    saturate(125%);
+}
+
+
+/* iluminação azul do hero */
+
+.sava-dashboard-header::before {
+  content: "";
+
+  position: absolute;
+
+  top: -150px;
+  right: -85px;
+
+  width: 390px;
+  height: 390px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(67, 136, 232, .18) 0%,
+      rgba(67, 136, 232, .07) 35%,
+      transparent 70%
+    );
+}
+
+
+/* detalhe decorativo */
+
+.sava-dashboard-header::after {
+  content: "";
+
+  position: absolute;
+
+  right: 54px;
+  bottom: -62px;
+
+  width: 185px;
+  height: 185px;
+
+  border:
+    1px solid rgba(47, 114, 214, .08);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  box-shadow:
+    0 0 0 24px rgba(47, 114, 214, .025),
+    0 0 0 48px rgba(47, 114, 214, .018);
+}
+
+
+.sava-dashboard-title {
+  position: relative;
+  z-index: 2;
+
+  max-width: 690px;
+}
+
+
+.sava-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 8px;
+
+  color: #316cb6;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: .17em;
+
+  text-transform: uppercase;
+}
+
+
+/* pequeno detalhe antes do texto */
+
+.sava-eyebrow::before {
+  content: "";
+
+  display: block;
+
+  width: 18px;
+  height: 2px;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #286bc2,
+      #67a3ef
+    );
+}
+
+
+.sava-dashboard-title h2 {
+  margin: 0;
+
+  color: #10213a;
+
+  font-size: clamp(26px, 2.3vw, 34px);
+  font-weight: 820;
+
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+
+
+.sava-dashboard-title p {
+  max-width: 610px;
+
+  margin:
+    9px 0 0;
+
+  color: #6f7f94;
+
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+
+/* ============================================================
+   20. BOTÃO ATUALIZAR DO DASHBOARD
+   ============================================================ */
+
+#dashboardRefresh {
+  position: relative;
+  z-index: 3;
+
+  flex: 0 0 auto;
+
+  min-height: 40px;
+
+  padding:
+    0 15px;
+
+  color: #39536f;
+
+  border:
+    1px solid rgba(31, 73, 119, .12);
+
+  border-radius: 11px;
+
+  background:
+    rgba(255, 255, 255, .83);
+
+  box-shadow:
+    0 5px 15px
+    rgba(20, 46, 75, .055);
+
+  backdrop-filter:
+    blur(12px);
+
+  -webkit-backdrop-filter:
+    blur(12px);
+
+  font-size: 11px;
+  font-weight: 750;
+
+  transition:
+    transform var(--sava-transition),
+    color var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition),
+    box-shadow var(--sava-transition);
+}
+
+
+#dashboardRefresh:hover {
+  color: #245eaa;
+
+  border-color:
+    rgba(47, 114, 214, .20);
+
+  background:
+    rgba(255, 255, 255, .97);
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 9px 20px
+    rgba(20, 46, 75, .09);
+}
+
+
+#dashboardRefresh:active {
+  transform: translateY(0);
+}
+
+
+/* ============================================================
+   21. GRID DOS KPIs
+   ============================================================ */
+
+.sava-kpi-grid,
+.stats-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+
+/* ============================================================
+   22. CARDS DOS KPIs
+   ============================================================ */
+
+.sava-kpi,
+.stat-card {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  min-width: 0;
+  min-height: 130px;
+
+  padding: 20px;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .86);
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, .90);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  transition:
+    transform var(--sava-transition),
+    box-shadow var(--sava-transition),
+    border-color var(--sava-transition);
+}
+
+
+/* barrinha de identidade */
+
+.sava-kpi::before,
+.stat-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 18px;
+  bottom: 18px;
+  left: 0;
+
+  width: 3px;
+
+  border-radius:
+    0 4px 4px 0;
+
+  background:
+    var(--sava-blue-600);
+}
+
+
+/* brilho ambiente do card */
+
+.sava-kpi::after,
+.stat-card::after {
+  content: "";
+
+  position: absolute;
+
+  right: -45px;
+  bottom: -55px;
+
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(47, 114, 214, .13),
+      transparent 68%
+    );
+}
+
+
+.sava-kpi:hover,
+.stat-card:hover {
+  transform:
+    translateY(-4px);
+
+  border-color:
+    rgba(47, 114, 214, .15);
+
+  box-shadow:
+    var(--sava-shadow-hover);
+}
+
+
+/* ============================================================
+   23. CORES INDIVIDUAIS DOS KPIs
+   ============================================================ */
+
+/* TOTAL */
+
+.sava-kpi-total::before {
+  background:
+    linear-gradient(
+      180deg,
+      #4b94ef,
+      #2f72d6
+    );
+}
+
+
+.sava-kpi-total::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(47, 114, 214, .17),
+      transparent 68%
+    );
+}
+
+
+/* 7 DIAS */
+
+.sava-kpi-warning::before {
+  background:
+    linear-gradient(
+      180deg,
+      #f2aa5e,
+      #e9933e
+    );
+}
+
+
+.sava-kpi-warning::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(233, 147, 62, .17),
+      transparent 68%
+    );
+}
+
+
+/* VENCIDAS */
+
+.sava-kpi-danger::before {
+  background:
+    linear-gradient(
+      180deg,
+      #ed6c79,
+      #e65362
+    );
+}
+
+
+.sava-kpi-danger::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(230, 83, 98, .16),
+      transparent 68%
+    );
+}
+
+
+/* GANHAS */
+
+.sava-kpi-success::before {
+  background:
+    linear-gradient(
+      180deg,
+      #30ba80,
+      #16a36a
+    );
+}
+
+
+.sava-kpi-success::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(22, 163, 106, .17),
+      transparent 68%
+    );
+}
+
+
+/* ============================================================
+   24. ÍCONES DOS KPIs
+   ============================================================ */
+
+.stat-icon {
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  width: 45px;
+  height: 45px;
+
+  border-radius: 13px;
+
+  font-size: 19px;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255, 255, 255, .58);
+}
+
+
+.stat-icon.blue {
+  color: #2876db;
+  background: #e9f3ff;
+}
+
+
+.stat-icon.orange {
+  color: #d97d28;
+  background: #fff3e5;
+}
+
+
+.stat-icon.red {
+  color: #d94858;
+  background: #ffedef;
+}
+
+
+.stat-icon.green {
+  color: #11905d;
+  background: #e7f7ef;
+}
+
+
+/* ============================================================
+   25. CONTEÚDO DOS KPIs
+   ============================================================ */
+
+.sava-kpi-content,
+.stat-content {
+  position: relative;
+  z-index: 2;
+
+  min-width: 0;
+}
+
+
+.sava-kpi-content > span,
+.stat-content > span,
+.stat-label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #7a8798;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  line-height: 1.35;
+
+  letter-spacing: .035em;
+
+  text-transform: uppercase;
+}
+
+
+.sava-kpi-content strong,
+.stat-value,
+.stat-content strong {
+  display: block;
+
+  color: #13233b;
+
+  font-size: 27px;
+  font-weight: 850;
+
+  line-height: 1;
+
+  letter-spacing: -.04em;
+}
+
+
+.sava-kpi-content small,
+.stat-content small,
+.stat-help {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #919cac;
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+/* ============================================================
+   26. ÁREA PRINCIPAL DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-main {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.45fr)
+    minmax(300px, .85fr);
+
+  gap: 16px;
+
+  align-items: stretch;
+}
+
+
+/* ============================================================
+   27. PAINÉIS DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-panel {
+  position: relative;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 255, 255, .85);
+
+  border-radius: 18px;
+
+  background:
+    rgba(255, 255, 255, .91);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  -webkit-backdrop-filter:
+    blur(18px)
+    saturate(125%);
+
+  transition:
+    transform var(--sava-transition),
+    box-shadow var(--sava-transition),
+    border-color var(--sava-transition);
+}
+
+
+.sava-dashboard-panel:hover {
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(47, 114, 214, .11);
+
+  box-shadow:
+    0 16px 38px
+    rgba(25, 49, 80, .105);
+}
+
+
+/* linha de luz superior */
+
+.sava-dashboard-panel::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 7%;
+  right: 7%;
+
+  height: 1px;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, .95),
+      transparent
+    );
+}
+
+
+/* ============================================================
+   28. CABEÇALHO DOS PAINÉIS
+   ============================================================ */
+
+.sava-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  min-height: 72px;
+
+  padding:
+    17px 19px;
+
+  border-bottom:
+    1px solid #edf1f5;
+
+  background:
+    rgba(255, 255, 255, .38);
+}
+
+
+.sava-panel-head > div {
+  min-width: 0;
+}
+
+
+.sava-panel-kicker {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #3977c9;
+
+  font-size: 8px;
+  font-weight: 900;
+
+  letter-spacing: .16em;
+
+  text-transform: uppercase;
+}
+
+
+.sava-panel-head h3 {
+  margin: 0;
+
+  color: #1b2b43;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  letter-spacing: -.018em;
+}
+
+
+.sava-panel-head p,
+.sava-panel-head small {
+  display: block;
+
+  margin: 4px 0 0;
+
+  color: #8793a3;
+
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+/* ============================================================
+   29. BOTÃO / LINK DOS PAINÉIS
+   ============================================================ */
+
+.sava-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  flex: 0 0 auto;
+
+  min-height: 32px;
+
+  padding:
+    0 10px;
+
+  color: #2e67b2;
+
+  border:
+    1px solid #dce8f6;
+
+  border-radius: 9px;
+
+  background:
+    #f2f7fd;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  transition:
+    transform var(--sava-transition),
+    color var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition);
+}
+
+
+.sava-link-btn:hover {
+  color: #225796;
+
+  border-color: #cbdcf0;
+
+  background: #e9f3ff;
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* ============================================================
+   30. PRÓXIMAS RENOVAÇÕES
+   ============================================================ */
+
+.upcoming-list,
+.sava-upcoming-list {
+  display: grid;
+  gap: 8px;
+
+  padding: 12px;
+
+  background: transparent;
+}
+
+
+.upcoming-item,
+.sava-upcoming-item {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.4fr)
+    minmax(90px, .65fr)
+    minmax(85px, .55fr);
+
+  align-items: center;
+  gap: 12px;
+
+  min-height: 58px;
+
+  padding:
+    10px 12px;
+
+  overflow: hidden;
+
+  border:
+    1px solid #e7ecf2;
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, .72);
+
+  box-shadow:
+    0 3px 12px
+    rgba(24, 45, 70, .025);
+
+  transition:
+    transform var(--sava-transition),
+    border-color var(--sava-transition),
+    box-shadow var(--sava-transition),
+    background var(--sava-transition);
+}
+
+
+.upcoming-item:hover,
+.sava-upcoming-item:hover {
+  transform:
+    translateX(3px);
+
+  border-color: #cedae8;
+
+  background:
+    rgba(255, 255, 255, .96);
+
+  box-shadow:
+    0 7px 18px
+    rgba(24, 45, 70, .06);
+}
+
+
+/* detalhe lateral */
+
+.upcoming-item::before,
+.sava-upcoming-item::before {
+  content: "";
+
+  position: absolute;
+
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+
+  width: 2px;
+
+  border-radius:
+    0 3px 3px 0;
+
+  background:
+    #8fb7e8;
+}
+
+
+.upcoming-item strong,
+.sava-upcoming-item strong {
+  color: #273850;
+
+  font-size: 11px;
+  font-weight: 750;
+}
+
+
+.upcoming-item span,
+.sava-upcoming-item span {
+  color: #758296;
+
+  font-size: 10px;
+}
+
+
+.upcoming-item small,
+.sava-upcoming-item small {
+  color: #929dac;
+
+  font-size: 9px;
+}
+
+
+/* ============================================================
+   31. ESTADO VAZIO DO DASHBOARD
+   ============================================================ */
+
+.empty-state,
+.sava-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 150px;
+
+  padding: 25px;
+
+  color: #8996a7;
+
+  text-align: center;
+}
+
+
+.empty-state strong,
+.sava-empty-state strong {
+  margin-bottom: 4px;
+
+  color: #5d6d82;
+
+  font-size: 12px;
+}
+
+
+.empty-state p,
+.sava-empty-state p {
+  max-width: 330px;
+
+  margin: 0;
+
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+
+/* ============================================================
+   32. PROCESSO DE RENOVAÇÃO
+   ============================================================ */
+
+.renewal-process,
+.sava-renewal-process {
+  display: grid;
+  gap: 13px;
+
+  padding:
+    16px 18px 19px;
+}
+
+
+.process-row,
+.sava-process-row {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(90px, 1fr)
+    minmax(110px, 1.7fr)
+    auto;
+
+  align-items: center;
+  gap: 10px;
+
+  min-height: 34px;
+}
+
+
+.process-row > span:first-child,
+.sava-process-row > span:first-child {
+  color: #637288;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+.process-row strong,
+.sava-process-row strong {
+  min-width: 26px;
+
+  color: #263850;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-align: right;
+}
+
+
+/* trilho */
+
+.process-bar,
+.sava-process-bar {
+  position: relative;
+
+  width: 100%;
+  height: 7px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: #edf1f5;
+
+  box-shadow:
+    inset 0 1px 2px
+    rgba(20, 42, 68, .05);
+}
+
+
+/* preenchimento */
+
+.process-bar > span,
+.process-bar-fill,
+.sava-process-bar > span,
+.sava-process-bar-fill {
+  display: block;
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #3d83df,
+      #6ca7ef
+    );
+
+  box-shadow:
+    0 0 10px
+    rgba(47, 114, 214, .15);
+}
+
+
+/* cores por status quando existirem */
+
+.process-row.warning .process-bar > span,
+.process-row.warning .process-bar-fill,
+.sava-process-row.warning .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #e9933e,
+      #f1b36e
+    );
+}
+
+
+.process-row.success .process-bar > span,
+.process-row.success .process-bar-fill,
+.sava-process-row.success .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #16a36a,
+      #4bc58e
+    );
+}
+
+
+.process-row.danger .process-bar > span,
+.process-row.danger .process-bar-fill,
+.sava-process-row.danger .sava-process-bar > span {
+  background:
+    linear-gradient(
+      90deg,
+      #e65362,
+      #ef7b86
+    );
+}
+
+
+/* ============================================================
+   33. SEGURADORAS
+   ============================================================ */
+
+.insurer-list,
+.sava-insurer-list {
+  display: grid;
+  gap: 8px;
+
+  padding: 12px;
+}
+
+
+.insurer-item,
+.sava-insurer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  min-height: 49px;
+
+  padding:
+    9px 12px;
+
+  border:
+    1px solid #e8edf2;
+
+  border-radius: 11px;
+
+  background:
+    rgba(255, 255, 255, .69);
+
+  transition:
+    transform var(--sava-transition),
+    border-color var(--sava-transition),
+    background var(--sava-transition),
+    box-shadow var(--sava-transition);
+}
+
+
+.insurer-item:hover,
+.sava-insurer-item:hover {
+  transform:
+    translateY(-1px);
+
+  border-color: #d4deea;
+
+  background: #fff;
+
+  box-shadow:
+    0 6px 16px
+    rgba(25, 49, 80, .05);
+}
+
+
+.insurer-item strong,
+.sava-insurer-item strong {
+  color: #35465d;
+
+  font-size: 10.5px;
+  font-weight: 750;
+}
+
+
+.insurer-item span,
+.sava-insurer-item span {
+  color: #8793a3;
+
+  font-size: 9.5px;
+}
+
+
+/* quantidade */
+
+.insurer-count,
+.sava-insurer-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 28px;
+  min-height: 25px;
+
+  padding: 0 8px;
+
+  color: #356db6;
+
+  border:
+    1px solid #dce8f6;
+
+  border-radius: 999px;
+
+  background: #f0f6fd;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+
+/* ============================================================
+   34. PAINEL GENÉRICO
+   Também será reaproveitado nas próximas telas.
+   ============================================================ */
+
+.panel {
+  position: relative;
+
+  min-width: 0;
+
+  border:
+    1px solid rgba(255, 255, 255, .84);
+
+  border-radius: var(--sava-radius-lg);
+
+  background:
+    var(--sava-surface);
+
+  box-shadow:
+    var(--sava-shadow-md);
+
+  backdrop-filter:
+    blur(17px)
+    saturate(120%);
+
+  -webkit-backdrop-filter:
+    blur(17px)
+    saturate(120%);
+}
+
+
+.panel-head,
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding:
+    16px 18px;
+
+  border-bottom:
+    1px solid #edf1f5;
+}
+
+
+.panel-head h3,
+.panel-header h3 {
+  margin: 0;
+
+  color: #1c2c44;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+
+.panel-head p,
+.panel-header p {
+  margin: 4px 0 0;
+
+  color: #8995a5;
+
+  font-size: 10px;
+}
+
+
+/* ============================================================
+   35. BADGES / PILLS
+   Base visual que será usada em todo o sistema.
+   ============================================================ */
+
+.badge,
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  min-height: 24px;
+
+  padding:
+    0 8px;
+
+  border:
+    1px solid transparent;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+
+.badge.blue,
+.pill.blue {
+  color: #285fa9;
+
+  border-color:
+    rgba(47, 114, 214, .10);
+
+  background:
+    var(--sava-blue-100);
+}
+
+
+.badge.green,
+.pill.green {
+  color: var(--sava-green-dark);
+
+  border-color:
+    rgba(22, 163, 106, .10);
+
+  background:
+    var(--sava-green-soft);
+}
+
+
+.badge.orange,
+.pill.orange {
+  color: var(--sava-orange-dark);
+
+  border-color:
+    rgba(233, 147, 62, .12);
+
+  background:
+    var(--sava-orange-soft);
+}
+
+
+.badge.red,
+.pill.red {
+  color: var(--sava-red-dark);
+
+  border-color:
+    rgba(230, 83, 98, .11);
+
+  background:
+    var(--sava-red-soft);
+}
+
+
+.badge.purple,
+.pill.purple {
+  color: #6642b5;
+
+  border-color:
+    rgba(128, 91, 212, .10);
+
+  background:
+    var(--sava-purple-soft);
+}
+
+
+/* ============================================================
+   36. MICROINTERAÇÕES DO DASHBOARD
+   ============================================================ */
+
+.sava-dashboard-header,
+.sava-kpi,
+.stat-card,
+.sava-dashboard-panel {
+  will-change: transform;
+}
+
+
+/* brilho muito sutil ao passar nos KPIs */
+
+.sava-kpi:hover .stat-icon,
+.stat-card:hover .stat-icon {
+  transform:
+    scale(1.04);
+}
+
+
+.stat-icon {
+  transition:
+    transform var(--sava-transition);
+}
+
+
+/* ============================================================
+   37. RESPONSIVIDADE DO DASHBOARD
+   ============================================================ */
+
+@media (max-width: 1180px) {
+
+  .sava-kpi-grid,
+  .stats-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  .sava-dashboard-main {
+    grid-template-columns:
+      minmax(0, 1.3fr)
+      minmax(280px, .8fr);
+  }
+
+}
+
+
+@media (max-width: 950px) {
+
+  .sava-dashboard-header {
+    min-height: 130px;
+
+    padding:
+      23px 22px;
+  }
+
+
+  .sava-dashboard-main {
+    grid-template-columns: 1fr;
+  }
+
+
+  .sava-dashboard-title h2 {
+    font-size: 27px;
+  }
+
+}
+
+
+@media (max-width: 680px) {
+
+  .sava-dashboard-header {
+    display: block;
+
+    min-height: auto;
+
+    padding:
+      21px 18px;
+  }
+
+
+  #dashboardRefresh {
+    margin-top: 17px;
+  }
+
+
+  .sava-kpi-grid,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .sava-kpi,
+  .stat-card {
+    min-height: 112px;
+  }
+
+
+  .upcoming-item,
+  .sava-upcoming-item {
+    grid-template-columns: 1fr;
+
+    gap: 5px;
+  }
+
+
+  .process-row,
+  .sava-process-row {
+    grid-template-columns:
+      minmax(80px, 1fr)
+      minmax(100px, 1.4fr)
+      auto;
+  }
+
+}
+
+
+
 

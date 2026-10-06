@@ -8695,3 +8695,45 @@ body #app .main .view,
 .sava-kpi-value {
   color: #0c1d38 !important;
 }
+
+/* ==========================================================
+   SAVA — GLASS TESTE FORÇADO
+   ========================================================== */
+
+/* Cabeçalho grande */
+#dashboard .sava-dashboard-header {
+  background: rgba(255,255,255,.48) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* 4 cards superiores */
+#dashboard .stat-card,
+#dashboard .sava-kpi {
+  background: rgba(255,255,255,.55) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* Painéis inferiores */
+#dashboard .sava-dashboard-panel {
+  background: rgba(255,255,255,.55) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+/* Linhas das próximas renovações */
+#dashboard .sava-dashboard-panel > div,
+#dashboard .upcoming-item,
+#dashboard .sava-upcoming-item {
+  background-color: rgba(255,255,255,.38) !important;
+}
+
+/* Mantém contraste dos textos */
+#dashboard h1,
+#dashboard h2,
+#dashboard h3,
+#dashboard strong {
+  color: #0b1d38 !important;
+}
+
